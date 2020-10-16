@@ -247,6 +247,7 @@ manual_files="	libavcodec/aarch64/fft_neon.S \
 		libavformat/utils.c \
 		libavutil/aarch64/asm.S \
 		libavutil/aarch64/bswap.h \
+		libavutil/aarch64/cpu.c \
 		libavutil/aarch64/float_dsp_neon.S \
 		libavutil/aarch64/timer.h \
 		libavutil/cpu.c \
