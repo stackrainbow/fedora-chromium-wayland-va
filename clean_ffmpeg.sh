@@ -165,6 +165,7 @@ header_files="	libavcodec/x86/inline_asm.h \
 		libavformat/options_table.h \
 		libavformat/version.h \
 		libavformat/w64.h \
+		libavutil/aarch64/cpu.h \
 		libavutil/x86/asm.h \
 		libavutil/x86/bswap.h \
 		libavutil/x86/cpu.h \
