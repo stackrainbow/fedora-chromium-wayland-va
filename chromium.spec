@@ -170,15 +170,15 @@ BuildRequires:  libicu-devel >= 5.4
 %global chromoting_client_id %nil
 %endif
 
-%global majorversion 85
+%global majorversion 86
 
 %if %{freeworld}
 Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4183.121
-Release:	2%{?dist}
+Version:	%{majorversion}.0.4240.75
+Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -195,8 +195,8 @@ License:	BSD and LGPLv2+ and ASL 2.0 and IJG and MIT and GPLv2+ and ISC and Open
 
 ### Chromium Fedora Patches ###
 Patch0:		chromium-70.0.3538.67-sandbox-pie.patch
-# Use /etc/chromium for master_prefs
-Patch1:		chromium-68.0.3440.106-master-prefs-path.patch
+# Use /etc/chromium for initial_prefs
+Patch1:		chromium-86.0.4240.75-initial_prefs-etc-path.patch
 # Use gn system files
 Patch2:		chromium-67.0.3396.62-gn-system.patch
 # Do not prefix libpng functions
@@ -206,7 +206,7 @@ Patch4:		chromium-60.0.3112.78-jpeg-nomangle.patch
 # Do not mangle zlib
 Patch5:		chromium-77.0.3865.75-no-zlib-mangle.patch
 # Do not use unrar code, it is non-free
-Patch6:		chromium-83.0.4103.61-norar.patch
+Patch6:		chromium-86.0.4240.75-norar.patch
 # Use Gentoo's Widevine hack
 # https://gitweb.gentoo.org/repo/gentoo.git/tree/www-client/chromium/files/chromium-widevine-r3.patch
 Patch7:		chromium-71.0.3578.98-widevine-r3.patch
@@ -215,11 +215,11 @@ Patch8:		chromium-83.0.4103.61-disable-fontconfig-cache-magic.patch
 # drop rsp clobber, which breaks gcc9 (thanks to Jeff Law)
 Patch9:	chromium-78.0.3904.70-gcc9-drop-rsp-clobber.patch
 # Try to load widevine from other places
-Patch10:	chromium-79.0.3945.56-widevine-other-locations.patch
+Patch10:	chromium-86.0.4240.75-widevine-other-locations.patch
 # Try to fix version.py for Rawhide
 Patch11:	chromium-71.0.3578.98-py2-bootstrap.patch
 # Add "Fedora" to the user agent string
-Patch12:	chromium-79.0.3945.56-fedora-user-agent.patch
+Patch12:	chromium-86.0.4240.75-fedora-user-agent.patch
 
 # rename function to avoid conflict with rawhide glibc "gettid()"
 Patch50:	chromium-75.0.3770.80-grpc-gettid-fix.patch
@@ -234,59 +234,40 @@ Patch54:	chromium-79-gcc-protobuf-alignas.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-78-protobuf-RepeatedPtrField-export.patch
 Patch55:	chromium-78-protobuf-RepeatedPtrField-export.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-80-QuicStreamSendBuffer-deleted-move-constructor.patch
-Patch57:	chromium-80-QuicStreamSendBuffer-deleted-move-constructor.patch
+Patch56:	chromium-80-QuicStreamSendBuffer-deleted-move-constructor.patch
 # ../../third_party/perfetto/include/perfetto/base/task_runner.h:48:55: error: 'uint32_t' has not been declared
-Patch58:	chromium-80.0.3987.87-missing-cstdint-header.patch
+Patch57:	chromium-80.0.3987.87-missing-cstdint-header.patch
 # Missing <cstring> (thanks c++17)
-Patch60:	chromium-80.0.3987.106-missing-cstring-header.patch
+Patch58:	chromium-80.0.3987.106-missing-cstring-header.patch
 # prepare for using system ffmpeg (clean)
 # http://svnweb.mageia.org/packages/cauldron/chromium-browser-stable/current/SOURCES/chromium-53-ffmpeg-no-deprecation-errors.patch?view=markup
-Patch61:	chromium-53-ffmpeg-no-deprecation-errors.patch
-# https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-83-gcc-iterator.patch
-Patch62:	chromium-83-gcc-iterator.patch
-# https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-83-gcc-compatibility.patch
-Patch63:	chromium-83-gcc-compatibility.patch
-# Fix skia's handling of no_sanitize attributes to work with gcc
-# https://github.com/stha09/chromium-patches/blob/master/chromium-skia-no_sanitize.patch
-Patch64:	chromium-skia-no_sanitize.patch
+Patch59:	chromium-53-ffmpeg-no-deprecation-errors.patch
 # Work around aarch64 gcc bug (PR95726)
-Patch65:	chromium-83.0.4103.97-gcc10-aarch64-hack.patch
+# Patch60:	chromium-83.0.4103.97-gcc10-aarch64-hack.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-84-blink-disable-clang-format.patch
-Patch66:	chromium-84-blink-disable-clang-format.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-85-ozone-include.patch
-Patch67:	chromium-85-ozone-include.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-blink-gcc-diagnostic-pragma.patch
-Patch68:	chromium-blink-gcc-diagnostic-pragma.patch
+Patch61:	chromium-84-blink-disable-clang-format.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-fix-char_traits.patch
-Patch69:	chromium-fix-char_traits.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-quiche-invalid-offsetof.patch
-Patch70:	chromium-quiche-invalid-offsetof.patch
+Patch62:	chromium-fix-char_traits.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-86-ConsumeDurationNumber-constexpr.patch
+Patch63:	chromium-86-ConsumeDurationNumber-constexpr.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-86-ImageMemoryBarrierData-init.patch
+Patch64:	chromium-86-ImageMemoryBarrierData-init.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-86-nearby-explicit.patch
+Patch65:	chromium-86-nearby-explicit.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-86-nearby-include.patch
+Patch66:	chromium-86-nearby-include.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-86-ServiceWorkerRunningInfo-noexcept.patch
+Patch67:	chromium-86-ServiceWorkerRunningInfo-noexcept.patch
 # Silence GCC warnings during gn compile
-Patch71:	chromium-84.0.4147.105-gn-gcc-cleanup.patch
+Patch68:	chromium-84.0.4147.105-gn-gcc-cleanup.patch
 # Fix missing cstring in remoting code
-Patch72:	chromium-84.0.4147.125-remoting-cstring.patch
+Patch69:	chromium-84.0.4147.125-remoting-cstring.patch
 # Apply fix_textrels hack for i686 (even without lld)
-Patch73:	chromium-84.0.4147.125-i686-fix_textrels.patch
+Patch70:	chromium-84.0.4147.125-i686-fix_textrels.patch
 # Work around binutils bug in aarch64 (F33+)
-Patch74:	chromium-84.0.4147.125-aarch64-clearkeycdm-binutils-workaround.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-85-FrameWidget-namespace.patch
-Patch75:	chromium-85-FrameWidget-namespace.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-85-NearbyConnection-abstract.patch
-Patch76:	chromium-85-NearbyConnection-abstract.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-85-oscillator_node-cast.patch
-Patch77:	chromium-85-oscillator_node-cast.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-85-ostream-operator.patch
-Patch78:	chromium-85-ostream-operator.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-85-sim_hash-include.patch
-Patch79:	chromium-85-sim_hash-include.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-85-DelayNode-cast.patch
-Patch80:	chromium-85-DelayNode-cast.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-85-NearbyShareEncryptedMetadataKey-include.patch
-Patch81:	chromium-85-NearbyShareEncryptedMetadataKey-include.patch
-# https://chromium.googlesource.com/chromium/src/+/17edd5225a9e6a388a9560efe20362a1a0d86694
-Patch82:	chromium-85.0.4183.83-gcc-not-auto.patch
+Patch71:	chromium-84.0.4147.125-aarch64-clearkeycdm-binutils-workaround.patch
 # https://github.com/chromium/chromium/commit/53478caee862624fc6d73516f8d64253854b146f
-Patch83:	chromium-85.0.4183.102-invalid-end-CookieMonster-53478ca.patch
+Patch72:	chromium-85.0.4183.102-invalid-end-CookieMonster-53478ca.patch
 
 # Use lstdc++ on EPEL7 only
 Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
@@ -307,11 +288,11 @@ Patch107:	chromium-84.0.4147.89-el8-arm-incompatible-ints.patch
 # This gets us by for now
 Patch108:	chromium-85.0.4183.83-el7-old-libdrm.patch
 
-# Enable VAAPI support on Linux
-# NOTE: This patch will never land upstream
-Patch202:	enable-vaapi.patch
-Patch203:	chromium-83.0.4103.97-vaapi-i686-fpermissive.patch
-Patch205:	chromium-84.0.4147.89-fix-vaapi-on-intel.patch
+# VAAPI
+# Upstream turned VAAPI on in Linux in 86
+Patch202:	chromium-86.0.4240.75-enable-hardware-accelerated-mjpeg.patch
+Patch203:	chromium-86.0.4240.75-vaapi-i686-fpermissive.patch
+Patch205:	chromium-86.0.4240.75-fix-vaapi-on-intel.patch
 
 # Apply these patches to work around EPEL8 issues
 Patch300:	chromium-76.0.3809.132-rhel8-force-disable-use_gnome_keyring.patch
@@ -881,32 +862,23 @@ udev.
 %patch53 -p1 -b .gcc-include-memory
 %patch54 -p1 -b .base-gcc-no-alignas
 %patch55 -p1 -b .protobuf-export
-%patch57 -p1 -b .gcc-quiche
-%patch58 -p1 -b .missing-cstdint
-%patch60 -p1 -b .missing-cstring
-%patch61 -p1 -b .ffmpeg-deprecations
-%patch62 -p1 -b .gcc-iterator2
-%patch63 -p1 -b .gcc-compatibility
-%patch64 -p1 -b .gcc-no_sanitize
-%patch65 -p1 -b .gcc10-aarch64-hack
-%patch66 -p1 -b .blink-disable-clang-format
-%patch67 -p1 -b .ozone-include
-%patch68 -p1 -b .blink-gcc-diagnostic-pragma
-%patch69 -p1 -b .fix-char_traits
-%patch70 -p1 -b .quiche-invalid-offset
-%patch71 -p1 -b .gn-gcc-cleanup
-%patch72 -p1 -b .remoting-cstring
-%patch73 -p1 -b .i686-textrels
-%patch74 -p1 -b .aarch64-clearkeycdm-binutils-workaround
-%patch75 -p1 -b .FrameWidget-namespace
-%patch76 -p1 -b .NearbyConnection-abstract
-%patch77 -p1 -b .oscillator_node-cast
-%patch78 -p1 -b .ostream-operator
-%patch79 -p1 -b .sim_hash-include
-%patch80 -p1 -b .DelayNode-cast
-%patch81 -p1 -b .NearbyShareEncryptedMetadataKey-include
-%patch82 -p1 -b .gcc-not-auto
-%patch83 -p1 -b .invalid-end-CookieMonster
+%patch56 -p1 -b .gcc-quiche
+%patch57 -p1 -b .missing-cstdint
+%patch58 -p1 -b .missing-cstring
+%patch59 -p1 -b .ffmpeg-deprecations
+# %%patch60 -p1 -b .gcc10-aarch64-hack
+%patch61 -p1 -b .blink-disable-clang-format
+%patch62 -p1 -b .fix-char_traits
+%patch63 -p1 -b .ConsumeDurationNumber-constexpr
+%patch64 -p1 -b .ImageMemoryBarrierData-init
+%patch65 -p1 -b .nearby-explicit
+%patch66 -p1 -b .nearby-include
+%patch67 -p1 -b .ServiceWorkerRunningInfo-noexcept
+%patch68 -p1 -b .gn-gcc-cleanup
+%patch69 -p1 -b .remoting-cstring
+%patch70 -p1 -b .i686-textrels
+%patch71 -p1 -b .aarch64-clearkeycdm-binutils-workaround
+%patch72 -p1 -b .invalid-end-CookieMonster
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -932,7 +904,7 @@ udev.
 
 # Feature specific patches
 %if %{use_vaapi}
-%patch202 -p1 -b .vaapi
+%patch202 -p1 -b .accel-mjpeg
 %ifarch i686
 %patch203 -p1 -b .i686permissive
 %endif
@@ -1148,7 +1120,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/breakpad' \
 	'third_party/breakpad/breakpad/src/third_party/curl' \
 	'third_party/brotli' \
-	'third_party/cacheinvalidation' \
 	'third_party/catapult' \
 	'third_party/catapult/common/py_vulcanize/third_party/rcssmin' \
 	'third_party/catapult/common/py_vulcanize/third_party/rjsmin' \
@@ -1180,9 +1151,15 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/devtools-frontend/src/third_party/axe-core' \
 	'third_party/devtools-frontend/src/third_party/typescript' \
 	'third_party/devtools-frontend/src/front_end/third_party/acorn' \
+	'third_party/devtools-frontend/src/front_end/third_party/chromium' \
 	'third_party/devtools-frontend/src/front_end/third_party/codemirror' \
 	'third_party/devtools-frontend/src/front_end/third_party/fabricjs' \
+	'third_party/devtools-frontend/src/front_end/third_party/i18n' \
+	'third_party/devtools-frontend/src/front_end/third_party/intl-messageformat' \
 	'third_party/devtools-frontend/src/front_end/third_party/lighthouse' \
+	'third_party/devtools-frontend/src/front_end/third_party/lit-html' \
+	'third_party/devtools-frontend/src/front_end/third_party/lodash-isequal' \
+	'third_party/devtools-frontend/src/front_end/third_party/marked' \
 	'third_party/devtools-frontend/src/front_end/third_party/wasmparser' \
 	'third_party/dom_distiller_js' \
 	'third_party/emoji-segmenter' \
@@ -1246,6 +1223,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/metrics_proto' \
 	'third_party/modp_b64' \
 	'third_party/nasm' \
+	'third_party/nearby' \
 	'third_party/node' \
 	'third_party/node/node_modules/polymer-bundler/lib/third_party/UglifyJS2' \
 	'third_party/one_euro_filter' \
@@ -1284,6 +1262,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/rnnoise' \
 	'third_party/s2cellid' \
 	'third_party/schema_org' \
+	'third_party/securemessage' \
 	'third_party/simplejson' \
 	'third_party/sinonjs' \
 	'third_party/skia' \
@@ -1306,6 +1285,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/swiftshader/third_party/SPIRV-Headers' \
 	'third_party/tcmalloc' \
 	'third_party/test_fonts' \
+	'third_party/ukey2' \
         'third_party/usb_ids' \
 	'third_party/usrsctp' \
 	'third_party/vulkan' \
@@ -1325,6 +1305,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/wuffs' \
 	'third_party/xcbproto' \
         'third_party/xdg-utils' \
+	'third_party/zxcvbn-cpp' \
         'third_party/zlib' \
 	'third_party/zlib/google' \
 	'tools/gn/src/base/third_party/icu' \
@@ -1924,6 +1905,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Wed Oct 14 2020 Tom Callaway <spot@fedoraproject.org> - 86.0.4240.75-1
+- update to 86.0.4240.75
+
 * Mon Sep 28 2020 Tom Callaway <spot@fedoraproject.org> - 85.0.4183.121-2
 - rebuild for libevent
 
