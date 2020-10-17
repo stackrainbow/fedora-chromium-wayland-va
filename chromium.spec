@@ -1546,7 +1546,11 @@ rm -rf %{buildroot}
 				%ifarch x86_64
 					cp -a ClearKeyCdm/_platform_specific/linux_x64/libclearkeycdm.so %{buildroot}%{chromium_path}
 				%else
-					cp -a libclearkeycdm.so %{buildroot}%{chromium_path}
+					%ifarch aarch64
+						cp -a ClearKeyCdm/_platform_specific/linux_arm64/libclearkeycdm.so %{buildroot}%{chromium_path}
+					%else
+						cp -a libclearkeycdm.so %{buildroot}%{chromium_path}
+					%endif
 				%endif
 			%endif
 		%endif
