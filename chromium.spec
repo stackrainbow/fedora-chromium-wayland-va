@@ -274,7 +274,7 @@ Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
 # el7 only patch
 Patch102:	chromium-80.0.3987.132-el7-noexcept.patch
 # No linux/kcmp.h on EPEL7
-Patch103:	chromium-84.0.4147.89-epel7-no-kcmp-h.patch
+Patch103:	chromium-86.0.4240.75-epel7-no-kcmp-h.patch
 # Use old cups (chromium's code workaround breaks on gcc)
 # Revert: https://github.com/chromium/chromium/commit/c3213f8779ddc427e89d982514185ed5e4c94e91
 Patch104:	chromium-84.0.4147.89-epel7-old-cups.patch
@@ -892,10 +892,6 @@ udev.
 %patch103 -p1 -b .epel7-kcmp
 %patch104 -p1 -b .el7cups
 %patch108 -p1 -b .el7-old-libdrm
-%endif
-
-%if 0%{?rhel} == 7 || 0%{?rhel} == 8
-%patch106 -p1 -b .el-clang
 %endif
 
 %if 0%{?rhel} == 8
