@@ -1,15 +1,16 @@
 diff -up chromium-86.0.4240.75/sandbox/policy/linux/bpf_cros_amd_gpu_policy_linux.cc.epel7-kcmp chromium-86.0.4240.75/sandbox/policy/linux/bpf_cros_amd_gpu_policy_linux.cc
---- chromium-86.0.4240.75/sandbox/policy/linux/bpf_cros_amd_gpu_policy_linux.cc.epel7-kcmp	2020-10-19 11:33:27.395594061 -0400
-+++ chromium-86.0.4240.75/sandbox/policy/linux/bpf_cros_amd_gpu_policy_linux.cc	2020-10-19 11:33:41.703706818 -0400
-@@ -6,7 +6,10 @@
+--- chromium-86.0.4240.75/sandbox/policy/linux/bpf_cros_amd_gpu_policy_linux.cc.epel7-kcmp	2020-10-19 19:05:20.249786458 -0400
++++ chromium-86.0.4240.75/sandbox/policy/linux/bpf_cros_amd_gpu_policy_linux.cc	2020-10-19 19:07:09.814720097 -0400
+@@ -5,8 +5,10 @@
+ #include "sandbox/policy/linux/bpf_cros_amd_gpu_policy_linux.h"
  
  #include <errno.h>
- #include <fcntl.h>
+-#include <fcntl.h>
 -#include <linux/kcmp.h>
++#include <linux/fcntl.h>
 +#ifndef KCMP_FILE
 +#define KCMP_FILE 0
 +#endif
-+#include <linux/fcntl.h>
  #include <sys/socket.h>
  
  // Some arch's (arm64 for instance) unistd.h don't pull in symbols used here
