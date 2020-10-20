@@ -118,6 +118,13 @@ BuildRequires:  libicu-devel >= 5.4
 # This can be revisited once we upgrade to Python 3
 %global bundlepylibs 1
 
+# RHEL 7.9 dropped minizip.
+# It exists everywhere else though.
+%global bundleminizip 0
+%if 0%{?rhel} == 7
+%global bundleminizip 1
+%endif
+
 # Chromium used to break on wayland, hidpi, and colors with gtk3 enabled.
 # Hopefully it does not anymore.
 %global gtk3 1
@@ -178,7 +185,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 Name:		chromium%{chromium_channel}
 %endif
 Version:	%{majorversion}.0.4240.75
-Release:	1%{?dist}
+Release:	2%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -379,8 +386,8 @@ BuildRequires:	minizip-compat-devel
 %if 0%{?rhel} >= 8
 BuildRequires:	minizip-compat-devel
 %else
-# RHEL 7 and older uses the old minizip
-BuildRequires:	minizip-devel
+# RHEL 7 used to have minizip, but as of 7.9, it does not.
+# BuildRequires:	minizip-devel
 %endif
 %endif
 # RHEL 7's nodejs is too old
@@ -754,7 +761,11 @@ Summary: Files needed for both the headless_shell and full Chromium
 %if 0%{?fedora} >= 30
 Requires: minizip-compat%{_isa}
 %else
+%if %{?rhel} == 7
+# Do nothing
+%else
 Requires: minizip%{_isa}
+%endif
 %endif
 # -common doesn't have chrome-remote-desktop bits
 # but we need to clean it up if it gets disabled again
@@ -1327,7 +1338,6 @@ sed -i 's|/opt/google/chrome-remote-desktop|%{crd_path}|g' remoting/host/setup/d
 export PATH=$PATH:%{_builddir}/depot_tools
 
 build/linux/unbundle/replace_gn_files.py --system-libraries \
-	flac \
 %if 0%{?bundlefontconfig}
 %else
 	fontconfig \
@@ -1377,7 +1387,11 @@ build/linux/unbundle/replace_gn_files.py --system-libraries \
 %else
 	re2 \
 %endif
-	zlib
+%if 0%{?bundleminizip}
+%else
+	zlib \
+%endif
+	flac
 
 # fix arm gcc
 sed -i 's|arm-linux-gnueabihf-|arm-linux-gnu-|g' build/toolchain/linux/BUILD.gn
@@ -1905,6 +1919,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Tue Oct 20 2020 Tom Callaway <spot@fedoraproject.org> - 86.0.4240.75-2
+- use bundled zlib/minizip on el7 (thanks Red Hat. :P)
+
 * Wed Oct 14 2020 Tom Callaway <spot@fedoraproject.org> - 86.0.4240.75-1
 - update to 86.0.4240.75
 
