@@ -184,8 +184,8 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4240.75
-Release:	2%{?dist}
+Version:	%{majorversion}.0.4240.111
+Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -275,6 +275,9 @@ Patch70:	chromium-84.0.4147.125-i686-fix_textrels.patch
 Patch71:	chromium-84.0.4147.125-aarch64-clearkeycdm-binutils-workaround.patch
 # https://github.com/chromium/chromium/commit/53478caee862624fc6d73516f8d64253854b146f
 Patch72:	chromium-85.0.4183.102-invalid-end-CookieMonster-53478ca.patch
+# EL7 failed to compile without this, but it seems accurate for all branches
+# https://github.com/chromium/chromium/commit/a61fb57edb75fcfe251af0e6f66820d13924ad62
+Patch73:	chromium-86-use-range-based-algorithms.patch
 
 # Use lstdc++ on EPEL7 only
 Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
@@ -892,6 +895,7 @@ udev.
 %patch70 -p1 -b .i686-textrels
 %patch71 -p1 -b .aarch64-clearkeycdm-binutils-workaround
 %patch72 -p1 -b .invalid-end-CookieMonster
+%patch73 -p1 -b .a61fb57e
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -1921,6 +1925,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Wed Oct 21 2020 Tom Callaway <spot@fedoraproject.org> - 86.0.4240.111-1
+- update to 86.0.4240.111
+
 * Tue Oct 20 2020 Tom Callaway <spot@fedoraproject.org> - 86.0.4240.75-2
 - use bundled zlib/minizip on el7 (thanks Red Hat. :P)
 

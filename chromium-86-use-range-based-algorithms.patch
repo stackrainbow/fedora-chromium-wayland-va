@@ -1,0 +1,1500 @@
+diff -up chromium-86.0.4240.75/base/callback_list.h.a61fb57e chromium-86.0.4240.75/base/callback_list.h
+--- chromium-86.0.4240.75/base/callback_list.h.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/callback_list.h	2020-10-21 16:38:29.003091331 -0400
+@@ -5,7 +5,6 @@
+ #ifndef BASE_CALLBACK_LIST_H_
+ #define BASE_CALLBACK_LIST_H_
+ 
+-#include <algorithm>
+ #include <list>
+ #include <memory>
+ #include <utility>
+@@ -17,6 +16,7 @@
+ #include "base/check.h"
+ #include "base/compiler_specific.h"
+ #include "base/memory/weak_ptr.h"
++#include "base/ranges/algorithm.h"
+ #include "base/stl_util.h"
+ 
+ // OVERVIEW:
+@@ -163,8 +163,8 @@ class CallbackListBase {
+   // Returns whether the list of registered callbacks is empty (from an external
+   // perspective -- meaning no remaining callbacks are live).
+   bool empty() const {
+-    return std::all_of(callbacks_.cbegin(), callbacks_.cend(),
+-                       [](const auto& callback) { return callback.is_null(); });
++    return ranges::all_of(
++        callbacks_, [](const auto& callback) { return callback.is_null(); });
+   }
+ 
+   // Calls all registered callbacks that are not canceled beforehand. If any
+diff -up chromium-86.0.4240.75/base/command_line.cc.a61fb57e chromium-86.0.4240.75/base/command_line.cc
+--- chromium-86.0.4240.75/base/command_line.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/command_line.cc	2020-10-21 16:38:29.003091331 -0400
+@@ -4,13 +4,13 @@
+ 
+ #include "base/command_line.h"
+ 
+-#include <algorithm>
+ #include <ostream>
+ 
+ #include "base/containers/span.h"
+ #include "base/files/file_path.h"
+ #include "base/logging.h"
+ #include "base/notreached.h"
++#include "base/ranges/algorithm.h"
+ #include "base/stl_util.h"
+ #include "base/strings/strcat.h"
+ #include "base/strings/string_split.h"
+@@ -411,8 +411,7 @@ CommandLine::StringVector CommandLine::G
+   // Gather all arguments after the last switch (may include kSwitchTerminator).
+   StringVector args(argv_.begin() + begin_args_, argv_.end());
+   // Erase only the first kSwitchTerminator (maybe "--" is a legitimate page?)
+-  auto switch_terminator =
+-      std::find(args.begin(), args.end(), kSwitchTerminator);
++  auto switch_terminator = ranges::find(args, kSwitchTerminator);
+   if (switch_terminator != args.end())
+     args.erase(switch_terminator);
+   return args;
+diff -up chromium-86.0.4240.75/base/containers/checked_range_unittest.cc.a61fb57e chromium-86.0.4240.75/base/containers/checked_range_unittest.cc
+--- chromium-86.0.4240.75/base/containers/checked_range_unittest.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/containers/checked_range_unittest.cc	2020-10-21 16:38:29.003091331 -0400
+@@ -8,6 +8,7 @@
+ #include <initializer_list>
+ #include <type_traits>
+ 
++#include "base/ranges/algorithm.h"
+ #include "base/strings/string_piece.h"
+ #include "testing/gtest/include/gtest/gtest.h"
+ 
+@@ -151,9 +152,9 @@ TEST(CheckedContiguousRange, Mutable_Dat
+   std::vector<int> vector = {3, 1, 4, 2, 5};
+   CheckedContiguousRange<std::vector<int>> range(vector);
+ 
+-  EXPECT_FALSE(std::is_sorted(vector.begin(), vector.end()));
++  EXPECT_FALSE(ranges::is_sorted(vector));
+   std::sort(range.data(), range.data() + range.size());
+-  EXPECT_TRUE(std::is_sorted(vector.begin(), vector.end()));
++  EXPECT_TRUE(ranges::is_sorted(vector));
+ }
+ 
+ TEST(CheckedContiguousRange, DataSizeEmpty_Constexpr) {
+diff -up chromium-86.0.4240.75/base/containers/circular_deque.h.a61fb57e chromium-86.0.4240.75/base/containers/circular_deque.h
+--- chromium-86.0.4240.75/base/containers/circular_deque.h.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/containers/circular_deque.h	2020-10-21 16:38:29.003091331 -0400
+@@ -14,6 +14,7 @@
+ #include "base/check_op.h"
+ #include "base/containers/vector_buffer.h"
+ #include "base/macros.h"
++#include "base/ranges/algorithm.h"
+ #include "base/stl_util.h"
+ #include "base/template_util.h"
+ 
+@@ -1097,7 +1098,7 @@ class circular_deque {
+ // Implementations of base::Erase[If] (see base/stl_util.h).
+ template <class T, class Value>
+ size_t Erase(circular_deque<T>& container, const Value& value) {
+-  auto it = std::remove(container.begin(), container.end(), value);
++  auto it = ranges::remove(container, value);
+   size_t removed = std::distance(it, container.end());
+   container.erase(it, container.end());
+   return removed;
+@@ -1105,7 +1106,7 @@ size_t Erase(circular_deque<T>& containe
+ 
+ template <class T, class Predicate>
+ size_t EraseIf(circular_deque<T>& container, Predicate pred) {
+-  auto it = std::remove_if(container.begin(), container.end(), pred);
++  auto it = ranges::remove_if(container, pred);
+   size_t removed = std::distance(it, container.end());
+   container.erase(it, container.end());
+   return removed;
+diff -up chromium-86.0.4240.75/base/containers/flat_map_unittest.cc.a61fb57e chromium-86.0.4240.75/base/containers/flat_map_unittest.cc
+--- chromium-86.0.4240.75/base/containers/flat_map_unittest.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/containers/flat_map_unittest.cc	2020-10-21 16:38:29.003091331 -0400
+@@ -8,6 +8,7 @@
+ #include <vector>
+ 
+ #include "base/macros.h"
++#include "base/ranges/algorithm.h"
+ #include "base/strings/string_piece.h"
+ #include "base/test/move_only_int.h"
+ #include "testing/gmock/include/gmock/gmock.h"
+@@ -214,7 +215,7 @@ TEST(FlatMap, InsertOrAssignMoveOnlyKey)
+   base::flat_map<MoveOnlyInt, int> map;
+   for (int i : {3, 1, 5, 6, 8, 7, 0, 9, 4, 2}) {
+     map.insert_or_assign(MoveOnlyInt(i), i);
+-    EXPECT_TRUE(std::is_sorted(map.begin(), map.end()));
++    EXPECT_TRUE(ranges::is_sorted(map));
+   }
+ }
+ 
+@@ -249,7 +250,7 @@ TEST(FlatMap, InsertOrAssignMoveOnlyKeyW
+   base::flat_map<MoveOnlyInt, int> map;
+   for (int i : {3, 1, 5, 6, 8, 7, 0, 9, 4, 2}) {
+     map.insert_or_assign(map.end(), MoveOnlyInt(i), i);
+-    EXPECT_TRUE(std::is_sorted(map.begin(), map.end()));
++    EXPECT_TRUE(ranges::is_sorted(map));
+   }
+ }
+ 
+@@ -294,7 +295,7 @@ TEST(FlatMap, TryEmplaceMoveOnlyKey) {
+   base::flat_map<MoveOnlyInt, int> map;
+   for (int i : {3, 1, 5, 6, 8, 7, 0, 9, 4, 2}) {
+     map.try_emplace(MoveOnlyInt(i), i);
+-    EXPECT_TRUE(std::is_sorted(map.begin(), map.end()));
++    EXPECT_TRUE(ranges::is_sorted(map));
+   }
+ }
+ 
+@@ -340,7 +341,7 @@ TEST(FlatMap, TryEmplaceMoveOnlyKeyWithH
+   base::flat_map<MoveOnlyInt, int> map;
+   for (int i : {3, 1, 5, 6, 8, 7, 0, 9, 4, 2}) {
+     map.try_emplace(map.end(), MoveOnlyInt(i), i);
+-    EXPECT_TRUE(std::is_sorted(map.begin(), map.end()));
++    EXPECT_TRUE(ranges::is_sorted(map));
+   }
+ }
+ 
+diff -up chromium-86.0.4240.75/base/containers/flat_tree.h.a61fb57e chromium-86.0.4240.75/base/containers/flat_tree.h
+--- chromium-86.0.4240.75/base/containers/flat_tree.h.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/containers/flat_tree.h	2020-10-21 16:38:29.004091339 -0400
+@@ -11,6 +11,7 @@
+ #include <utility>
+ #include <vector>
+ 
++#include "base/ranges/algorithm.h"
+ #include "base/stl_util.h"
+ #include "base/template_util.h"
+ 
+@@ -753,11 +754,10 @@ template <class Key, class Value, class
+ void flat_tree<Key, Value, GetKeyFromValue, KeyCompare>::replace(
+     underlying_type&& body) {
+   // Ensure that |body| is sorted and has no repeated elements.
+-  DCHECK(std::is_sorted(body.begin(), body.end(), value_comp()));
+-  DCHECK(std::adjacent_find(body.begin(), body.end(),
+-                            [this](const auto& lhs, const auto& rhs) {
+-                              return !value_comp()(lhs, rhs);
+-                            }) == body.end());
++  DCHECK(ranges::is_sorted(body, value_comp()));
++  DCHECK(ranges::adjacent_find(body, [this](const auto& lhs, const auto& rhs) {
++           return !value_comp()(lhs, rhs);
++         }) == body.end());
+   impl_.body_ = std::move(body);
+ }
+ 
+@@ -883,7 +883,7 @@ auto flat_tree<Key, Value, GetKeyFromVal
+   const KeyTypeOrK<K>& key_ref = key;
+ 
+   KeyValueCompare key_value(impl_.get_key_comp());
+-  return std::lower_bound(begin(), end(), key_ref, key_value);
++  return ranges::lower_bound(*this, key_ref, key_value);
+ }
+ 
+ template <class Key, class Value, class GetKeyFromValue, class KeyCompare>
+@@ -904,7 +904,7 @@ auto flat_tree<Key, Value, GetKeyFromVal
+   const KeyTypeOrK<K>& key_ref = key;
+ 
+   KeyValueCompare key_value(impl_.get_key_comp());
+-  return std::upper_bound(begin(), end(), key_ref, key_value);
++  return ranges::upper_bound(*this, key_ref, key_value);
+ }
+ 
+ // ----------------------------------------------------------------------------
+@@ -978,7 +978,7 @@ size_t EraseIf(
+     base::internal::flat_tree<Key, Value, GetKeyFromValue, KeyCompare>&
+         container,
+     Predicate pred) {
+-  auto it = std::remove_if(container.begin(), container.end(), pred);
++  auto it = ranges::remove_if(container, pred);
+   size_t removed = std::distance(it, container.end());
+   container.erase(it, container.end());
+   return removed;
+diff -up chromium-86.0.4240.75/base/containers/flat_tree_unittest.cc.a61fb57e chromium-86.0.4240.75/base/containers/flat_tree_unittest.cc
+--- chromium-86.0.4240.75/base/containers/flat_tree_unittest.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/containers/flat_tree_unittest.cc	2020-10-21 16:38:29.004091339 -0400
+@@ -35,6 +35,7 @@
+ #include <string>
+ #include <vector>
+ 
++#include "base/ranges/algorithm.h"
+ #include "base/template_util.h"
+ #include "base/test/move_only_int.h"
+ #include "testing/gmock/include/gmock/gmock.h"
+@@ -218,8 +219,8 @@ TEST(FlatTree, Stability) {
+   Tree cont({{0, 0}, {1, 0}, {0, 1}, {2, 0}, {0, 2}, {1, 1}});
+ 
+   auto AllOfSecondsAreZero = [&cont] {
+-    return std::all_of(cont.begin(), cont.end(),
+-                       [](const Pair& elem) { return elem.second == 0; });
++    return ranges::all_of(cont,
++                          [](const Pair& elem) { return elem.second == 0; });
+   };
+ 
+   EXPECT_TRUE(AllOfSecondsAreZero()) << "constructor should be stable";
+@@ -975,11 +976,11 @@ TEST(FlatTree, EraseEndDeath) {
+ TEST(FlatTree, KeyComp) {
+   ReversedTree cont({1, 2, 3, 4, 5});
+ 
+-  EXPECT_TRUE(std::is_sorted(cont.begin(), cont.end(), cont.key_comp()));
++  EXPECT_TRUE(ranges::is_sorted(cont, cont.key_comp()));
+   int new_elements[] = {6, 7, 8, 9, 10};
+   std::copy(std::begin(new_elements), std::end(new_elements),
+             std::inserter(cont, cont.end()));
+-  EXPECT_TRUE(std::is_sorted(cont.begin(), cont.end(), cont.key_comp()));
++  EXPECT_TRUE(ranges::is_sorted(cont, cont.key_comp()));
+ }
+ 
+ // value_compare value_comp() const
+@@ -987,11 +988,11 @@ TEST(FlatTree, KeyComp) {
+ TEST(FlatTree, ValueComp) {
+   ReversedTree cont({1, 2, 3, 4, 5});
+ 
+-  EXPECT_TRUE(std::is_sorted(cont.begin(), cont.end(), cont.value_comp()));
++  EXPECT_TRUE(ranges::is_sorted(cont, cont.value_comp()));
+   int new_elements[] = {6, 7, 8, 9, 10};
+   std::copy(std::begin(new_elements), std::end(new_elements),
+             std::inserter(cont, cont.end()));
+-  EXPECT_TRUE(std::is_sorted(cont.begin(), cont.end(), cont.value_comp()));
++  EXPECT_TRUE(ranges::is_sorted(cont, cont.value_comp()));
+ }
+ 
+ // ----------------------------------------------------------------------------
+diff -up chromium-86.0.4240.75/base/containers/span_unittest.cc.a61fb57e chromium-86.0.4240.75/base/containers/span_unittest.cc
+--- chromium-86.0.4240.75/base/containers/span_unittest.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/containers/span_unittest.cc	2020-10-21 16:38:29.004091339 -0400
+@@ -6,7 +6,6 @@
+ 
+ #include <stdint.h>
+ 
+-#include <algorithm>
+ #include <iterator>
+ #include <memory>
+ #include <string>
+@@ -14,6 +13,7 @@
+ #include <vector>
+ 
+ #include "base/containers/checked_iterators.h"
++#include "base/ranges/algorithm.h"
+ #include "base/stl_util.h"
+ #include "base/strings/string_piece.h"
+ #include "testing/gmock/include/gmock/gmock.h"
+@@ -1382,7 +1382,7 @@ TEST(SpanTest, Sort) {
+   int array[] = {5, 4, 3, 2, 1};
+ 
+   span<int> dynamic_span = array;
+-  std::sort(dynamic_span.begin(), dynamic_span.end());
++  ranges::sort(dynamic_span);
+   EXPECT_THAT(array, ElementsAre(1, 2, 3, 4, 5));
+   std::sort(dynamic_span.rbegin(), dynamic_span.rend());
+   EXPECT_THAT(array, ElementsAre(5, 4, 3, 2, 1));
+@@ -1390,7 +1390,7 @@ TEST(SpanTest, Sort) {
+   span<int, 5> static_span = array;
+   std::sort(static_span.rbegin(), static_span.rend(), std::greater<>());
+   EXPECT_THAT(array, ElementsAre(1, 2, 3, 4, 5));
+-  std::sort(static_span.begin(), static_span.end(), std::greater<>());
++  ranges::sort(static_span, std::greater<>());
+   EXPECT_THAT(array, ElementsAre(5, 4, 3, 2, 1));
+ }
+ 
+diff -up chromium-86.0.4240.75/base/containers/unique_ptr_adapters_unittest.cc.a61fb57e chromium-86.0.4240.75/base/containers/unique_ptr_adapters_unittest.cc
+--- chromium-86.0.4240.75/base/containers/unique_ptr_adapters_unittest.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/containers/unique_ptr_adapters_unittest.cc	2020-10-21 16:38:29.004091339 -0400
+@@ -4,10 +4,10 @@
+ 
+ #include "base/containers/unique_ptr_adapters.h"
+ 
+-#include <algorithm>
+ #include <memory>
+ #include <vector>
+ 
++#include "base/ranges/algorithm.h"
+ #include "testing/gtest/include/gtest/gtest.h"
+ 
+ namespace base {
+@@ -76,19 +76,19 @@ TEST(UniquePtrMatcherTest, Basic) {
+   v.push_back(std::move(foo_ptr2));
+ 
+   {
+-    auto iter = std::find_if(v.begin(), v.end(), UniquePtrMatcher<Foo>(foo1));
++    auto iter = ranges::find_if(v, UniquePtrMatcher<Foo>(foo1));
+     ASSERT_TRUE(iter != v.end());
+     EXPECT_EQ(foo1, iter->get());
+   }
+ 
+   {
+-    auto iter = std::find_if(v.begin(), v.end(), UniquePtrMatcher<Foo>(foo2));
++    auto iter = ranges::find_if(v, UniquePtrMatcher<Foo>(foo2));
+     ASSERT_TRUE(iter != v.end());
+     EXPECT_EQ(foo2, iter->get());
+   }
+ 
+   {
+-    auto iter = std::find_if(v.begin(), v.end(), MatchesUniquePtr(foo2));
++    auto iter = ranges::find_if(v, MatchesUniquePtr(foo2));
+     ASSERT_TRUE(iter != v.end());
+     EXPECT_EQ(foo2, iter->get());
+   }
+@@ -110,22 +110,19 @@ TEST(UniquePtrMatcherTest, Deleter) {
+   v.push_back(std::move(foo_ptr2));
+ 
+   {
+-    auto iter = std::find_if(v.begin(), v.end(),
+-                             UniquePtrMatcher<Foo, TestDeleter>(foo1));
++    auto iter = ranges::find_if(v, UniquePtrMatcher<Foo, TestDeleter>(foo1));
+     ASSERT_TRUE(iter != v.end());
+     EXPECT_EQ(foo1, iter->get());
+   }
+ 
+   {
+-    auto iter = std::find_if(v.begin(), v.end(),
+-                             UniquePtrMatcher<Foo, TestDeleter>(foo2));
++    auto iter = ranges::find_if(v, UniquePtrMatcher<Foo, TestDeleter>(foo2));
+     ASSERT_TRUE(iter != v.end());
+     EXPECT_EQ(foo2, iter->get());
+   }
+ 
+   {
+-    auto iter = std::find_if(v.begin(), v.end(),
+-                             MatchesUniquePtr<Foo, TestDeleter>(foo2));
++    auto iter = ranges::find_if(v, MatchesUniquePtr<Foo, TestDeleter>(foo2));
+     ASSERT_TRUE(iter != v.end());
+     EXPECT_EQ(foo2, iter->get());
+   }
+diff -up chromium-86.0.4240.75/base/debug/activity_analyzer.cc.a61fb57e chromium-86.0.4240.75/base/debug/activity_analyzer.cc
+--- chromium-86.0.4240.75/base/debug/activity_analyzer.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/debug/activity_analyzer.cc	2020-10-21 16:38:29.004091339 -0400
+@@ -4,7 +4,6 @@
+ 
+ #include "base/debug/activity_analyzer.h"
+ 
+-#include <algorithm>
+ #include <utility>
+ 
+ #include "base/check_op.h"
+@@ -14,6 +13,7 @@
+ #include "base/metrics/histogram_functions.h"
+ #include "base/metrics/histogram_macros.h"
+ #include "base/no_destructor.h"
++#include "base/ranges/algorithm.h"
+ #include "base/stl_util.h"
+ #include "base/strings/string_util.h"
+ 
+@@ -398,7 +398,7 @@ void GlobalActivityAnalyzer::PrepareAllA
+   }
+ 
+   // Reverse the list of PIDs so that they get popped in the order found.
+-  std::reverse(process_ids_.begin(), process_ids_.end());
++  ranges::reverse(process_ids_);
+ }
+ 
+ }  // namespace debug
+diff -up chromium-86.0.4240.75/base/debug/task_trace.cc.a61fb57e chromium-86.0.4240.75/base/debug/task_trace.cc
+--- chromium-86.0.4240.75/base/debug/task_trace.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/debug/task_trace.cc	2020-10-21 16:38:29.004091339 -0400
+@@ -4,13 +4,13 @@
+ 
+ #include "base/debug/task_trace.h"
+ 
++#include "base/ranges/algorithm.h"
+ #include "build/build_config.h"
+ 
+ #if defined(OS_ANDROID)
+ #include <android/log.h>
+ #endif  // OS_ANDROID
+ 
+-#include <algorithm>
+ #include <iostream>
+ #include <sstream>
+ 
+@@ -55,8 +55,7 @@ TaskTrace::TaskTrace() {
+     return;
+   std::array<const void*, PendingTask::kTaskBacktraceLength + 1> task_trace;
+   task_trace[0] = current_task->posted_from.program_counter();
+-  std::copy(current_task->task_backtrace.begin(),
+-            current_task->task_backtrace.end(), task_trace.begin() + 1);
++  ranges::copy(current_task->task_backtrace, task_trace.begin() + 1);
+   size_t length = 0;
+   while (length < task_trace.size() && task_trace[length])
+     ++length;
+diff -up chromium-86.0.4240.75/base/feature_list_unittest.cc.a61fb57e chromium-86.0.4240.75/base/feature_list_unittest.cc
+--- chromium-86.0.4240.75/base/feature_list_unittest.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/feature_list_unittest.cc	2020-10-21 16:38:29.005091348 -0400
+@@ -6,7 +6,6 @@
+ 
+ #include <stddef.h>
+ 
+-#include <algorithm>
+ #include <utility>
+ #include <vector>
+ 
+@@ -14,6 +13,7 @@
+ #include "base/memory/read_only_shared_memory_region.h"
+ #include "base/metrics/field_trial.h"
+ #include "base/metrics/persistent_memory_allocator.h"
++#include "base/ranges/algorithm.h"
+ #include "base/stl_util.h"
+ #include "base/strings/string_piece.h"
+ #include "base/strings/string_util.h"
+@@ -39,7 +39,7 @@ struct Feature kFeatureOffByDefault {
+ std::string SortFeatureListString(const std::string& feature_list) {
+   std::vector<base::StringPiece> features =
+       FeatureList::SplitFeatureListString(feature_list);
+-  std::sort(features.begin(), features.end());
++  ranges::sort(features);
+   return JoinString(features, ",");
+ }
+ 
+diff -up chromium-86.0.4240.75/base/hash/sha1_perftest.cc.a61fb57e chromium-86.0.4240.75/base/hash/sha1_perftest.cc
+--- chromium-86.0.4240.75/base/hash/sha1_perftest.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/hash/sha1_perftest.cc	2020-10-21 16:38:29.005091348 -0400
+@@ -6,11 +6,11 @@
+ 
+ #include <stddef.h>
+ #include <stdint.h>
+-#include <algorithm>
+ #include <string>
+ #include <vector>
+ 
+ #include "base/rand_util.h"
++#include "base/ranges/algorithm.h"
+ #include "base/strings/string_number_conversions.h"
+ #include "base/strings/string_util.h"
+ #include "base/time/time.h"
+@@ -48,7 +48,7 @@ void Timing(const size_t len) {
+       utime[i] = TimeTicks::Now() - start;
+       total_test_time += utime[i];
+     }
+-    std::sort(utime.begin(), utime.end());
++    ranges::sort(utime);
+   }
+ 
+   reporter.AddResult(kMetricRuntime, total_test_time.InMicrosecondsF());
+@@ -67,8 +67,8 @@ void Timing(const size_t len) {
+ 
+   // Convert to a comma-separated string so we can report every data point.
+   std::vector<std::string> rate_strings(utime.size());
+-  std::transform(utime.cbegin(), utime.cend(), rate_strings.begin(),
+-                 [rate](const auto& t) { return NumberToString(rate(t)); });
++  ranges::transform(utime, rate_strings.begin(),
++                    [rate](const auto& t) { return NumberToString(rate(t)); });
+   reporter.AddResultList(kMetricThroughput, JoinString(rate_strings, ","));
+ }
+ 
+diff -up chromium-86.0.4240.75/base/i18n/break_iterator_unittest.cc.a61fb57e chromium-86.0.4240.75/base/i18n/break_iterator_unittest.cc
+--- chromium-86.0.4240.75/base/i18n/break_iterator_unittest.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/i18n/break_iterator_unittest.cc	2020-10-21 16:38:29.005091348 -0400
+@@ -7,6 +7,7 @@
+ #include <stddef.h>
+ #include <vector>
+ 
++#include "base/ranges/algorithm.h"
+ #include "base/stl_util.h"
+ #include "base/strings/string_piece.h"
+ #include "base/strings/string_util.h"
+@@ -414,8 +415,7 @@ TEST(BreakIteratorTest, IsSentenceBounda
+   sentence_breaks.push_back(24);
+   sentence_breaks.push_back(42);
+   for (size_t i = 0; i < str.size(); i++) {
+-    if (std::find(sentence_breaks.begin(), sentence_breaks.end(), i) !=
+-        sentence_breaks.end()) {
++    if (ranges::find(sentence_breaks, i) != sentence_breaks.end()) {
+       EXPECT_TRUE(iter.IsSentenceBoundary(i)) << " at index=" << i;
+     } else {
+       EXPECT_FALSE(iter.IsSentenceBoundary(i)) << " at index=" << i;
+diff -up chromium-86.0.4240.75/base/immediate_crash_unittest.cc.a61fb57e chromium-86.0.4240.75/base/immediate_crash_unittest.cc
+diff -up chromium-86.0.4240.75/base/json/json_parser.cc.a61fb57e chromium-86.0.4240.75/base/json/json_parser.cc
+--- chromium-86.0.4240.75/base/json/json_parser.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/json/json_parser.cc	2020-10-21 16:38:29.005091348 -0400
+@@ -13,6 +13,7 @@
+ #include "base/macros.h"
+ #include "base/notreached.h"
+ #include "base/numerics/safe_conversions.h"
++#include "base/ranges/algorithm.h"
+ #include "base/strings/string_number_conversions.h"
+ #include "base/strings/string_piece.h"
+ #include "base/strings/string_util.h"
+@@ -441,7 +442,7 @@ Optional<Value> JSONParser::ConsumeDicti
+   ConsumeChar();  // Closing '}'.
+   // Reverse |dict_storage| to keep the last of elements with the same key in
+   // the input.
+-  std::reverse(dict_storage.begin(), dict_storage.end());
++  ranges::reverse(dict_storage);
+   return Value(Value::DictStorage(std::move(dict_storage)));
+ }
+ 
+diff -up chromium-86.0.4240.75/base/memory/platform_shared_memory_region_unittest.cc.a61fb57e chromium-86.0.4240.75/base/memory/platform_shared_memory_region_unittest.cc
+--- chromium-86.0.4240.75/base/memory/platform_shared_memory_region_unittest.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/memory/platform_shared_memory_region_unittest.cc	2020-10-21 16:38:29.005091348 -0400
+@@ -7,6 +7,7 @@
+ #include "base/check.h"
+ #include "base/memory/shared_memory_mapping.h"
+ #include "base/process/process_metrics.h"
++#include "base/ranges/algorithm.h"
+ #include "base/system/sys_info.h"
+ #include "base/test/gtest_util.h"
+ #include "base/test/test_shared_memory_util.h"
+@@ -250,11 +251,10 @@ void CheckReadOnlyMapProtection(void* ad
+   ASSERT_TRUE(base::debug::ReadProcMaps(&proc_maps));
+   std::vector<base::debug::MappedMemoryRegion> regions;
+   ASSERT_TRUE(base::debug::ParseProcMaps(proc_maps, &regions));
+-  auto it =
+-      std::find_if(regions.begin(), regions.end(),
+-                   [addr](const base::debug::MappedMemoryRegion& region) {
+-                     return region.start == reinterpret_cast<uintptr_t>(addr);
+-                   });
++  auto it = ranges::find_if(
++      regions, [addr](const base::debug::MappedMemoryRegion& region) {
++        return region.start == reinterpret_cast<uintptr_t>(addr);
++      });
+   ASSERT_TRUE(it != regions.end());
+   // PROT_READ may imply PROT_EXEC on some architectures, so just check that
+   // permissions don't contain PROT_WRITE bit.
+diff -up chromium-86.0.4240.75/base/memory/shared_memory_mapping_unittest.cc.a61fb57e chromium-86.0.4240.75/base/memory/shared_memory_mapping_unittest.cc
+--- chromium-86.0.4240.75/base/memory/shared_memory_mapping_unittest.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/memory/shared_memory_mapping_unittest.cc	2020-10-21 16:38:29.005091348 -0400
+@@ -6,12 +6,12 @@
+ 
+ #include <stdint.h>
+ 
+-#include <algorithm>
+ #include <limits>
+ 
+ #include "base/containers/span.h"
+ #include "base/memory/read_only_shared_memory_region.h"
+ #include "base/memory/writable_shared_memory_region.h"
++#include "base/ranges/algorithm.h"
+ #include "base/test/metrics/histogram_tester.h"
+ #include "build/build_config.h"
+ #include "testing/gmock/include/gmock/gmock.h"
+@@ -67,7 +67,7 @@ TEST_F(SharedMemoryMappingTest, SpanWith
+   span<const uint32_t> read_span = read_mapping_.GetMemoryAsSpan<uint32_t>();
+   ASSERT_EQ(2u, read_span.size());
+ 
+-  std::fill(write_span.begin(), write_span.end(), 0);
++  ranges::fill(write_span, 0);
+   EXPECT_EQ(0u, read_span[0]);
+   EXPECT_EQ(0u, read_span[1]);
+ 
+@@ -92,7 +92,7 @@ TEST_F(SharedMemoryMappingTest, SpanWith
+   span<const uint32_t> read_span_2 = read_mapping_.GetMemoryAsSpan<uint32_t>(1);
+   ASSERT_EQ(1u, read_span_2.size());
+ 
+-  std::fill(write_span.begin(), write_span.end(), 0);
++  ranges::fill(write_span, 0);
+   EXPECT_EQ(0u, read_span[0]);
+   EXPECT_EQ(0u, read_span[1]);
+   EXPECT_EQ(0u, read_span_2[0]);
+@@ -103,7 +103,7 @@ TEST_F(SharedMemoryMappingTest, SpanWith
+   EXPECT_EQ(0x08070605u, read_span[1]);
+   EXPECT_EQ(0x04030201u, read_span_2[0]);
+ 
+-  std::fill(write_span_2.begin(), write_span_2.end(), 0);
++  ranges::fill(write_span_2, 0);
+   EXPECT_EQ(0u, read_span[0]);
+   EXPECT_EQ(0x08070605u, read_span[1]);
+   EXPECT_EQ(0u, read_span_2[0]);
+diff -up chromium-86.0.4240.75/base/metrics/histogram.cc.a61fb57e chromium-86.0.4240.75/base/metrics/histogram.cc
+--- chromium-86.0.4240.75/base/metrics/histogram.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/metrics/histogram.cc	2020-10-21 16:38:29.006091357 -0400
+@@ -13,7 +13,6 @@
+ #include <limits.h>
+ #include <math.h>
+ 
+-#include <algorithm>
+ #include <string>
+ #include <utility>
+ 
+@@ -29,6 +28,7 @@
+ #include "base/metrics/sample_vector.h"
+ #include "base/metrics/statistics_recorder.h"
+ #include "base/pickle.h"
++#include "base/ranges/algorithm.h"
+ #include "base/strings/string_util.h"
+ #include "base/strings/stringprintf.h"
+ #include "base/strings/utf_string_conversions.h"
+@@ -1248,8 +1248,8 @@ class CustomHistogram::Factory : public
+     std::vector<int> ranges = *custom_ranges_;
+     ranges.push_back(0);  // Ensure we have a zero value.
+     ranges.push_back(HistogramBase::kSampleType_MAX);
+-    std::sort(ranges.begin(), ranges.end());
+-    ranges.erase(std::unique(ranges.begin(), ranges.end()), ranges.end());
++    ranges::sort(ranges);
++    ranges.erase(ranges::unique(ranges), ranges.end());
+ 
+     BucketRanges* bucket_ranges = new BucketRanges(ranges.size());
+     for (uint32_t i = 0; i < ranges.size(); i++) {
+diff -up chromium-86.0.4240.75/base/metrics/statistics_recorder.cc.a61fb57e chromium-86.0.4240.75/base/metrics/statistics_recorder.cc
+--- chromium-86.0.4240.75/base/metrics/statistics_recorder.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/metrics/statistics_recorder.cc	2020-10-21 16:38:29.006091357 -0400
+@@ -16,6 +16,7 @@
+ #include "base/metrics/metrics_hashes.h"
+ #include "base/metrics/persistent_histogram_allocator.h"
+ #include "base/metrics/record_histogram_checker.h"
++#include "base/ranges/algorithm.h"
+ #include "base/stl_util.h"
+ #include "base/strings/stringprintf.h"
+ #include "base/values.h"
+@@ -366,7 +367,7 @@ StatisticsRecorder::Histograms Statistic
+ 
+ // static
+ StatisticsRecorder::Histograms StatisticsRecorder::Sort(Histograms histograms) {
+-  std::sort(histograms.begin(), histograms.end(), &HistogramNameLesser);
++  ranges::sort(histograms, &HistogramNameLesser);
+   return histograms;
+ }
+ 
+@@ -376,12 +377,12 @@ StatisticsRecorder::Histograms Statistic
+     const std::string& query) {
+   // Need a C-string query for comparisons against C-string histogram name.
+   const char* const query_string = query.c_str();
+-  histograms.erase(std::remove_if(histograms.begin(), histograms.end(),
+-                                  [query_string](const HistogramBase* const h) {
+-                                    return !strstr(h->histogram_name(),
+-                                                   query_string);
+-                                  }),
+-                   histograms.end());
++  histograms.erase(
++      ranges::remove_if(histograms,
++                        [query_string](const HistogramBase* const h) {
++                          return !strstr(h->histogram_name(), query_string);
++                        }),
++      histograms.end());
+   return histograms;
+ }
+ 
+@@ -389,10 +390,11 @@ StatisticsRecorder::Histograms Statistic
+ StatisticsRecorder::Histograms StatisticsRecorder::NonPersistent(
+     Histograms histograms) {
+   histograms.erase(
+-      std::remove_if(histograms.begin(), histograms.end(),
+-                     [](const HistogramBase* const h) {
+-                       return (h->flags() & HistogramBase::kIsPersistent) != 0;
+-                     }),
++      ranges::remove_if(histograms,
++                        [](const HistogramBase* const h) {
++                          return (h->flags() & HistogramBase::kIsPersistent) !=
++                                 0;
++                        }),
+       histograms.end());
+   return histograms;
+ }
+diff -up chromium-86.0.4240.75/base/observer_list.h.a61fb57e chromium-86.0.4240.75/base/observer_list.h
+--- chromium-86.0.4240.75/base/observer_list.h.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/observer_list.h	2020-10-21 16:44:23.777189648 -0400
+@@ -18,6 +18,7 @@
+ #include "base/macros.h"
+ #include "base/notreached.h"
+ #include "base/observer_list_internal.h"
++#include "base/ranges/algorithm.h"
+ #include "base/sequence_checker.h"
+ #include "base/stl_util.h"
+ 
+@@ -279,9 +280,8 @@ class ObserverList {
+   // not in this list.
+   void RemoveObserver(const ObserverType* obs) {
+     DCHECK(obs);
+-    const auto it =
+-        std::find_if(observers_.begin(), observers_.end(),
+-                     [obs](const auto& o) { return o.IsEqual(obs); });
++    const auto it = ranges::find_if(
++        observers_, [obs](const auto& o) { return o.IsEqual(obs); });
+     if (it == observers_.end())
+       return;
+ 
+@@ -300,9 +300,9 @@ class ObserverList {
+     // probably DCHECK, but some client code currently does pass null.
+     if (obs == nullptr)
+       return false;
+-    return std::find_if(observers_.begin(), observers_.end(),
+-                        [obs](const auto& o) { return o.IsEqual(obs); }) !=
+-           observers_.end();
++    return ranges::find_if(observers_, [obs](const auto& o) {
++             return o.IsEqual(obs);
++           }) != observers_.end();
+   }
+ 
+   // Removes all the observers from this list.
+diff -up chromium-86.0.4240.75/base/process/process_metrics_unittest.cc.a61fb57e chromium-86.0.4240.75/base/process/process_metrics_unittest.cc
+--- chromium-86.0.4240.75/base/process/process_metrics_unittest.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/process/process_metrics_unittest.cc	2020-10-21 16:38:29.006091357 -0400
+@@ -19,6 +19,7 @@
+ #include "base/macros.h"
+ #include "base/memory/shared_memory_mapping.h"
+ #include "base/memory/writable_shared_memory_region.h"
++#include "base/ranges/algorithm.h"
+ #include "base/strings/string_number_conversions.h"
+ #include "base/strings/string_util.h"
+ #include "base/strings/stringprintf.h"
+@@ -781,13 +782,13 @@ TEST(ProcessMetricsTestLinux, GetCumulat
+ 
+   // Should have at least the test runner thread and the thread spawned above.
+   EXPECT_GE(prev_thread_times.size(), 2u);
+-  EXPECT_TRUE(std::any_of(
+-      prev_thread_times.begin(), prev_thread_times.end(),
++  EXPECT_TRUE(ranges::any_of(
++      prev_thread_times,
+       [&thread1](const std::pair<PlatformThreadId, base::TimeDelta>& entry) {
+         return entry.first == thread1.GetThreadId();
+       }));
+-  EXPECT_TRUE(std::any_of(
+-      prev_thread_times.begin(), prev_thread_times.end(),
++  EXPECT_TRUE(ranges::any_of(
++      prev_thread_times,
+       [](const std::pair<PlatformThreadId, base::TimeDelta>& entry) {
+         return entry.first == base::PlatformThread::CurrentId();
+       }));
+@@ -803,16 +804,16 @@ TEST(ProcessMetricsTestLinux, GetCumulat
+ 
+   // The stopped thread may still be reported until the kernel cleans it up.
+   EXPECT_GE(prev_thread_times.size(), 1u);
+-  EXPECT_TRUE(std::any_of(
+-      current_thread_times.begin(), current_thread_times.end(),
++  EXPECT_TRUE(ranges::any_of(
++      current_thread_times,
+       [](const std::pair<PlatformThreadId, base::TimeDelta>& entry) {
+         return entry.first == base::PlatformThread::CurrentId();
+       }));
+ 
+   // Reported times should not decrease.
+   for (const auto& entry : current_thread_times) {
+-    auto prev_it = std::find_if(
+-        prev_thread_times.begin(), prev_thread_times.end(),
++    auto prev_it = ranges::find_if(
++        prev_thread_times,
+         [&entry](
+             const std::pair<PlatformThreadId, base::TimeDelta>& prev_entry) {
+           return entry.first == prev_entry.first;
+@@ -862,8 +863,8 @@ TEST(ProcessMetricsTestLinux, GetPerThre
+ 
+   // Reported times should not decrease.
+   for (const auto& entry : current_thread_times) {
+-    auto prev_it = std::find_if(
+-        prev_thread_times.begin(), prev_thread_times.end(),
++    auto prev_it = ranges::find_if(
++        prev_thread_times,
+         [&entry](const ProcessMetrics::ThreadTimeInState& prev_entry) {
+           return entry.thread_id == prev_entry.thread_id &&
+                  entry.core_type == prev_entry.core_type &&
+diff -up chromium-86.0.4240.75/base/profiler/arm_cfi_table.cc.a61fb57e chromium-86.0.4240.75/base/profiler/arm_cfi_table.cc
+--- chromium-86.0.4240.75/base/profiler/arm_cfi_table.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/profiler/arm_cfi_table.cc	2020-10-21 16:38:29.006091357 -0400
+@@ -4,7 +4,7 @@
+ 
+ #include "base/profiler/arm_cfi_table.h"
+ 
+-#include <algorithm>
++#include "base/ranges/algorithm.h"
+ 
+ namespace base {
+ 
+@@ -91,8 +91,7 @@ Optional<ArmCFITable::FrameEntry> ArmCFI
+   // Find the required function address in UNW_INDEX as the last function lower
+   // or equal to |address| (the value right before the result of upper_bound(),
+   // if any).
+-  auto func_it = std::upper_bound(function_addresses_.begin(),
+-                                  function_addresses_.end(), address);
++  auto func_it = ranges::upper_bound(function_addresses_, address);
+   // If no function comes before |address|, no CFI entry  is returned.
+   if (func_it == function_addresses_.begin())
+     return nullopt;
+@@ -157,4 +156,4 @@ Optional<ArmCFITable::FrameEntry> ArmCFI
+   return last_frame_entry;
+ }
+ 
+-}  // namespace base
+\ No newline at end of file
++}  // namespace base
+diff -up chromium-86.0.4240.75/base/profiler/metadata_recorder_unittest.cc.a61fb57e chromium-86.0.4240.75/base/profiler/metadata_recorder_unittest.cc
+--- chromium-86.0.4240.75/base/profiler/metadata_recorder_unittest.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/profiler/metadata_recorder_unittest.cc	2020-10-21 16:38:29.006091357 -0400
+@@ -4,6 +4,7 @@
+ 
+ #include "base/profiler/metadata_recorder.h"
+ 
++#include "base/ranges/algorithm.h"
+ #include "base/test/gtest_util.h"
+ #include "base/test/metrics/histogram_tester.h"
+ #include "testing/gmock/include/gmock/gmock.h"
+@@ -213,7 +214,7 @@ TEST(MetadataRecorderTest, ReclaimInacti
+   }
+ 
+   MetadataRecorder::ItemArray items_arr;
+-  std::copy(items_set.begin(), items_set.end(), items_arr.begin());
++  ranges::copy(items_set, items_arr.begin());
+ 
+   MetadataRecorder::ItemArray recorder_items;
+   size_t recorder_item_count =
+diff -up chromium-86.0.4240.75/base/profiler/module_cache.cc.a61fb57e chromium-86.0.4240.75/base/profiler/module_cache.cc
+--- chromium-86.0.4240.75/base/profiler/module_cache.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/profiler/module_cache.cc	2020-10-21 16:38:29.007091366 -0400
+@@ -4,10 +4,11 @@
+ 
+ #include "base/profiler/module_cache.h"
+ 
+-#include <algorithm>
+ #include <iterator>
+ #include <utility>
+ 
++#include "base/ranges/algorithm.h"
++
+ namespace base {
+ 
+ namespace {
+diff -up chromium-86.0.4240.75/base/profiler/stack_sampler_impl.cc.a61fb57e chromium-86.0.4240.75/base/profiler/stack_sampler_impl.cc
+--- chromium-86.0.4240.75/base/profiler/stack_sampler_impl.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/profiler/stack_sampler_impl.cc	2020-10-21 16:38:29.007091366 -0400
+@@ -16,6 +16,7 @@
+ #include "base/profiler/stack_copier.h"
+ #include "base/profiler/suspendable_thread_delegate.h"
+ #include "base/profiler/unwinder.h"
++#include "base/ranges/algorithm.h"
+ #include "build/build_config.h"
+ 
+ // IMPORTANT NOTE: Some functions within this implementation are invoked while
+@@ -161,11 +162,10 @@ std::vector<Frame> StackSamplerImpl::Wal
+   do {
+     // Choose an authoritative unwinder for the current module. Use the first
+     // unwinder that thinks it can unwind from the current frame.
+-    auto unwinder =
+-        std::find_if(unwinders.begin(), unwinders.end(),
+-                     [&stack](const std::unique_ptr<Unwinder>& unwinder) {
+-                       return unwinder->CanUnwindFrom(stack.back());
+-                     });
++    auto unwinder = ranges::find_if(
++        unwinders, [&stack](const std::unique_ptr<Unwinder>& unwinder) {
++          return unwinder->CanUnwindFrom(stack.back());
++        });
+     if (unwinder == unwinders.end())
+       return stack;
+ 
+diff -up chromium-86.0.4240.75/base/profiler/stack_sampling_profiler_unittest.cc.a61fb57e chromium-86.0.4240.75/base/profiler/stack_sampling_profiler_unittest.cc
+--- chromium-86.0.4240.75/base/profiler/stack_sampling_profiler_unittest.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/profiler/stack_sampling_profiler_unittest.cc	2020-10-21 16:38:29.007091366 -0400
+@@ -5,7 +5,6 @@
+ #include <stddef.h>
+ #include <stdint.h>
+ 
+-#include <algorithm>
+ #include <cstdlib>
+ #include <memory>
+ #include <set>
+@@ -25,6 +24,7 @@
+ #include "base/profiler/stack_sampling_profiler.h"
+ #include "base/profiler/stack_sampling_profiler_test_util.h"
+ #include "base/profiler/unwinder.h"
++#include "base/ranges/algorithm.h"
+ #include "base/run_loop.h"
+ #include "base/scoped_native_library.h"
+ #include "base/stl_util.h"
+@@ -269,10 +269,10 @@ size_t WaitForSamplingComplete(
+     const std::vector<std::unique_ptr<TestProfilerInfo>>& infos) {
+   // Map unique_ptrs to something that WaitMany can accept.
+   std::vector<WaitableEvent*> sampling_completed_rawptrs(infos.size());
+-  std::transform(infos.begin(), infos.end(), sampling_completed_rawptrs.begin(),
+-                 [](const std::unique_ptr<TestProfilerInfo>& info) {
+-                   return &info.get()->completed;
+-                 });
++  ranges::transform(infos, sampling_completed_rawptrs.begin(),
++                    [](const std::unique_ptr<TestProfilerInfo>& info) {
++                      return &info.get()->completed;
++                    });
+   // Wait for one profiler to finish.
+   return WaitableEvent::WaitMany(sampling_completed_rawptrs.data(),
+                                  sampling_completed_rawptrs.size());
+diff -up chromium-86.0.4240.75/base/sampling_heap_profiler/poisson_allocation_sampler.cc.a61fb57e chromium-86.0.4240.75/base/sampling_heap_profiler/poisson_allocation_sampler.cc
+--- chromium-86.0.4240.75/base/sampling_heap_profiler/poisson_allocation_sampler.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/sampling_heap_profiler/poisson_allocation_sampler.cc	2020-10-21 16:38:29.007091366 -0400
+@@ -4,7 +4,6 @@
+ 
+ #include "base/sampling_heap_profiler/poisson_allocation_sampler.h"
+ 
+-#include <algorithm>
+ #include <atomic>
+ #include <cmath>
+ #include <memory>
+@@ -17,6 +16,7 @@
+ #include "base/no_destructor.h"
+ #include "base/partition_alloc_buildflags.h"
+ #include "base/rand_util.h"
++#include "base/ranges/algorithm.h"
+ #include "build/build_config.h"
+ 
+ #if defined(OS_APPLE) || defined(OS_ANDROID)
+@@ -557,8 +557,7 @@ void PoissonAllocationSampler::SuppressR
+ void PoissonAllocationSampler::AddSamplesObserver(SamplesObserver* observer) {
+   ScopedMuteThreadSamples no_reentrancy_scope;
+   AutoLock lock(mutex_);
+-  DCHECK(std::find(observers_.begin(), observers_.end(), observer) ==
+-         observers_.end());
++  DCHECK(ranges::find(observers_, observer) == observers_.end());
+   observers_.push_back(observer);
+   InstallAllocatorHooksOnce();
+   g_running = !observers_.empty();
+@@ -568,7 +567,7 @@ void PoissonAllocationSampler::RemoveSam
+     SamplesObserver* observer) {
+   ScopedMuteThreadSamples no_reentrancy_scope;
+   AutoLock lock(mutex_);
+-  auto it = std::find(observers_.begin(), observers_.end(), observer);
++  auto it = ranges::find(observers_, observer);
+   DCHECK(it != observers_.end());
+   observers_.erase(it);
+   g_running = !observers_.empty();
+diff -up chromium-86.0.4240.75/base/scoped_observer.h.a61fb57e chromium-86.0.4240.75/base/scoped_observer.h
+--- chromium-86.0.4240.75/base/scoped_observer.h.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/scoped_observer.h	2020-10-21 16:47:44.604936721 -0400
+@@ -7,11 +7,11 @@
+ 
+ #include <stddef.h>
+ 
+-#include <algorithm>
+ #include <vector>
+ 
+ #include "base/check.h"
+ #include "base/macros.h"
++#include "base/ranges/algorithm.h"
+ #include "base/stl_util.h"
+ 
+ // ScopedObserver is used to keep track of the set of sources an object has
+@@ -56,7 +56,7 @@ class ScopedObserver {
+ 
+   // Remove the object passed to the constructor as an observer from |source|.
+   void Remove(Source* source) {
+-    auto it = std::find(sources_.begin(), sources_.end(), source);
++    auto it = base::ranges::find(sources_, source);
+     DCHECK(it != sources_.end());
+     sources_.erase(it);
+     (source->*RemoveObsFn)(observer_);
+diff -up chromium-86.0.4240.75/base/strings/abseil_string_conversions.cc.a61fb57e chromium-86.0.4240.75/base/strings/abseil_string_conversions.cc
+--- chromium-86.0.4240.75/base/strings/abseil_string_conversions.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/strings/abseil_string_conversions.cc	2020-10-21 16:38:29.007091366 -0400
+@@ -4,10 +4,10 @@
+ 
+ #include "base/strings/abseil_string_conversions.h"
+ 
+-#include <algorithm>
+ #include <vector>
+ 
+ #include "base/containers/span.h"
++#include "base/ranges/algorithm.h"
+ #include "base/strings/string_piece.h"
+ #include "third_party/abseil-cpp/absl/strings/string_view.h"
+ 
+@@ -16,16 +16,14 @@ namespace base {
+ std::vector<absl::string_view> StringPiecesToStringViews(
+     span<const StringPiece> pieces) {
+   std::vector<absl::string_view> views(pieces.size());
+-  std::transform(pieces.begin(), pieces.end(), views.begin(),
+-                 &StringPieceToStringView);
++  ranges::transform(pieces, views.begin(), &StringPieceToStringView);
+   return views;
+ }
+ 
+ std::vector<StringPiece> StringViewsToStringPieces(
+     span<const absl::string_view> views) {
+   std::vector<StringPiece> pieces(views.size());
+-  std::transform(views.begin(), views.end(), pieces.begin(),
+-                 &StringViewToStringPiece);
++  ranges::transform(views, pieces.begin(), &StringViewToStringPiece);
+   return pieces;
+ }
+ 
+diff -up chromium-86.0.4240.75/base/strings/string_util_internal.h.a61fb57e chromium-86.0.4240.75/base/strings/string_util_internal.h
+--- chromium-86.0.4240.75/base/strings/string_util_internal.h.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/strings/string_util_internal.h	2020-10-21 16:38:29.007091366 -0400
+@@ -7,6 +7,7 @@
+ 
+ #include "base/logging.h"
+ #include "base/notreached.h"
++#include "base/ranges/algorithm.h"
+ #include "base/strings/string_piece.h"
+ #include "base/third_party/icu/icu_utf.h"
+ 
+@@ -578,8 +579,7 @@ StringType DoReplaceStringPlaceholders(
+             ReplacementOffset r_offset(index,
+                                        static_cast<int>(formatted.size()));
+             r_offsets.insert(
+-                std::upper_bound(r_offsets.begin(), r_offsets.end(), r_offset,
+-                                 &CompareParameter),
++                ranges::upper_bound(r_offsets, r_offset, &CompareParameter),
+                 r_offset);
+           }
+           if (index < substitutions)
+diff -up chromium-86.0.4240.75/base/synchronization/waitable_event_posix.cc.a61fb57e chromium-86.0.4240.75/base/synchronization/waitable_event_posix.cc
+--- chromium-86.0.4240.75/base/synchronization/waitable_event_posix.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/synchronization/waitable_event_posix.cc	2020-10-21 16:38:29.008091375 -0400
+@@ -4,13 +4,13 @@
+ 
+ #include <stddef.h>
+ 
+-#include <algorithm>
+ #include <limits>
+ #include <vector>
+ 
+ #include "base/check_op.h"
+ #include "base/debug/activity_tracker.h"
+ #include "base/optional.h"
++#include "base/ranges/algorithm.h"
+ #include "base/synchronization/condition_variable.h"
+ #include "base/synchronization/lock.h"
+ #include "base/synchronization/waitable_event.h"
+@@ -265,7 +265,7 @@ size_t WaitableEvent::WaitMany(WaitableE
+ 
+   DCHECK_EQ(count, waitables.size());
+ 
+-  sort(waitables.begin(), waitables.end(), cmp_fst_addr);
++  ranges::sort(waitables, cmp_fst_addr);
+ 
+   // The set of waitables must be distinct. Since we have just sorted by
+   // address, we can check this cheaply by comparing pairs of consecutive
+diff -up chromium-86.0.4240.75/base/task/common/checked_lock_impl.cc.a61fb57e chromium-86.0.4240.75/base/task/common/checked_lock_impl.cc
+--- chromium-86.0.4240.75/base/task/common/checked_lock_impl.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/task/common/checked_lock_impl.cc	2020-10-21 16:38:29.008091375 -0400
+@@ -4,12 +4,12 @@
+ 
+ #include "base/task/common/checked_lock_impl.h"
+ 
+-#include <algorithm>
+ #include <unordered_map>
+ #include <vector>
+ 
+ #include "base/check_op.h"
+ #include "base/lazy_instance.h"
++#include "base/ranges/algorithm.h"
+ #include "base/synchronization/condition_variable.h"
+ #include "base/task/common/checked_lock.h"
+ #include "base/threading/platform_thread.h"
+@@ -44,8 +44,7 @@ class SafeAcquisitionTracker {
+ 
+   void RecordRelease(const CheckedLockImpl* const lock) {
+     LockVector* acquired_locks = GetAcquiredLocksOnCurrentThread();
+-    const auto iter_at_lock =
+-        std::find(acquired_locks->begin(), acquired_locks->end(), lock);
++    const auto iter_at_lock = ranges::find(*acquired_locks, lock);
+     DCHECK(iter_at_lock != acquired_locks->end());
+     acquired_locks->erase(iter_at_lock);
+   }
+diff -up chromium-86.0.4240.75/base/task/common/operations_controller_unittest.cc.a61fb57e chromium-86.0.4240.75/base/task/common/operations_controller_unittest.cc
+--- chromium-86.0.4240.75/base/task/common/operations_controller_unittest.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/task/common/operations_controller_unittest.cc	2020-10-21 16:38:29.008091375 -0400
+@@ -8,6 +8,7 @@
+ #include <cstdint>
+ #include <utility>
+ 
++#include "base/ranges/algorithm.h"
+ #include "base/threading/platform_thread.h"
+ #include "base/threading/simple_thread.h"
+ #include "testing/gtest/include/gtest/gtest.h"
+@@ -124,8 +125,7 @@ class TestThread : public SimpleThread {
+       }
+       if (!was_started)
+         continue;
+-      if (std::any_of(tokens.begin(), tokens.end(),
+-                      [](const auto& token) { return !token; })) {
++      if (ranges::any_of(tokens, [](const auto& token) { return !token; })) {
+         break;
+       }
+     }
+diff -up chromium-86.0.4240.75/base/task/common/task_annotator.cc.a61fb57e chromium-86.0.4240.75/base/task/common/task_annotator.cc
+--- chromium-86.0.4240.75/base/task/common/task_annotator.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/task/common/task_annotator.cc	2020-10-21 16:48:17.376221810 -0400
+@@ -9,6 +9,7 @@
+ #include "base/debug/activity_tracker.h"
+ #include "base/debug/alias.h"
+ #include "base/no_destructor.h"
++#include "base/ranges/algorithm.h"
+ #include "base/threading/thread_local.h"
+ #include "base/trace_event/base_tracing.h"
+ 
+@@ -127,8 +128,7 @@ void TaskAnnotator::RunTask(const char*
+   task_backtrace.back() = reinterpret_cast<void*>(0x0d00d1d1d178119);
+ 
+   task_backtrace[1] = pending_task->posted_from.program_counter();
+-  std::copy(pending_task->task_backtrace.begin(),
+-            pending_task->task_backtrace.end(), task_backtrace.begin() + 2);
++  ranges::copy(pending_task->task_backtrace, task_backtrace.begin() + 2);
+   task_backtrace[kStackTaskTraceSnapshotSize - 2] =
+       reinterpret_cast<void*>(pending_task->ipc_hash);
+   debug::Alias(&task_backtrace);
+diff -up chromium-86.0.4240.75/base/task/sequence_manager/sequence_manager_impl.cc.a61fb57e chromium-86.0.4240.75/base/task/sequence_manager/sequence_manager_impl.cc
+--- chromium-86.0.4240.75/base/task/sequence_manager/sequence_manager_impl.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/task/sequence_manager/sequence_manager_impl.cc	2020-10-21 16:38:29.008091375 -0400
+@@ -18,6 +18,7 @@
+ #include "base/no_destructor.h"
+ #include "base/optional.h"
+ #include "base/rand_util.h"
++#include "base/ranges/algorithm.h"
+ #include "base/task/sequence_manager/real_time_domain.h"
+ #include "base/task/sequence_manager/task_time_observer.h"
+ #include "base/task/sequence_manager/thread_controller_impl.h"
+@@ -539,8 +540,7 @@ void SequenceManagerImpl::LogTaskDebugIn
+     case Settings::TaskLogging::kEnabledWithBacktrace: {
+       std::array<const void*, PendingTask::kTaskBacktraceLength + 1> task_trace;
+       task_trace[0] = task->posted_from.program_counter();
+-      std::copy(task->task_backtrace.begin(), task->task_backtrace.end(),
+-                task_trace.begin() + 1);
++      ranges::copy(task->task_backtrace, task_trace.begin() + 1);
+       size_t length = 0;
+       while (length < task_trace.size() && task_trace[length])
+         ++length;
+diff -up chromium-86.0.4240.75/base/task/sequence_manager/task_queue_impl.cc.a61fb57e chromium-86.0.4240.75/base/task/sequence_manager/task_queue_impl.cc
+--- chromium-86.0.4240.75/base/task/sequence_manager/task_queue_impl.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/task/sequence_manager/task_queue_impl.cc	2020-10-21 16:38:29.008091375 -0400
+@@ -10,6 +10,7 @@
+ #include <utility>
+ 
+ #include "base/logging.h"
++#include "base/ranges/algorithm.h"
+ #include "base/strings/stringprintf.h"
+ #include "base/task/common/scoped_defer_task_posting.h"
+ #include "base/task/sequence_manager/sequence_manager_impl.h"
+@@ -1404,7 +1405,7 @@ void TaskQueueImpl::DelayedIncomingQueue
+ 
+   // If we deleted something, re-enforce the heap property.
+   if (task_deleted)
+-    std::make_heap(queue_.c.begin(), queue_.c.end(), queue_.comp);
++    ranges::make_heap(queue_.c, queue_.comp);
+ }
+ 
+ Value TaskQueueImpl::DelayedIncomingQueue::AsValue(TimeTicks now) const {
+diff -up chromium-86.0.4240.75/base/task/thread_pool/pooled_single_thread_task_runner_manager.cc.a61fb57e chromium-86.0.4240.75/base/task/thread_pool/pooled_single_thread_task_runner_manager.cc
+--- chromium-86.0.4240.75/base/task/thread_pool/pooled_single_thread_task_runner_manager.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/task/thread_pool/pooled_single_thread_task_runner_manager.cc	2020-10-21 16:38:29.009091383 -0400
+@@ -4,7 +4,6 @@
+ 
+ #include "base/task/thread_pool/pooled_single_thread_task_runner_manager.h"
+ 
+-#include <algorithm>
+ #include <memory>
+ #include <string>
+ #include <utility>
+@@ -12,6 +11,7 @@
+ #include "base/bind.h"
+ #include "base/callback.h"
+ #include "base/memory/ptr_util.h"
++#include "base/ranges/algorithm.h"
+ #include "base/single_thread_task_runner.h"
+ #include "base/stl_util.h"
+ #include "base/strings/stringprintf.h"
+@@ -719,7 +719,7 @@ void PooledSingleThreadTaskRunnerManager
+     if (workers_.empty())
+       return;
+ 
+-    auto worker_iter = std::find(workers_.begin(), workers_.end(), worker);
++    auto worker_iter = ranges::find(workers_, worker);
+     DCHECK(worker_iter != workers_.end());
+     worker_to_destroy = std::move(*worker_iter);
+     workers_.erase(worker_iter);
+diff -up chromium-86.0.4240.75/base/task/thread_pool/thread_group_impl.cc.a61fb57e chromium-86.0.4240.75/base/task/thread_pool/thread_group_impl.cc
+--- chromium-86.0.4240.75/base/task/thread_pool/thread_group_impl.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/task/thread_pool/thread_group_impl.cc	2020-10-21 16:38:29.009091383 -0400
+@@ -22,6 +22,7 @@
+ #include "base/metrics/histogram.h"
+ #include "base/numerics/clamped_math.h"
+ #include "base/optional.h"
++#include "base/ranges/algorithm.h"
+ #include "base/sequence_token.h"
+ #include "base/strings/string_util.h"
+ #include "base/strings/stringprintf.h"
+@@ -83,10 +84,10 @@ constexpr TimeDelta kBackgroundBlockedWo
+ // Only used in DCHECKs.
+ bool ContainsWorker(const std::vector<scoped_refptr<WorkerThread>>& workers,
+                     const WorkerThread* worker) {
+-  auto it = std::find_if(workers.begin(), workers.end(),
+-                         [worker](const scoped_refptr<WorkerThread>& i) {
+-                           return i.get() == worker;
+-                         });
++  auto it =
++      ranges::find_if(workers, [worker](const scoped_refptr<WorkerThread>& i) {
++        return i.get() == worker;
++      });
+   return it != workers.end();
+ }
+ 
+@@ -734,8 +735,7 @@ void ThreadGroupImpl::WorkerThreadDelega
+   outer_->idle_workers_stack_.Remove(worker);
+ 
+   // Remove the worker from |workers_|.
+-  auto worker_iter =
+-      std::find(outer_->workers_.begin(), outer_->workers_.end(), worker);
++  auto worker_iter = ranges::find(outer_->workers_, worker);
+   DCHECK(worker_iter != outer_->workers_.end());
+   outer_->workers_.erase(worker_iter);
+ }
+diff -up chromium-86.0.4240.75/base/task/thread_pool/worker_thread_stack.cc.a61fb57e chromium-86.0.4240.75/base/task/thread_pool/worker_thread_stack.cc
+--- chromium-86.0.4240.75/base/task/thread_pool/worker_thread_stack.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/task/thread_pool/worker_thread_stack.cc	2020-10-21 16:38:29.009091383 -0400
+@@ -4,9 +4,8 @@
+ 
+ #include "base/task/thread_pool/worker_thread_stack.h"
+ 
+-#include <algorithm>
+-
+ #include "base/check_op.h"
++#include "base/ranges/algorithm.h"
+ #include "base/stl_util.h"
+ #include "base/task/thread_pool/worker_thread.h"
+ 
+@@ -47,7 +46,7 @@ bool WorkerThreadStack::Contains(const W
+ void WorkerThreadStack::Remove(const WorkerThread* worker) {
+   DCHECK(!IsEmpty());
+   DCHECK_NE(worker, stack_.back());
+-  auto it = std::find(stack_.begin(), stack_.end(), worker);
++  auto it = ranges::find(stack_, worker);
+   DCHECK(it != stack_.end());
+   DCHECK_NE(TimeTicks(), (*it)->GetLastUsedTime());
+   stack_.erase(it);
+diff -up chromium-86.0.4240.75/base/test/launcher/test_launcher.cc.a61fb57e chromium-86.0.4240.75/base/test/launcher/test_launcher.cc
+--- chromium-86.0.4240.75/base/test/launcher/test_launcher.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/test/launcher/test_launcher.cc	2020-10-21 16:38:29.009091383 -0400
+@@ -30,6 +30,7 @@
+ #include "base/numerics/safe_conversions.h"
+ #include "base/process/kill.h"
+ #include "base/process/launch.h"
++#include "base/ranges/algorithm.h"
+ #include "base/run_loop.h"
+ #include "base/single_thread_task_runner.h"
+ #include "base/strings/pattern.h"
+@@ -670,7 +671,7 @@ void TestRunner::Run(const std::vector<s
+   CHECK_GT(runner_count_, 0u);
+   tests_to_run_ = test_names;
+   // Reverse test order to avoid coping the whole vector when removing tests.
+-  std::reverse(tests_to_run_.begin(), tests_to_run_.end());
++  ranges::reverse(tests_to_run_);
+   runners_done_ = 0;
+   task_runners_.clear();
+   for (size_t i = 0; i < runner_count_; i++) {
+@@ -1554,7 +1555,7 @@ bool TestLauncher::ShuffleTests(CommandL
+ 
+     std::mt19937 randomizer;
+     randomizer.seed(shuffle_seed);
+-    std::shuffle(tests_.begin(), tests_.end(), randomizer);
++    ranges::shuffle(tests_, randomizer);
+ 
+     fprintf(stdout, "Randomizing with seed %u\n", shuffle_seed);
+     fflush(stdout);
+diff -up chromium-86.0.4240.75/base/test/scoped_feature_list.cc.a61fb57e chromium-86.0.4240.75/base/test/scoped_feature_list.cc
+--- chromium-86.0.4240.75/base/test/scoped_feature_list.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/test/scoped_feature_list.cc	2020-10-21 16:38:29.009091383 -0400
+@@ -4,12 +4,12 @@
+ 
+ #include "base/test/scoped_feature_list.h"
+ 
+-#include <algorithm>
+ #include <utility>
+ #include <vector>
+ 
+ #include "base/memory/ptr_util.h"
+ #include "base/metrics/field_trial_param_associator.h"
++#include "base/ranges/algorithm.h"
+ #include "base/strings/string_number_conversions.h"
+ #include "base/strings/string_split.h"
+ #include "base/strings/string_util.h"
+@@ -71,10 +71,10 @@ struct Features {
+ // with GetFeatureName() and also could be without parameters.
+ bool ContainsFeature(const std::vector<StringPiece>& feature_vector,
+                      StringPiece feature_name) {
+-  auto iter = std::find_if(feature_vector.begin(), feature_vector.end(),
+-                           [&feature_name](const StringPiece& a) {
+-                             return GetFeatureName(a) == feature_name;
+-                           });
++  auto iter =
++      ranges::find_if(feature_vector, [&feature_name](const StringPiece& a) {
++        return GetFeatureName(a) == feature_name;
++      });
+   return iter != feature_vector.end();
+ }
+ 
+diff -up chromium-86.0.4240.75/base/test/trace_event_analyzer.cc.a61fb57e chromium-86.0.4240.75/base/test/trace_event_analyzer.cc
+--- chromium-86.0.4240.75/base/test/trace_event_analyzer.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/test/trace_event_analyzer.cc	2020-10-21 16:38:29.010091392 -0400
+@@ -14,6 +14,7 @@
+ #include "base/logging.h"
+ #include "base/memory/ptr_util.h"
+ #include "base/memory/ref_counted_memory.h"
++#include "base/ranges/algorithm.h"
+ #include "base/run_loop.h"
+ #include "base/strings/pattern.h"
+ #include "base/trace_event/trace_buffer.h"
+@@ -775,7 +776,7 @@ bool TraceAnalyzer::SetEvents(const std:
+   raw_events_.clear();
+   if (!ParseEventsFromJson(json_events, &raw_events_))
+     return false;
+-  std::stable_sort(raw_events_.begin(), raw_events_.end());
++  base::ranges::stable_sort(raw_events_);
+   ParseMetadata();
+   return true;
+ }
+@@ -964,7 +965,7 @@ bool GetRateStats(const TraceEventVector
+     deltas.push_back(delta);
+   }
+ 
+-  std::sort(deltas.begin(), deltas.end());
++  base::ranges::sort(deltas);
+ 
+   if (options) {
+     if (options->trim_min + options->trim_max > events.size() - kMinEvents) {
+@@ -980,8 +981,8 @@ bool GetRateStats(const TraceEventVector
+   for (size_t i = 0; i < num_deltas; ++i)
+     delta_sum += deltas[i];
+ 
+-  stats->min_us = *std::min_element(deltas.begin(), deltas.end());
+-  stats->max_us = *std::max_element(deltas.begin(), deltas.end());
++  stats->min_us = *base::ranges::min_element(deltas);
++  stats->max_us = *base::ranges::max_element(deltas);
+   stats->mean_us = delta_sum / static_cast<double>(num_deltas);
+ 
+   double sum_mean_offsets_squared = 0.0;
+diff -up chromium-86.0.4240.75/base/threading/hang_watcher.cc.a61fb57e chromium-86.0.4240.75/base/threading/hang_watcher.cc
+--- chromium-86.0.4240.75/base/threading/hang_watcher.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/threading/hang_watcher.cc	2020-10-21 16:38:29.010091392 -0400
+@@ -4,7 +4,6 @@
+ 
+ #include "base/threading/hang_watcher.h"
+ 
+-#include <algorithm>
+ #include <atomic>
+ #include <utility>
+ 
+@@ -16,6 +15,7 @@
+ #include "base/feature_list.h"
+ #include "base/metrics/field_trial_params.h"
+ #include "base/no_destructor.h"
++#include "base/ranges/algorithm.h"
+ #include "base/strings/string_number_conversions.h"
+ #include "base/synchronization/lock.h"
+ #include "base/synchronization/waitable_event.h"
+@@ -413,10 +413,10 @@ HangWatcher::WatchStateSnapShot::WatchSt
+ 
+   // Sort |hung_watch_state_copies_| by order of decreasing hang severity so the
+   // most severe hang is first in the list.
+-  std::sort(hung_watch_state_copies_.begin(), hung_watch_state_copies_.end(),
+-            [](const WatchStateCopy& lhs, const WatchStateCopy& rhs) {
+-              return lhs.deadline < rhs.deadline;
+-            });
++  ranges::sort(hung_watch_state_copies_,
++               [](const WatchStateCopy& lhs, const WatchStateCopy& rhs) {
++                 return lhs.deadline < rhs.deadline;
++               });
+ }
+ 
+ HangWatcher::WatchStateSnapShot::WatchStateSnapShot(
+@@ -476,8 +476,8 @@ void HangWatcher::Monitor() {
+   // atomically. This is fine. Detecting a hang is generally best effort and
+   // if a thread resumes from hang in the time it takes to move on to
+   // capturing then its ID will be absent from the crash keys.
+-  bool any_thread_hung = std::any_of(
+-      watch_states_.cbegin(), watch_states_.cend(),
++  bool any_thread_hung = ranges::any_of(
++      watch_states_,
+       [this, now](const std::unique_ptr<internal::HangWatchState>& state) {
+         uint64_t flags;
+         base::TimeTicks deadline;
+@@ -595,12 +595,12 @@ void HangWatcher::UnregisterThread() {
+   internal::HangWatchState* current_hang_watch_state =
+       internal::HangWatchState::GetHangWatchStateForCurrentThread()->Get();
+ 
+-  auto it =
+-      std::find_if(watch_states_.cbegin(), watch_states_.cend(),
+-                   [current_hang_watch_state](
+-                       const std::unique_ptr<internal::HangWatchState>& state) {
+-                     return state.get() == current_hang_watch_state;
+-                   });
++  auto it = ranges::find_if(
++      watch_states_,
++      [current_hang_watch_state](
++          const std::unique_ptr<internal::HangWatchState>& state) {
++        return state.get() == current_hang_watch_state;
++      });
+ 
+   // Thread should be registered to get unregistered.
+   DCHECK(it != watch_states_.end());
+diff -up chromium-86.0.4240.75/base/trace_event/trace_log.cc.a61fb57e chromium-86.0.4240.75/base/trace_event/trace_log.cc
+--- chromium-86.0.4240.75/base/trace_event/trace_log.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/trace_event/trace_log.cc	2020-10-21 16:38:29.010091392 -0400
+@@ -4,7 +4,6 @@
+ 
+ #include "base/trace_event/trace_log.h"
+ 
+-#include <algorithm>
+ #include <cmath>
+ #include <limits>
+ #include <memory>
+@@ -23,6 +22,7 @@
+ #include "base/no_destructor.h"
+ #include "base/process/process.h"
+ #include "base/process/process_metrics.h"
++#include "base/ranges/algorithm.h"
+ #include "base/stl_util.h"
+ #include "base/strings/string_piece.h"
+ #include "base/strings/string_split.h"
+@@ -777,8 +777,7 @@ void TraceLog::AddEnabledStateObserver(E
+ void TraceLog::RemoveEnabledStateObserver(EnabledStateObserver* listener) {
+   AutoLock lock(observers_lock_);
+   enabled_state_observers_.erase(
+-      std::remove(enabled_state_observers_.begin(),
+-                  enabled_state_observers_.end(), listener),
++      ranges::remove(enabled_state_observers_, listener),
+       enabled_state_observers_.end());
+ }
+ 
+diff -up chromium-86.0.4240.75/base/values.cc.a61fb57e chromium-86.0.4240.75/base/values.cc
+--- chromium-86.0.4240.75/base/values.cc.a61fb57e	2020-10-07 12:38:34.000000000 -0400
++++ chromium-86.0.4240.75/base/values.cc	2020-10-21 16:38:29.010091392 -0400
+@@ -6,7 +6,6 @@
+ 
+ #include <string.h>
+ 
+-#include <algorithm>
+ #include <cmath>
+ #include <new>
+ #include <ostream>
+@@ -18,6 +17,7 @@
+ #include "base/json/json_writer.h"
+ #include "base/memory/ptr_util.h"
+ #include "base/notreached.h"
++#include "base/ranges/algorithm.h"
+ #include "base/stl_util.h"
+ #include "base/strings/string_util.h"
+ #include "base/strings/utf_string_conversions.h"
+@@ -1581,7 +1581,7 @@ bool ListValue::Remove(size_t index, std
+ }
+ 
+ bool ListValue::Remove(const Value& value, size_t* index) {
+-  auto it = std::find(list().begin(), list().end(), value);
++  auto it = ranges::find(list(), value);
+ 
+   if (it == list().end())
+     return false;
+@@ -1659,7 +1659,7 @@ bool ListValue::Insert(size_t index, std
+ }
+ 
+ ListValue::const_iterator ListValue::Find(const Value& value) const {
+-  return std::find(GetList().begin(), GetList().end(), value);
++  return ranges::find(GetList(), value);
+ }
+ 
+ void ListValue::Swap(ListValue* other) {
+diff -up chromium-86.0.4240.75/content/public/browser/content_browser_client.cc.a61fb57e chromium-86.0.4240.75/content/public/browser/content_browser_client.cc
+--- chromium-86.0.4240.75/content/public/browser/content_browser_client.cc.a61fb57e	2020-10-21 16:38:29.011091401 -0400
++++ chromium-86.0.4240.75/content/public/browser/content_browser_client.cc	2020-10-21 16:48:43.858452175 -0400
+@@ -9,7 +9,7 @@
+ // declarations instead of including more headers. If that is infeasible, adjust
+ // the limit. For more info, see
+ // https://chromium.googlesource.com/chromium/src/+/HEAD/docs/wmax_tokens.md
+-#pragma clang max_tokens_here 880000
++#pragma clang max_tokens_here 910000
+ 
+ #include <utility>
+ 
+diff -up chromium-86.0.4240.75/third_party/blink/renderer/core/dom/document.cc.a61fb57e chromium-86.0.4240.75/third_party/blink/renderer/core/dom/document.cc
+--- chromium-86.0.4240.75/third_party/blink/renderer/core/dom/document.cc.a61fb57e	2020-10-21 16:38:29.013091419 -0400
++++ chromium-86.0.4240.75/third_party/blink/renderer/core/dom/document.cc	2020-10-21 16:49:03.209620502 -0400
+@@ -33,7 +33,7 @@
+ // instead of including more headers. If that is infeasible, adjust the limit.
+ // For more info, see
+ // https://chromium.googlesource.com/chromium/src/+/HEAD/docs/wmax_tokens.md
+-#pragma clang max_tokens_here 900000
++#pragma clang max_tokens_here 960000
+ 
+ #include <memory>
+ #include <utility>
