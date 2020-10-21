@@ -869,7 +869,9 @@ udev.
 # Short term fixes (usually gcc and backports)
 %patch50 -p1 -b .gettid-fix
 %patch51 -p1 -b .gcc-remoting-constexpr
+%if 0%{?fedora} || 0%{?rhel} >= 8
 %patch52 -p1 -b .unbundle-zlib
+%endif
 %patch53 -p1 -b .gcc-include-memory
 %patch54 -p1 -b .base-gcc-no-alignas
 %patch55 -p1 -b .protobuf-export
