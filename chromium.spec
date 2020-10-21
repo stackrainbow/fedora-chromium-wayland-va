@@ -276,6 +276,7 @@ Patch71:	chromium-84.0.4147.125-aarch64-clearkeycdm-binutils-workaround.patch
 # https://github.com/chromium/chromium/commit/53478caee862624fc6d73516f8d64253854b146f
 Patch72:	chromium-85.0.4183.102-invalid-end-CookieMonster-53478ca.patch
 # EL7 failed to compile without this, but it seems accurate for all branches
+# just a bit taken from
 # https://github.com/chromium/chromium/commit/a61fb57edb75fcfe251af0e6f66820d13924ad62
 Patch73:	chromium-86-use-range-based-algorithms.patch
 
