@@ -275,10 +275,6 @@ Patch70:	chromium-84.0.4147.125-i686-fix_textrels.patch
 Patch71:	chromium-84.0.4147.125-aarch64-clearkeycdm-binutils-workaround.patch
 # https://github.com/chromium/chromium/commit/53478caee862624fc6d73516f8d64253854b146f
 Patch72:	chromium-85.0.4183.102-invalid-end-CookieMonster-53478ca.patch
-# EL7 failed to compile without this, but it seems accurate for all branches
-# just a bit taken from
-# https://github.com/chromium/chromium/commit/a61fb57edb75fcfe251af0e6f66820d13924ad62
-Patch73:	chromium-86-use-range-based-algorithms.patch
 
 # Use lstdc++ on EPEL7 only
 Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
@@ -298,6 +294,10 @@ Patch107:	chromium-84.0.4147.89-el8-arm-incompatible-ints.patch
 # libdrm on EL7 is rather old and chromium assumes newer
 # This gets us by for now
 Patch108:	chromium-85.0.4183.83-el7-old-libdrm.patch
+# Move nearby_share code to chromeos only on EL7
+# Why? Because something in it fails to build on EL7 (and only there)
+# And upstream later sets it to chromeos only anyway
+Patch109:	chromium-86.0.4240.111-el7-limit-nearby-sharing-to-chromeos.patch
 
 # VAAPI
 # Upstream turned VAAPI on in Linux in 86
@@ -896,7 +896,6 @@ udev.
 %patch70 -p1 -b .i686-textrels
 %patch71 -p1 -b .aarch64-clearkeycdm-binutils-workaround
 %patch72 -p1 -b .invalid-end-CookieMonster
-%patch73 -p1 -b .a61fb57e
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -910,6 +909,7 @@ udev.
 %patch103 -p1 -b .epel7-kcmp
 %patch104 -p1 -b .el7cups
 %patch108 -p1 -b .el7-old-libdrm
+%patch109 -p1 -b .disable-nearby_sharing
 %endif
 
 %if 0%{?rhel} == 8
