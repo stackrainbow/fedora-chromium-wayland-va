@@ -118,6 +118,13 @@ BuildRequires:  libicu-devel >= 5.4
 # This can be revisited once we upgrade to Python 3
 %global bundlepylibs 1
 
+# RHEL 7.9 dropped minizip.
+# It exists everywhere else though.
+%global bundleminizip 0
+%if 0%{?rhel} == 7
+%global bundleminizip 1
+%endif
+
 # Chromium used to break on wayland, hidpi, and colors with gtk3 enabled.
 # Hopefully it does not anymore.
 %global gtk3 1
@@ -177,7 +184,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4240.75
+Version:	%{majorversion}.0.4240.111
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -287,6 +294,10 @@ Patch107:	chromium-84.0.4147.89-el8-arm-incompatible-ints.patch
 # libdrm on EL7 is rather old and chromium assumes newer
 # This gets us by for now
 Patch108:	chromium-85.0.4183.83-el7-old-libdrm.patch
+# Move nearby_share code to chromeos only on EL7
+# Why? Because something in it fails to build on EL7 (and only there)
+# And upstream later sets it to chromeos only anyway
+Patch109:	chromium-86.0.4240.111-el7-limit-nearby-sharing-to-chromeos.patch
 
 # VAAPI
 # Upstream turned VAAPI on in Linux in 86
@@ -379,8 +390,8 @@ BuildRequires:	minizip-compat-devel
 %if 0%{?rhel} >= 8
 BuildRequires:	minizip-compat-devel
 %else
-# RHEL 7 and older uses the old minizip
-BuildRequires:	minizip-devel
+# RHEL 7 used to have minizip, but as of 7.9, it does not.
+# BuildRequires:	minizip-devel
 %endif
 %endif
 # RHEL 7's nodejs is too old
@@ -754,7 +765,11 @@ Summary: Files needed for both the headless_shell and full Chromium
 %if 0%{?fedora} >= 30
 Requires: minizip-compat%{_isa}
 %else
+%if %{?rhel} == 7
+# Do nothing
+%else
 Requires: minizip%{_isa}
+%endif
 %endif
 # -common doesn't have chrome-remote-desktop bits
 # but we need to clean it up if it gets disabled again
@@ -858,7 +873,9 @@ udev.
 # Short term fixes (usually gcc and backports)
 %patch50 -p1 -b .gettid-fix
 %patch51 -p1 -b .gcc-remoting-constexpr
+%if 0%{?fedora} || 0%{?rhel} >= 8
 %patch52 -p1 -b .unbundle-zlib
+%endif
 %patch53 -p1 -b .gcc-include-memory
 %patch54 -p1 -b .base-gcc-no-alignas
 %patch55 -p1 -b .protobuf-export
@@ -892,6 +909,7 @@ udev.
 %patch103 -p1 -b .epel7-kcmp
 %patch104 -p1 -b .el7cups
 %patch108 -p1 -b .el7-old-libdrm
+%patch109 -p1 -b .disable-nearby_sharing
 %endif
 
 %if 0%{?rhel} == 8
@@ -1327,7 +1345,6 @@ sed -i 's|/opt/google/chrome-remote-desktop|%{crd_path}|g' remoting/host/setup/d
 export PATH=$PATH:%{_builddir}/depot_tools
 
 build/linux/unbundle/replace_gn_files.py --system-libraries \
-	flac \
 %if 0%{?bundlefontconfig}
 %else
 	fontconfig \
@@ -1377,7 +1394,11 @@ build/linux/unbundle/replace_gn_files.py --system-libraries \
 %else
 	re2 \
 %endif
-	zlib
+%if 0%{?bundleminizip}
+%else
+	zlib \
+%endif
+	flac
 
 # fix arm gcc
 sed -i 's|arm-linux-gnueabihf-|arm-linux-gnu-|g' build/toolchain/linux/BUILD.gn
@@ -1905,6 +1926,12 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Wed Oct 21 2020 Tom Callaway <spot@fedoraproject.org> - 86.0.4240.111-1
+- update to 86.0.4240.111
+
+* Tue Oct 20 2020 Tom Callaway <spot@fedoraproject.org> - 86.0.4240.75-2
+- use bundled zlib/minizip on el7 (thanks Red Hat. :P)
+
 * Wed Oct 14 2020 Tom Callaway <spot@fedoraproject.org> - 86.0.4240.75-1
 - update to 86.0.4240.75
 

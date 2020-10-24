@@ -1,0 +1,1135 @@
+diff -up chromium-86.0.4240.111/chrome/browser/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/browser/BUILD.gn
+--- chromium-86.0.4240.111/chrome/browser/BUILD.gn.disable-nearby_sharing	2020-10-22 10:18:26.618372988 -0400
++++ chromium-86.0.4240.111/chrome/browser/BUILD.gn	2020-10-22 10:18:25.065360685 -0400
+@@ -3378,64 +3378,6 @@ static_library("browser") {
+       "metrics/tab_stats_tracker.cc",
+       "metrics/tab_stats_tracker.h",
+       "metrics/tab_stats_tracker_delegate.h",
+-      "nearby_sharing/attachment_info.cc",
+-      "nearby_sharing/attachment_info.h",
+-      "nearby_sharing/constants.h",
+-      "nearby_sharing/fast_initiation_manager.cc",
+-      "nearby_sharing/fast_initiation_manager.h",
+-      "nearby_sharing/incoming_frames_reader.cc",
+-      "nearby_sharing/incoming_frames_reader.h",
+-      "nearby_sharing/incoming_share_target_info.cc",
+-      "nearby_sharing/incoming_share_target_info.h",
+-      "nearby_sharing/instantmessaging/constants.h",
+-      "nearby_sharing/instantmessaging/receive_messages_express.cc",
+-      "nearby_sharing/instantmessaging/receive_messages_express.h",
+-      "nearby_sharing/instantmessaging/send_message_express.cc",
+-      "nearby_sharing/instantmessaging/send_message_express.h",
+-      "nearby_sharing/instantmessaging/stream_parser.cc",
+-      "nearby_sharing/instantmessaging/stream_parser.h",
+-      "nearby_sharing/instantmessaging/token_fetcher.cc",
+-      "nearby_sharing/instantmessaging/token_fetcher.h",
+-      "nearby_sharing/nearby_confirmation_manager.cc",
+-      "nearby_sharing/nearby_confirmation_manager.h",
+-      "nearby_sharing/nearby_connection.h",
+-      "nearby_sharing/nearby_connection_impl.cc",
+-      "nearby_sharing/nearby_connection_impl.h",
+-      "nearby_sharing/nearby_connections_manager.h",
+-      "nearby_sharing/nearby_connections_manager_impl.cc",
+-      "nearby_sharing/nearby_connections_manager_impl.h",
+-      "nearby_sharing/nearby_notification_delegate.h",
+-      "nearby_sharing/nearby_notification_handler.cc",
+-      "nearby_sharing/nearby_notification_handler.h",
+-      "nearby_sharing/nearby_notification_manager.cc",
+-      "nearby_sharing/nearby_notification_manager.h",
+-      "nearby_sharing/nearby_per_session_discovery_manager.cc",
+-      "nearby_sharing/nearby_per_session_discovery_manager.h",
+-      "nearby_sharing/nearby_process_manager.cc",
+-      "nearby_sharing/nearby_process_manager.h",
+-      "nearby_sharing/nearby_share_settings.cc",
+-      "nearby_sharing/nearby_share_settings.h",
+-      "nearby_sharing/nearby_sharing_service.h",
+-      "nearby_sharing/nearby_sharing_service_factory.cc",
+-      "nearby_sharing/nearby_sharing_service_factory.h",
+-      "nearby_sharing/nearby_sharing_service_impl.cc",
+-      "nearby_sharing/nearby_sharing_service_impl.h",
+-      "nearby_sharing/outgoing_share_target_info.cc",
+-      "nearby_sharing/outgoing_share_target_info.h",
+-      "nearby_sharing/paired_key_verification_runner.cc",
+-      "nearby_sharing/paired_key_verification_runner.h",
+-      "nearby_sharing/share_target.cc",
+-      "nearby_sharing/share_target.h",
+-      "nearby_sharing/share_target_discovered_callback.h",
+-      "nearby_sharing/share_target_info.cc",
+-      "nearby_sharing/share_target_info.h",
+-      "nearby_sharing/transfer_metadata.cc",
+-      "nearby_sharing/transfer_metadata.h",
+-      "nearby_sharing/transfer_metadata_builder.cc",
+-      "nearby_sharing/transfer_metadata_builder.h",
+-      "nearby_sharing/transfer_update_callback.h",
+-      "nearby_sharing/webrtc_signaling_messenger.cc",
+-      "nearby_sharing/webrtc_signaling_messenger.h",
+       "notifications/notification_system_observer.cc",
+       "notifications/notification_system_observer.h",
+       "notifications/profile_notification.cc",
+@@ -3824,17 +3766,6 @@ static_library("browser") {
+       "//chrome/app/vector_icons",
+       "//chrome/browser/media/kaleidoscope:kaleidoscope_resources",
+       "//chrome/browser/media/kaleidoscope/mojom",
+-      "//chrome/browser/nearby_sharing:share_target",
+-      "//chrome/browser/nearby_sharing/certificates",
+-      "//chrome/browser/nearby_sharing/client",
+-      "//chrome/browser/nearby_sharing/common",
+-      "//chrome/browser/nearby_sharing/contacts",
+-      "//chrome/browser/nearby_sharing/instantmessaging/proto",
+-      "//chrome/browser/nearby_sharing/local_device_data",
+-      "//chrome/browser/nearby_sharing/logging",
+-      "//chrome/browser/nearby_sharing/logging:util",
+-      "//chrome/browser/nearby_sharing/proto",
+-      "//chrome/browser/nearby_sharing/scheduling",
+       "//chrome/browser/policy:path_parser",
+       "//chrome/browser/profile_resetter:profile_reset_report_proto",
+       "//chrome/browser/resource_coordinator:intervention_policy_database_proto",
+@@ -3990,6 +3921,64 @@ static_library("browser") {
+       "metrics/perf/random_selector.h",
+       "metrics/perf/windowed_incognito_observer.cc",
+       "metrics/perf/windowed_incognito_observer.h",
++      "nearby_sharing/attachment_info.cc",
++      "nearby_sharing/attachment_info.h",
++      "nearby_sharing/constants.h",
++      "nearby_sharing/fast_initiation_manager.cc",
++      "nearby_sharing/fast_initiation_manager.h",
++      "nearby_sharing/incoming_frames_reader.cc",
++      "nearby_sharing/incoming_frames_reader.h",
++      "nearby_sharing/incoming_share_target_info.cc",
++      "nearby_sharing/incoming_share_target_info.h",
++      "nearby_sharing/instantmessaging/constants.h",
++      "nearby_sharing/instantmessaging/receive_messages_express.cc",
++      "nearby_sharing/instantmessaging/receive_messages_express.h",
++      "nearby_sharing/instantmessaging/send_message_express.cc",
++      "nearby_sharing/instantmessaging/send_message_express.h",
++      "nearby_sharing/instantmessaging/stream_parser.cc",
++      "nearby_sharing/instantmessaging/stream_parser.h",
++      "nearby_sharing/instantmessaging/token_fetcher.cc",
++      "nearby_sharing/instantmessaging/token_fetcher.h",
++      "nearby_sharing/nearby_confirmation_manager.cc",
++      "nearby_sharing/nearby_confirmation_manager.h",
++      "nearby_sharing/nearby_connection.h",
++      "nearby_sharing/nearby_connection_impl.cc",
++      "nearby_sharing/nearby_connection_impl.h",
++      "nearby_sharing/nearby_connections_manager.h",
++      "nearby_sharing/nearby_connections_manager_impl.cc",
++      "nearby_sharing/nearby_connections_manager_impl.h",
++      "nearby_sharing/nearby_notification_delegate.h",
++      "nearby_sharing/nearby_notification_handler.cc",
++      "nearby_sharing/nearby_notification_handler.h",
++      "nearby_sharing/nearby_notification_manager.cc",
++      "nearby_sharing/nearby_notification_manager.h",
++      "nearby_sharing/nearby_per_session_discovery_manager.cc",
++      "nearby_sharing/nearby_per_session_discovery_manager.h",
++      "nearby_sharing/nearby_process_manager.cc",
++      "nearby_sharing/nearby_process_manager.h",
++      "nearby_sharing/nearby_share_settings.cc",
++      "nearby_sharing/nearby_share_settings.h",
++      "nearby_sharing/nearby_sharing_service.h",
++      "nearby_sharing/nearby_sharing_service_factory.cc",
++      "nearby_sharing/nearby_sharing_service_factory.h",
++      "nearby_sharing/nearby_sharing_service_impl.cc",
++      "nearby_sharing/nearby_sharing_service_impl.h",
++      "nearby_sharing/outgoing_share_target_info.cc",
++      "nearby_sharing/outgoing_share_target_info.h",
++      "nearby_sharing/paired_key_verification_runner.cc",
++      "nearby_sharing/paired_key_verification_runner.h",
++      "nearby_sharing/share_target.cc",
++      "nearby_sharing/share_target.h",
++      "nearby_sharing/share_target_discovered_callback.h",
++      "nearby_sharing/share_target_info.cc",
++      "nearby_sharing/share_target_info.h",
++      "nearby_sharing/transfer_metadata.cc",
++      "nearby_sharing/transfer_metadata.h",
++      "nearby_sharing/transfer_metadata_builder.cc",
++      "nearby_sharing/transfer_metadata_builder.h",
++      "nearby_sharing/transfer_update_callback.h",
++      "nearby_sharing/webrtc_signaling_messenger.cc",
++      "nearby_sharing/webrtc_signaling_messenger.h",
+       "notifications/arc_application_notifier_controller.cc",
+       "notifications/arc_application_notifier_controller.h",
+       "notifications/chrome_ash_message_center_client.cc",
+@@ -4051,6 +4040,17 @@ static_library("browser") {
+       "//ash/public/cpp",
+       "//ash/public/cpp/external_arc",
+       "//chrome/browser/chromeos",
++      "//chrome/browser/nearby_sharing/common",
++      "//chrome/browser/nearby_sharing:share_target",
++      "//chrome/browser/nearby_sharing/certificates",
++      "//chrome/browser/nearby_sharing/client",
++      "//chrome/browser/nearby_sharing/contacts",
++      "//chrome/browser/nearby_sharing/instantmessaging/proto",
++      "//chrome/browser/nearby_sharing/local_device_data",
++      "//chrome/browser/nearby_sharing/logging",
++      "//chrome/browser/nearby_sharing/logging:util",
++      "//chrome/browser/nearby_sharing/proto",
++      "//chrome/browser/nearby_sharing/scheduling",
+       "//chromeos/components/account_manager",
+       "//chromeos/components/cdm_factory_daemon:cdm_factory_daemon_browser",
+       "//chromeos/components/quick_answers",
+diff -up chromium-86.0.4240.111/chrome/browser/extensions/api/settings_private/prefs_util.cc.disable-nearby_sharing chromium-86.0.4240.111/chrome/browser/extensions/api/settings_private/prefs_util.cc
+--- chromium-86.0.4240.111/chrome/browser/extensions/api/settings_private/prefs_util.cc.disable-nearby_sharing	2020-10-22 10:21:29.276819990 -0400
++++ chromium-86.0.4240.111/chrome/browser/extensions/api/settings_private/prefs_util.cc	2020-10-22 10:22:22.905244833 -0400
+@@ -305,6 +305,7 @@ const PrefsUtil::TypedPrefMap& PrefsUtil
+       settings_api::PrefType::PREF_TYPE_DICTIONARY;
+ #endif
+ 
++#if defined(OS_CHROMEOS)
+   // Nearby Share.
+   (*s_whitelist)[::prefs::kNearbySharingEnabledPrefName] =
+       settings_api::PrefType::PREF_TYPE_BOOLEAN;
+@@ -314,6 +315,7 @@ const PrefsUtil::TypedPrefMap& PrefsUtil
+       settings_api::PrefType::PREF_TYPE_STRING;
+   (*s_whitelist)[::prefs::kNearbySharingDataUsageName] =
+       settings_api::PrefType::PREF_TYPE_NUMBER;
++#endif
+ 
+   // Search page.
+   (*s_whitelist)[DefaultSearchManager::kDefaultSearchProviderDataPrefName] =
+diff -up chromium-86.0.4240.111/chrome/browser/extensions/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/browser/extensions/BUILD.gn
+--- chromium-86.0.4240.111/chrome/browser/extensions/BUILD.gn.disable-nearby_sharing	2020-10-22 10:20:10.002191986 -0400
++++ chromium-86.0.4240.111/chrome/browser/extensions/BUILD.gn	2020-10-22 10:21:10.586671928 -0400
+@@ -774,7 +774,6 @@ static_library("extensions") {
+     "//chrome/browser/image_decoder",
+     "//chrome/browser/media/router",
+     "//chrome/browser/media/router/discovery",
+-    "//chrome/browser/nearby_sharing/common",
+     "//chrome/browser/resource_coordinator:intervention_policy_database_proto",
+     "//chrome/browser/resource_coordinator:mojo_bindings",
+     "//chrome/browser/safe_browsing",
+@@ -1023,6 +1022,7 @@ static_library("extensions") {
+       "//ash/keyboard/ui:resources_grit_grit",
+       "//ash/public/cpp",
+       "//chrome/browser/chromeos/crostini:crostini_installer_types_mojom",
++      "//chrome/browser/nearby_sharing/common",
+       "//chrome/browser/ui/webui/settings/chromeos/constants:mojom",
+       "//chromeos",
+       "//chromeos/attestation",
+diff -up chromium-86.0.4240.111/chrome/browser/nearby_sharing/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/browser/nearby_sharing/BUILD.gn
+--- chromium-86.0.4240.111/chrome/browser/nearby_sharing/BUILD.gn.disable-nearby_sharing	2020-10-22 10:22:35.857347439 -0400
++++ chromium-86.0.4240.111/chrome/browser/nearby_sharing/BUILD.gn	2020-10-22 10:22:53.364486129 -0400
+@@ -2,6 +2,8 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++assert(is_chromeos, "Nearby Share is CrOS only")
++
+ source_set("share_target") {
+   sources = [
+     "attachment.cc",
+diff -up chromium-86.0.4240.111/chrome/browser/nearby_sharing/certificates/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/browser/nearby_sharing/certificates/BUILD.gn
+--- chromium-86.0.4240.111/chrome/browser/nearby_sharing/certificates/BUILD.gn.disable-nearby_sharing	2020-10-22 10:23:11.225627627 -0400
++++ chromium-86.0.4240.111/chrome/browser/nearby_sharing/certificates/BUILD.gn	2020-10-22 10:23:23.972728611 -0400
+@@ -2,6 +2,8 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++assert(is_chromeos, "Nearby Share is CrOS only")
++
+ source_set("certificates") {
+   sources = [
+     "common.cc",
+diff -up chromium-86.0.4240.111/chrome/browser/nearby_sharing/client/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/browser/nearby_sharing/client/BUILD.gn
+--- chromium-86.0.4240.111/chrome/browser/nearby_sharing/client/BUILD.gn.disable-nearby_sharing	2020-10-22 10:23:38.273841904 -0400
++++ chromium-86.0.4240.111/chrome/browser/nearby_sharing/client/BUILD.gn	2020-10-22 10:23:51.980950491 -0400
+@@ -2,6 +2,8 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++assert(is_chromeos, "Nearby Share is CrOS only")
++
+ source_set("client") {
+   sources = [
+     "nearby_share_api_call_flow.h",
+diff -up chromium-86.0.4240.111/chrome/browser/nearby_sharing/common/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/browser/nearby_sharing/common/BUILD.gn
+--- chromium-86.0.4240.111/chrome/browser/nearby_sharing/common/BUILD.gn.disable-nearby_sharing	2020-10-22 10:24:03.625042734 -0400
++++ chromium-86.0.4240.111/chrome/browser/nearby_sharing/common/BUILD.gn	2020-10-22 10:24:19.347167284 -0400
+@@ -2,6 +2,8 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++assert(is_chromeos, "Nearby Share is CrOS only")
++
+ source_set("common") {
+   sources = [
+     "nearby_share_enums.h",
+diff -up chromium-86.0.4240.111/chrome/browser/nearby_sharing/contacts/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/browser/nearby_sharing/contacts/BUILD.gn
+--- chromium-86.0.4240.111/chrome/browser/nearby_sharing/contacts/BUILD.gn.disable-nearby_sharing	2020-10-22 10:24:35.969298963 -0400
++++ chromium-86.0.4240.111/chrome/browser/nearby_sharing/contacts/BUILD.gn	2020-10-22 10:24:47.991405762 -0400
+@@ -2,6 +2,8 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++assert(is_chromeos, "Nearby Share is CrOS only")
++
+ source_set("contacts") {
+   sources = [
+     "nearby_share_contact_manager.cc",
+diff -up chromium-86.0.4240.111/chrome/browser/nearby_sharing/local_device_data/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/browser/nearby_sharing/local_device_data/BUILD.gn
+--- chromium-86.0.4240.111/chrome/browser/nearby_sharing/local_device_data/BUILD.gn.disable-nearby_sharing	2020-10-22 10:25:01.904532442 -0400
++++ chromium-86.0.4240.111/chrome/browser/nearby_sharing/local_device_data/BUILD.gn	2020-10-22 10:25:14.379646038 -0400
+@@ -2,6 +2,8 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++assert(is_chromeos, "Nearby Share is CrOS only")
++
+ source_set("local_device_data") {
+   sources = [
+     "nearby_share_device_data_updater.cc",
+diff -up chromium-86.0.4240.111/chrome/browser/nearby_sharing/logging/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/browser/nearby_sharing/logging/BUILD.gn
+--- chromium-86.0.4240.111/chrome/browser/nearby_sharing/logging/BUILD.gn.disable-nearby_sharing	2020-10-22 10:25:27.194762726 -0400
++++ chromium-86.0.4240.111/chrome/browser/nearby_sharing/logging/BUILD.gn	2020-10-22 10:25:40.191881068 -0400
+@@ -2,6 +2,8 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++assert(is_chromeos, "Nearby Share is CrOS only")
++
+ source_set("logging") {
+   sources = [
+     "log_buffer.cc",
+diff -up chromium-86.0.4240.111/chrome/browser/nearby_sharing/proto/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/browser/nearby_sharing/proto/BUILD.gn
+--- chromium-86.0.4240.111/chrome/browser/nearby_sharing/proto/BUILD.gn.disable-nearby_sharing	2020-10-22 10:26:17.899224400 -0400
++++ chromium-86.0.4240.111/chrome/browser/nearby_sharing/proto/BUILD.gn	2020-10-22 10:26:32.540357709 -0400
+@@ -2,6 +2,8 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++assert(is_chromeos, "Nearby Share is CrOS only")
++
+ import("//third_party/protobuf/proto_library.gni")
+ 
+ proto_library("proto") {
+diff -up chromium-86.0.4240.111/chrome/browser/nearby_sharing/scheduling/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/browser/nearby_sharing/scheduling/BUILD.gn
+--- chromium-86.0.4240.111/chrome/browser/nearby_sharing/scheduling/BUILD.gn.disable-nearby_sharing	2020-10-22 10:26:49.726514190 -0400
++++ chromium-86.0.4240.111/chrome/browser/nearby_sharing/scheduling/BUILD.gn	2020-10-22 10:27:05.204655124 -0400
+@@ -2,6 +2,8 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++assert(is_chromeos, "Nearby Share is CrOS only")
++
+ source_set("scheduling") {
+   sources = [
+     "nearby_share_expiration_scheduler.cc",
+diff -up chromium-86.0.4240.111/chrome/browser/notifications/notification_display_service_impl.cc.disable-nearby_sharing chromium-86.0.4240.111/chrome/browser/notifications/notification_display_service_impl.cc
+--- chromium-86.0.4240.111/chrome/browser/notifications/notification_display_service_impl.cc.disable-nearby_sharing	2020-10-22 10:27:31.529894851 -0400
++++ chromium-86.0.4240.111/chrome/browser/notifications/notification_display_service_impl.cc	2020-10-22 10:28:43.622551281 -0400
+@@ -38,11 +38,14 @@
+ #endif
+ 
+ #if defined(OS_LINUX) || defined(OS_MAC) || defined(OS_WIN)
+-#include "chrome/browser/nearby_sharing/nearby_notification_handler.h"
+ #include "chrome/browser/send_tab_to_self/desktop_notification_handler.h"
+ #include "chrome/browser/sharing/sharing_notification_handler.h"
+ #endif
+ 
++#if defined(OS_CHROMEOS)
++#include "chrome/browser/nearby_sharing/nearby_notification_handler.h"
++#endif
++
+ #if defined(OS_WIN)
+ #include "base/strings/utf_string_conversions.h"
+ #include "chrome/browser/notifications/notification_platform_bridge_win.h"
+@@ -169,7 +172,9 @@ NotificationDisplayServiceImpl::Notifica
+                            std::make_unique<SharingNotificationHandler>());
+     AddNotificationHandler(NotificationHandler::Type::ANNOUNCEMENT,
+                            std::make_unique<AnnouncementNotificationHandler>());
++#endif
+ 
++#if defined(OS_CHROMEOS)
+     if (base::FeatureList::IsEnabled(features::kNearbySharing)) {
+       AddNotificationHandler(NotificationHandler::Type::NEARBY_SHARE,
+                              std::make_unique<NearbyNotificationHandler>());
+diff -up chromium-86.0.4240.111/chrome/browser/policy/configuration_policy_handler_list_factory.cc.disable-nearby_sharing chromium-86.0.4240.111/chrome/browser/policy/configuration_policy_handler_list_factory.cc
+--- chromium-86.0.4240.111/chrome/browser/policy/configuration_policy_handler_list_factory.cc.disable-nearby_sharing	2020-10-22 10:29:00.985709391 -0400
++++ chromium-86.0.4240.111/chrome/browser/policy/configuration_policy_handler_list_factory.cc	2020-10-22 10:31:05.720845193 -0400
+@@ -17,7 +17,6 @@
+ #include "base/values.h"
+ #include "build/branding_buildflags.h"
+ #include "build/build_config.h"
+-#include "chrome/browser/nearby_sharing/common/nearby_share_prefs.h"
+ #include "chrome/browser/net/disk_cache_dir_policy_handler.h"
+ #include "chrome/browser/net/referrer_policy_policy_handler.h"
+ #include "chrome/browser/net/secure_dns_policy_handler.h"
+@@ -120,6 +119,7 @@
+ #include "chrome/browser/chromeos/policy/configuration_policy_handler_chromeos.h"
+ #include "chrome/browser/chromeos/policy/secondary_google_account_signin_policy_handler.h"
+ #include "chrome/browser/chromeos/policy/system_features_disable_list_policy_handler.h"
++#include "chrome/browser/nearby_sharing/common/nearby_share_prefs.h"
+ #include "chrome/browser/policy/default_geolocation_policy_handler.h"
+ #include "chrome/common/chrome_features.h"
+ #include "chromeos/constants/chromeos_pref_names.h"
+@@ -1525,8 +1525,6 @@ std::unique_ptr<ConfigurationPolicyHandl
+ #else   // defined(OS_ANDROID)
+   handlers->AddHandler(
+       std::make_unique<NtpCustomBackgroundEnabledPolicyHandler>());
+-  handlers->AddHandler(std::make_unique<BooleanDisablingPolicyHandler>(
+-      key::kNearbyShareAllowed, prefs::kNearbySharingEnabledPrefName));
+   handlers->AddHandler(std::make_unique<DefaultDownloadDirPolicyHandler>());
+   handlers->AddHandler(
+       std::make_unique<DownloadAutoOpenPolicyHandler>(chrome_schema));
+@@ -1846,6 +1844,8 @@ std::unique_ptr<ConfigurationPolicyHandl
+       std::make_unique<SimplePolicyHandler>(
+           key::kExternalPrintServersAllowlist,
+           prefs::kExternalPrintServersAllowlist, base::Value::Type::LIST)));
++  handlers->AddHandler(std::make_unique<BooleanDisablingPolicyHandler>(
++￼      key::kNearbyShareAllowed, prefs::kNearbySharingEnabledPrefName));
+ #if defined(USE_CUPS)
+   handlers->AddHandler(std::make_unique<extensions::ExtensionListPolicyHandler>(
+       key::kPrintingAPIExtensionsWhitelist,
+diff -up chromium-86.0.4240.111/chrome/browser/prefs/browser_prefs.cc.disable-nearby_sharing chromium-86.0.4240.111/chrome/browser/prefs/browser_prefs.cc
+--- chromium-86.0.4240.111/chrome/browser/prefs/browser_prefs.cc.disable-nearby_sharing	2020-10-22 10:31:22.225995479 -0400
++++ chromium-86.0.4240.111/chrome/browser/prefs/browser_prefs.cc	2020-10-22 10:32:01.016348671 -0400
+@@ -760,7 +760,6 @@ void RegisterLocalState(PrefRegistrySimp
+   media_router::RegisterLocalStatePrefs(registry);
+   metrics::TabStatsTracker::RegisterPrefs(registry);
+   RegisterBrowserPrefs(registry);
+-  RegisterNearbySharingLocalPrefs(registry);
+   StartupBrowserCreator::RegisterLocalStatePrefs(registry);
+   task_manager::TaskManagerInterface::RegisterPrefs(registry);
+   UpgradeDetector::RegisterPrefs(registry);
+@@ -836,6 +835,7 @@ void RegisterLocalState(PrefRegistrySimp
+   policy::SystemFeaturesDisableListPolicyHandler::RegisterPrefs(registry);
+   quirks::QuirksManager::RegisterPrefs(registry);
+   UpgradeDetectorChromeos::RegisterPrefs(registry);
++  RegisterNearbySharingLocalPrefs(registry);
+ #endif  // defined(OS_CHROMEOS)
+ 
+ #if defined(OS_MAC)
+diff -up chromium-86.0.4240.111/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc.disable-nearby_sharing chromium-86.0.4240.111/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc
+--- chromium-86.0.4240.111/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc.disable-nearby_sharing	2020-10-22 10:32:20.862529372 -0400
++++ chromium-86.0.4240.111/chrome/browser/profiles/chrome_browser_main_extra_parts_profiles.cc	2020-10-22 10:33:17.678046697 -0400
+@@ -44,7 +44,6 @@
+ #include "chrome/browser/media/router/media_router_factory.h"
+ #include "chrome/browser/media/webrtc/webrtc_event_log_manager_keyed_service_factory.h"
+ #include "chrome/browser/media_galleries/media_galleries_preferences_factory.h"
+-#include "chrome/browser/nearby_sharing/nearby_sharing_service_factory.h"
+ #include "chrome/browser/notifications/notifier_state_tracker_factory.h"
+ #include "chrome/browser/ntp_snippets/content_suggestions_service_factory.h"
+ #include "chrome/browser/page_load_metrics/observers/https_engagement_metrics/https_engagement_service_factory.h"
+@@ -176,6 +175,7 @@
+ 
+ #if defined(OS_CHROMEOS)
+ #include "chrome/browser/chromeos/cert_provisioning/cert_provisioning_scheduler_user_service.h"
++#include "chrome/browser/nearby_sharing/nearby_sharing_service_factory.h"
+ #endif
+ 
+ namespace chrome {
+@@ -306,7 +306,7 @@ void ChromeBrowserMainExtraPartsProfiles
+   metrics::DesktopProfileSessionDurationsServiceFactory::GetInstance();
+ #endif
+   ModelTypeStoreServiceFactory::GetInstance();
+-#if !defined(OS_ANDROID)
++#if defined(OS_CHROMEOS)
+   NearbySharingServiceFactory::GetInstance();
+ #endif
+   NotifierStateTrackerFactory::GetInstance();
+diff -up chromium-86.0.4240.111/chrome/browser/resources/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/browser/resources/BUILD.gn
+--- chromium-86.0.4240.111/chrome/browser/resources/BUILD.gn.disable-nearby_sharing	2020-10-22 10:33:27.386135091 -0400
++++ chromium-86.0.4240.111/chrome/browser/resources/BUILD.gn	2020-10-22 11:40:19.883762361 -0400
+@@ -38,7 +38,6 @@ if (enable_js_type_check) {
+         "management:closure_compile",
+         "media_router:closure_compile",
+         "nearby_internals:closure_compile",
+-        "nearby_share:closure_compile",
+         "nearby_share/shared:closure_compile",
+         "nearby_share/shared:closure_compile_module",
+         "new_tab_page:closure_compile",
+@@ -60,7 +59,10 @@ if (enable_js_type_check) {
+       deps += [ "sandbox_internals:closure_compile" ]
+     }
+     if (is_chromeos) {
+-      deps += [ "chromeos:closure_compile" ]
++      deps += [ 
++        "chromeos:closure_compile",
++        "nearby_share:closure_compile",
++      ]
+     }
+     if (enable_extensions) {
+       deps += [ "extensions:closure_compile" ]
+@@ -208,50 +210,6 @@ if (!is_android) {
+     output_dir = "$root_gen_dir/chrome"
+   }
+ 
+-  grit("nearby_internals_resources") {
+-    source = "nearby_internals/nearby_internals_resources.grd"
+-
+-    grit_flags = [
+-      "-E",
+-      "root_gen_dir=" + rebase_path(root_gen_dir, root_build_dir),
+-    ]
+-
+-    deps = [ "//chrome/browser/resources/nearby_internals:web_components" ]
+-
+-    defines = chrome_grit_defines
+-    outputs = [
+-      "grit/nearby_internals_resources.h",
+-      "grit/nearby_internals_resources_map.cc",
+-      "grit/nearby_internals_resources_map.h",
+-      "nearby_internals_resources.pak",
+-    ]
+-    output_dir = "$root_gen_dir/chrome"
+-  }
+-
+-  grit("nearby_share_dialog_resources") {
+-    source = "nearby_share/nearby_share_dialog_resources.grd"
+-
+-    grit_flags = [
+-      "-E",
+-      "root_gen_dir=" + rebase_path(root_gen_dir, root_build_dir),
+-    ]
+-
+-    deps = [
+-      "//chrome/browser/resources/nearby_share:web_components",
+-      "//chrome/browser/resources/nearby_share/shared:polymer3_elements",
+-      "//chrome/browser/ui/webui/nearby_share:mojom_js",
+-    ]
+-
+-    defines = chrome_grit_defines
+-    outputs = [
+-      "grit/nearby_share_dialog_resources.h",
+-      "grit/nearby_share_dialog_resources_map.cc",
+-      "grit/nearby_share_dialog_resources_map.h",
+-      "nearby_share_dialog_resources.pak",
+-    ]
+-    output_dir = "$root_gen_dir/chrome"
+-  }
+-
+   grit("new_tab_page_resources") {
+     if (optimize_webui) {
+       source = "new_tab_page/new_tab_page_resources_vulcanized.grd"
+@@ -360,6 +318,50 @@ if (is_chromeos) {
+     output_dir = "$root_gen_dir/chrome"
+   }
+ 
++  grit("nearby_internals_resources") {
++    source = "nearby_internals/nearby_internals_resources.grd"
++
++    grit_flags = [
++      "-E",
++      "root_gen_dir=" + rebase_path(root_gen_dir, root_build_dir),
++    ]
++
++    deps = [ "//chrome/browser/resources/nearby_internals:web_components" ]
++
++    defines = chrome_grit_defines
++    outputs = [
++      "grit/nearby_internals_resources.h",
++      "grit/nearby_internals_resources_map.cc",
++      "grit/nearby_internals_resources_map.h",
++      "nearby_internals_resources.pak",
++    ]
++    output_dir = "$root_gen_dir/chrome"
++  }
++
++  grit("nearby_share_dialog_resources") {
++    source = "nearby_share/nearby_share_dialog_resources.grd"
++
++    grit_flags = [
++      "-E",
++      "root_gen_dir=" + rebase_path(root_gen_dir, root_build_dir),
++    ]
++
++    deps = [
++      "//chrome/browser/resources/nearby_share:web_components",
++      "//chrome/browser/resources/nearby_share/shared:polymer3_elements",
++      "//chrome/browser/ui/webui/nearby_share:mojom_js",
++    ]
++
++    defines = chrome_grit_defines
++    outputs = [
++      "grit/nearby_share_dialog_resources.h",
++      "grit/nearby_share_dialog_resources_map.cc",
++      "grit/nearby_share_dialog_resources_map.h",
++      "nearby_share_dialog_resources.pak",
++    ]
++    output_dir = "$root_gen_dir/chrome"
++  }
++
+   grit("os_settings_resources") {
+     grit_flags = [
+       "-E",
+diff -up chromium-86.0.4240.111/chrome/browser/resources/nearby_share/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/browser/resources/nearby_share/BUILD.gn
+--- chromium-86.0.4240.111/chrome/browser/resources/nearby_share/BUILD.gn.disable-nearby_sharing	2020-10-22 10:37:40.598383248 -0400
++++ chromium-86.0.4240.111/chrome/browser/resources/nearby_share/BUILD.gn	2020-10-22 10:37:57.036514858 -0400
+@@ -5,6 +5,8 @@
+ import("//third_party/closure_compiler/compile_js.gni")
+ import("//tools/polymer/html_to_js.gni")
+ 
++assert(is_chromeos, "Nearby Share is CrOS only")
++
+ js_type_check("closure_compile") {
+   is_polymer3 = true
+   closure_flags =
+diff -up chromium-86.0.4240.111/chrome/browser/ui/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/browser/ui/BUILD.gn
+--- chromium-86.0.4240.111/chrome/browser/ui/BUILD.gn.disable-nearby_sharing	2020-10-22 10:38:10.073619238 -0400
++++ chromium-86.0.4240.111/chrome/browser/ui/BUILD.gn	2020-10-22 10:42:04.260496813 -0400
+@@ -372,7 +372,6 @@ static_library("ui") {
+     "//chrome/browser/image_decoder",
+     "//chrome/browser/media:mojo_bindings",
+     "//chrome/browser/media/feeds:mojo_bindings",
+-    "//chrome/browser/nearby_sharing/common",
+     "//chrome/browser/profiling_host",
+     "//chrome/browser/resources/invalidations:invalidations_resources",
+     "//chrome/browser/resources/media:webrtc_logs_resources",
+@@ -1340,20 +1339,6 @@ static_library("ui") {
+       "webui/media_router/media_router_internals_webui_message_handler.cc",
+       "webui/media_router/media_router_internals_webui_message_handler.h",
+       "webui/media_router/web_contents_display_observer.h",
+-      "webui/nearby_internals/nearby_internals_contact_handler.cc",
+-      "webui/nearby_internals/nearby_internals_contact_handler.h",
+-      "webui/nearby_internals/nearby_internals_http_handler.cc",
+-      "webui/nearby_internals/nearby_internals_http_handler.h",
+-      "webui/nearby_internals/nearby_internals_logs_handler.cc",
+-      "webui/nearby_internals/nearby_internals_logs_handler.h",
+-      "webui/nearby_internals/nearby_internals_ui.cc",
+-      "webui/nearby_internals/nearby_internals_ui.h",
+-      "webui/nearby_internals/nearby_internals_ui_trigger_handler.cc",
+-      "webui/nearby_internals/nearby_internals_ui_trigger_handler.h",
+-      "webui/nearby_share/nearby_share_dialog_ui.cc",
+-      "webui/nearby_share/nearby_share_dialog_ui.h",
+-      "webui/nearby_share/shared_resources.cc",
+-      "webui/nearby_share/shared_resources.h",
+       "webui/new_tab_page/new_tab_page_handler.cc",
+       "webui/new_tab_page/new_tab_page_handler.h",
+       "webui/new_tab_page/new_tab_page_ui.cc",
+@@ -1504,13 +1489,6 @@ static_library("ui") {
+       "//chrome/browser:theme_properties",
+       "//chrome/browser/media/kaleidoscope/mojom",
+       "//chrome/browser/media/router",
+-      "//chrome/browser/nearby_sharing/certificates",
+-      "//chrome/browser/nearby_sharing/client",
+-      "//chrome/browser/nearby_sharing/contacts",
+-      "//chrome/browser/nearby_sharing/local_device_data",
+-      "//chrome/browser/nearby_sharing/logging",
+-      "//chrome/browser/nearby_sharing/logging:util",
+-      "//chrome/browser/nearby_sharing/proto",
+       "//chrome/browser/profile_resetter:profile_reset_report_proto",
+       "//chrome/browser/promo_browser_command:mojo_bindings",
+       "//chrome/browser/resource_coordinator:tab_metrics_event_proto",
+@@ -1520,8 +1498,6 @@ static_library("ui") {
+       "//chrome/browser/ui/color:mixers",
+       "//chrome/browser/ui/webui/app_management:mojo_bindings",
+       "//chrome/browser/ui/webui/internals/web_app:mojo_bindings",
+-      "//chrome/browser/ui/webui/nearby_share:mojom",
+-      "//chrome/browser/ui/webui/nearby_share/public/mojom",
+       "//chrome/common:buildflags",
+       "//chrome/common/media_router/mojom:media_router",
+       "//chrome/common/search:generate_chrome_colors_info",
+@@ -2354,6 +2330,20 @@ static_library("ui") {
+       "webui/help/version_updater_chromeos.h",
+       "webui/management_ui_handler_chromeos.cc",
+       "webui/management_ui_handler_chromeos.h",
++      "webui/nearby_internals/nearby_internals_contact_handler.cc",
++      "webui/nearby_internals/nearby_internals_contact_handler.h",
++      "webui/nearby_internals/nearby_internals_http_handler.cc",
++      "webui/nearby_internals/nearby_internals_http_handler.h",
++      "webui/nearby_internals/nearby_internals_logs_handler.cc",
++      "webui/nearby_internals/nearby_internals_logs_handler.h",
++      "webui/nearby_internals/nearby_internals_ui.cc",
++      "webui/nearby_internals/nearby_internals_ui.h",
++      "webui/nearby_internals/nearby_internals_ui_trigger_handler.cc",
++      "webui/nearby_internals/nearby_internals_ui_trigger_handler.h",
++      "webui/nearby_share/nearby_share_dialog_ui.cc",
++      "webui/nearby_share/nearby_share_dialog_ui.h",
++      "webui/nearby_share/shared_resources.cc",
++      "webui/nearby_share/shared_resources.h",
+       "webui/settings/chromeos/about_section.cc",
+       "webui/settings/chromeos/about_section.h",
+       "webui/settings/chromeos/accessibility_handler.cc",
+@@ -2500,6 +2490,14 @@ static_library("ui") {
+       "//chrome/browser/chromeos",
+       "//chrome/browser/chromeos:backdrop_wallpaper_proto",
+       "//chrome/browser/chromeos/crostini:crostini_installer_types_mojom",
++      "//chrome/browser/nearby_sharing/certificates",
++      "//chrome/browser/nearby_sharing/client",
++      "//chrome/browser/nearby_sharing/common",
++      "//chrome/browser/nearby_sharing/contacts",
++      "//chrome/browser/nearby_sharing/local_device_data",
++      "//chrome/browser/nearby_sharing/logging",
++      "//chrome/browser/nearby_sharing/logging:util",
++      "//chrome/browser/nearby_sharing/proto",
+       "//chrome/browser/resources:bluetooth_pairing_dialog_resources",
+       "//chrome/browser/ui/app_list/search/cros_action_history:cros_action_proto",
+       "//chrome/browser/ui/app_list/search/search_result_ranker:app_launch_event_logger_proto",
+@@ -2513,6 +2511,8 @@ static_library("ui") {
+       "//chrome/browser/ui/webui/chromeos/crostini_upgrader:mojo_bindings",
+       "//chrome/browser/ui/webui/chromeos/file_manager:mojo_bindings",
+       "//chrome/browser/ui/webui/chromeos/machine_learning:mojo_bindings",
++      "//chrome/browser/ui/webui/nearby_share:mojom",
++      "//chrome/browser/ui/webui/nearby_share/public/mojom",
+       "//chrome/browser/ui/webui/settings/chromeos/constants:mojom",
+       "//chrome/browser/ui/webui/settings/chromeos/search:mojo_bindings",
+       "//chrome/services/file_util/public/cpp",
+diff -up chromium-86.0.4240.111/chrome/browser/ui/webui/chrome_web_ui_controller_factory.cc.disable-nearby_sharing chromium-86.0.4240.111/chrome/browser/ui/webui/chrome_web_ui_controller_factory.cc
+--- chromium-86.0.4240.111/chrome/browser/ui/webui/chrome_web_ui_controller_factory.cc.disable-nearby_sharing	2020-10-22 10:42:19.451627856 -0400
++++ chromium-86.0.4240.111/chrome/browser/ui/webui/chrome_web_ui_controller_factory.cc	2020-10-22 10:45:12.011116391 -0400
+@@ -54,7 +54,6 @@
+ #include "chrome/browser/ui/webui/media/media_history_ui.h"
+ #include "chrome/browser/ui/webui/media/webrtc_logs_ui.h"
+ #include "chrome/browser/ui/webui/memory_internals_ui.h"
+-#include "chrome/browser/ui/webui/nearby_internals/nearby_internals_ui.h"
+ #include "chrome/browser/ui/webui/net_export_ui.h"
+ #include "chrome/browser/ui/webui/net_internals/net_internals_ui.h"
+ #include "chrome/browser/ui/webui/ntp_tiles_internals_ui.h"
+@@ -138,7 +137,6 @@
+ #include "chrome/browser/ui/webui/inspect_ui.h"
+ #include "chrome/browser/ui/webui/management_ui.h"
+ #include "chrome/browser/ui/webui/media_router/media_router_internals_ui.h"
+-#include "chrome/browser/ui/webui/nearby_share/nearby_share_dialog_ui.h"
+ #include "chrome/browser/ui/webui/new_tab_page/new_tab_page_ui.h"
+ #include "chrome/browser/ui/webui/ntp/new_tab_ui.h"
+ #include "chrome/browser/ui/webui/page_not_available_for_guest/page_not_available_for_guest_ui.h"
+@@ -191,6 +189,8 @@
+ #include "chrome/browser/ui/webui/chromeos/smb_shares/smb_credentials_dialog.h"
+ #include "chrome/browser/ui/webui/chromeos/smb_shares/smb_share_dialog.h"
+ #include "chrome/browser/ui/webui/chromeos/sys_internals/sys_internals_ui.h"
++#include "chrome/browser/ui/webui/nearby_internals/nearby_internals_ui.h"
++#include "chrome/browser/ui/webui/nearby_share/nearby_share_dialog_ui.h"
+ #include "chrome/browser/ui/webui/settings/chromeos/os_settings_ui.h"
+ #include "chromeos/components/camera_app_ui/camera_app_ui.h"
+ #include "chromeos/components/camera_app_ui/url_constants.h"
+@@ -540,14 +540,6 @@ WebUIFactoryFunction GetWebUIFactoryFunc
+   // Identity API is not available on Android.
+   if (url.host_piece() == chrome::kChromeUIIdentityInternalsHost)
+     return &NewWebUI<IdentityInternalsUI>;
+-  if (base::FeatureList::IsEnabled(features::kNearbySharing)) {
+-    if (url.host_piece() == chrome::kChromeUINearbyInternalsHost)
+-      return &NewWebUI<NearbyInternalsUI>;
+-    if (url.host_piece() == chrome::kChromeUINearbyShareHost &&
+-        profile->IsRegularProfile()) {
+-      return &NewWebUI<nearby_share::NearbyShareDialogUI>;
+-    }
+-  }
+   if (url.host_piece() == chrome::kChromeUINewTabHost)
+     return &NewWebUI<NewTabUI>;
+   if (url.host_piece() == chrome::kChromeUINewTabPageHost)
+@@ -692,6 +684,15 @@ WebUIFactoryFunction GetWebUIFactoryFunc
+     return &NewWebUI<chromeos::CameraAppUI>;
+   }
+ 
++  if (base::FeatureList::IsEnabled(features::kNearbySharing)) {
++    if (url.host_piece() == chrome::kChromeUINearbyInternalsHost)
++      return &NewWebUI<NearbyInternalsUI>;
++    if (url.host_piece() == chrome::kChromeUINearbyShareHost &&
++        profile->IsRegularProfile()) {
++      return &NewWebUI<nearby_share::NearbyShareDialogUI>;
++    }
++  }
++
+   if (url.host_piece() == chrome::kChromeUIArcGraphicsTracingHost)
+     return &NewWebUI<chromeos::ArcGraphicsTracingUI<
+         chromeos::ArcGraphicsTracingMode::kFull>>;
+diff -up chromium-86.0.4240.111/chrome/browser/ui/webui/nearby_share/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/browser/ui/webui/nearby_share/BUILD.gn
+--- chromium-86.0.4240.111/chrome/browser/ui/webui/nearby_share/BUILD.gn.disable-nearby_sharing	2020-10-22 10:45:28.621259670 -0400
++++ chromium-86.0.4240.111/chrome/browser/ui/webui/nearby_share/BUILD.gn	2020-10-22 10:45:42.070375681 -0400
+@@ -2,6 +2,8 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++assert(is_chromeos, "Nearby Share is CrOS only")
++
+ import("//mojo/public/tools/bindings/mojom.gni")
+ 
+ mojom("nearby_share_target_types") {
+diff -up chromium-86.0.4240.111/chrome/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/BUILD.gn
+--- chromium-86.0.4240.111/chrome/BUILD.gn.disable-nearby_sharing	2020-10-22 10:19:09.215710440 -0400
++++ chromium-86.0.4240.111/chrome/BUILD.gn	2020-10-22 10:19:40.108955174 -0400
+@@ -1316,8 +1316,6 @@ group("extra_resources") {
+       "//chrome/browser/resources:gaia_auth_host_resources",
+       "//chrome/browser/resources:history_resources",
+       "//chrome/browser/resources:local_ntp_resources",
+-      "//chrome/browser/resources:nearby_internals_resources",
+-      "//chrome/browser/resources:nearby_share_dialog_resources",
+       "//chrome/browser/resources:new_tab_page_resources",
+       "//chrome/browser/resources:settings_resources",
+     ]
+@@ -1327,6 +1325,8 @@ group("extra_resources") {
+     public_deps += [
+       "//chrome/browser/resources:bluetooth_pairing_dialog_resources",
+       "//chrome/browser/resources:multidevice_internals_resources",
++      "//chrome/browser/resources:nearby_internals_resources",
++      "//chrome/browser/resources:nearby_share_dialog_resources",
+       "//chrome/browser/resources:os_settings_resources",
+       "//chrome/browser/resources/chromeos:cellular_setup_resources",
+       "//chrome/browser/resources/chromeos:multidevice_setup_resources",
+diff -up chromium-86.0.4240.111/chrome/chrome_paks.gni.disable-nearby_sharing chromium-86.0.4240.111/chrome/chrome_paks.gni
+--- chromium-86.0.4240.111/chrome/chrome_paks.gni.disable-nearby_sharing	2020-10-22 10:45:56.899503595 -0400
++++ chromium-86.0.4240.111/chrome/chrome_paks.gni	2020-10-22 10:47:11.355145881 -0400
+@@ -136,8 +136,6 @@ template("chrome_extra_paks") {
+         "$root_gen_dir/chrome/gaia_auth_host_resources.pak",
+         "$root_gen_dir/chrome/history_resources.pak",
+         "$root_gen_dir/chrome/local_ntp_resources.pak",
+-        "$root_gen_dir/chrome/nearby_internals_resources.pak",
+-        "$root_gen_dir/chrome/nearby_share_dialog_resources.pak",
+         "$root_gen_dir/chrome/new_tab_page_resources.pak",
+         "$root_gen_dir/chrome/settings_resources.pak",
+         "$root_gen_dir/content/browser/devtools/devtools_resources.pak",
+@@ -152,8 +150,6 @@ template("chrome_extra_paks") {
+         "//chrome/browser/resources:gaia_auth_host_resources",
+         "//chrome/browser/resources:history_resources",
+         "//chrome/browser/resources:local_ntp_resources",
+-        "//chrome/browser/resources:nearby_internals_resources",
+-        "//chrome/browser/resources:nearby_share_dialog_resources",
+         "//chrome/browser/resources:new_tab_page_resources",
+         "//chrome/browser/resources:settings_resources",
+         "//content/browser/devtools:devtools_resources",
+@@ -168,6 +164,8 @@ template("chrome_extra_paks") {
+         "$root_gen_dir/chrome/cellular_setup_resources.pak",
+         "$root_gen_dir/chrome/multidevice_internals_resources.pak",
+         "$root_gen_dir/chrome/multidevice_setup_resources.pak",
++        "$root_gen_dir/chrome/nearby_internals_resources.pak",
++        "$root_gen_dir/chrome/nearby_share_dialog_resources.pak",
+         "$root_gen_dir/chrome/os_settings_resources.pak",
+         "$root_gen_dir/chromeos/chromeos_camera_app_resources.pak",
+         "$root_gen_dir/chromeos/chromeos_help_app_bundle_resources.pak",
+@@ -184,6 +182,8 @@ template("chrome_extra_paks") {
+         "//ash/public/cpp/resources:ash_public_unscaled_resources",
+         "//chrome/browser/resources:bluetooth_pairing_dialog_resources",
+         "//chrome/browser/resources:multidevice_internals_resources",
++        "//chrome/browser/resources:nearby_internals_resources",
++        "//chrome/browser/resources:nearby_share_dialog_resources",
+         "//chrome/browser/resources:os_settings_resources",
+         "//chrome/browser/resources/chromeos:cellular_setup_resources",
+         "//chrome/browser/resources/chromeos:multidevice_setup_resources",
+diff -up chromium-86.0.4240.111/chrome/services/sharing/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/services/sharing/BUILD.gn
+--- chromium-86.0.4240.111/chrome/services/sharing/BUILD.gn.disable-nearby_sharing	2020-10-22 10:47:49.654476258 -0400
++++ chromium-86.0.4240.111/chrome/services/sharing/BUILD.gn	2020-10-22 10:48:01.693580107 -0400
+@@ -2,6 +2,8 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++assert(is_chromeos, "Nearby Share is CrOS only")
++
+ source_set("sharing") {
+   sources = [
+     "sharing_impl.cc",
+diff -up chromium-86.0.4240.111/chrome/services/sharing/nearby/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/services/sharing/nearby/BUILD.gn
+--- chromium-86.0.4240.111/chrome/services/sharing/nearby/BUILD.gn.disable-nearby_sharing	2020-10-22 10:48:19.813736424 -0400
++++ chromium-86.0.4240.111/chrome/services/sharing/nearby/BUILD.gn	2020-10-22 10:48:31.958841191 -0400
+@@ -2,6 +2,8 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++assert(is_chromeos, "Nearby Share is CrOS only")
++
+ source_set("nearby") {
+   sources = [
+     "nearby_connections.cc",
+diff -up chromium-86.0.4240.111/chrome/test/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/test/BUILD.gn
+--- chromium-86.0.4240.111/chrome/test/BUILD.gn.disable-nearby_sharing	2020-10-22 10:48:44.491949303 -0400
++++ chromium-86.0.4240.111/chrome/test/BUILD.gn	2020-10-22 10:52:27.201870438 -0400
+@@ -3712,34 +3712,6 @@ test("unit_tests") {
+       "../browser/media/feeds/media_feeds_fetcher_unittest.cc",
+       "../browser/media/feeds/media_feeds_service_unittest.cc",
+       "../browser/media/kaleidoscope/kaleidoscope_switches_unittest.cc",
+-      "../browser/nearby_sharing/fake_nearby_connection.cc",
+-      "../browser/nearby_sharing/fake_nearby_connection.h",
+-      "../browser/nearby_sharing/fake_nearby_connections_manager.cc",
+-      "../browser/nearby_sharing/fake_nearby_connections_manager.h",
+-      "../browser/nearby_sharing/fast_initiation_manager_unittest.cc",
+-      "../browser/nearby_sharing/incoming_frames_reader_unittest.cc",
+-      "../browser/nearby_sharing/instantmessaging/fake_token_fetcher.cc",
+-      "../browser/nearby_sharing/instantmessaging/fake_token_fetcher.h",
+-      "../browser/nearby_sharing/instantmessaging/receive_messages_express_unittest.cc",
+-      "../browser/nearby_sharing/instantmessaging/send_message_express_unittest.cc",
+-      "../browser/nearby_sharing/instantmessaging/stream_parser_unittest.cc",
+-      "../browser/nearby_sharing/mock_nearby_connections.cc",
+-      "../browser/nearby_sharing/mock_nearby_connections.h",
+-      "../browser/nearby_sharing/mock_nearby_process_manager.cc",
+-      "../browser/nearby_sharing/mock_nearby_process_manager.h",
+-      "../browser/nearby_sharing/mock_nearby_sharing_decoder.cc",
+-      "../browser/nearby_sharing/mock_nearby_sharing_decoder.h",
+-      "../browser/nearby_sharing/mock_nearby_sharing_service.cc",
+-      "../browser/nearby_sharing/mock_nearby_sharing_service.h",
+-      "../browser/nearby_sharing/nearby_confirmation_manager_unittest.cc",
+-      "../browser/nearby_sharing/nearby_connections_manager_impl_unittest.cc",
+-      "../browser/nearby_sharing/nearby_notification_manager_unittest.cc",
+-      "../browser/nearby_sharing/nearby_per_session_discovery_manager_unittest.cc",
+-      "../browser/nearby_sharing/nearby_process_manager_unittest.cc",
+-      "../browser/nearby_sharing/nearby_share_settings_unittest.cc",
+-      "../browser/nearby_sharing/nearby_sharing_service_impl_unittest.cc",
+-      "../browser/nearby_sharing/paired_key_verification_runner_unittest.cc",
+-      "../browser/nearby_sharing/webrtc_signaling_messenger_unittest.cc",
+       "../browser/password_manager/generated_password_leak_detection_pref_unittest.cc",
+       "../browser/performance_manager/test_support/page_discarding_utils.cc",
+       "../browser/performance_manager/test_support/page_discarding_utils.h",
+@@ -4442,22 +4414,9 @@ test("unit_tests") {
+     }
+ 
+     deps += [
+-      "//chrome/browser/nearby_sharing/certificates:test_support",
+-      "//chrome/browser/nearby_sharing/certificates:unit_tests",
+-      "//chrome/browser/nearby_sharing/client:unit_tests",
+-      "//chrome/browser/nearby_sharing/contacts:test_support",
+-      "//chrome/browser/nearby_sharing/local_device_data:test_support",
+-      "//chrome/browser/nearby_sharing/local_device_data:unit_tests",
+-      "//chrome/browser/nearby_sharing/logging:unit_tests",
+-      "//chrome/browser/nearby_sharing/proto",
+-      "//chrome/browser/nearby_sharing/scheduling:unit_tests",
+       "//chrome/browser/promo_browser_command:mojo_bindings",
+       "//chrome/browser/resource_coordinator:tab_metrics_event_proto",
+       "//chrome/browser/resource_coordinator/tab_ranker:tab_features_test_helper",
+-      "//chrome/services/sharing:unit_tests",
+-      "//chrome/services/sharing/nearby:unit_tests",
+-      "//chrome/services/sharing/nearby/decoder:unit_tests",
+-      "//chrome/services/sharing/nearby/platform_v2:unit_tests",
+       "//chrome/services/sharing/public/cpp:unit_tests",
+       "//chrome/services/sharing/webrtc:unit_tests",
+       "//chrome/services/speech:unit_tests",
+@@ -4618,6 +4577,34 @@ test("unit_tests") {
+       "../browser/metrics/perf/process_type_collector_unittest.cc",
+       "../browser/metrics/perf/profile_provider_chromeos_unittest.cc",
+       "../browser/metrics/perf/windowed_incognito_observer_unittest.cc",
++      "../browser/nearby_sharing/fake_nearby_connection.cc",
++      "../browser/nearby_sharing/fake_nearby_connection.h",
++      "../browser/nearby_sharing/fake_nearby_connections_manager.cc",
++      "../browser/nearby_sharing/fake_nearby_connections_manager.h",
++      "../browser/nearby_sharing/fast_initiation_manager_unittest.cc",
++      "../browser/nearby_sharing/incoming_frames_reader_unittest.cc",
++      "../browser/nearby_sharing/instantmessaging/fake_token_fetcher.cc",
++      "../browser/nearby_sharing/instantmessaging/fake_token_fetcher.h",
++      "../browser/nearby_sharing/instantmessaging/receive_messages_express_unittest.cc",
++      "../browser/nearby_sharing/instantmessaging/send_message_express_unittest.cc",
++      "../browser/nearby_sharing/instantmessaging/stream_parser_unittest.cc",
++      "../browser/nearby_sharing/mock_nearby_connections.cc",
++      "../browser/nearby_sharing/mock_nearby_connections.h",
++      "../browser/nearby_sharing/mock_nearby_process_manager.cc",
++      "../browser/nearby_sharing/mock_nearby_process_manager.h",
++      "../browser/nearby_sharing/mock_nearby_sharing_decoder.cc",
++      "../browser/nearby_sharing/mock_nearby_sharing_decoder.h",
++      "../browser/nearby_sharing/mock_nearby_sharing_service.cc",
++      "../browser/nearby_sharing/mock_nearby_sharing_service.h",
++      "../browser/nearby_sharing/nearby_confirmation_manager_unittest.cc",
++      "../browser/nearby_sharing/nearby_connections_manager_impl_unittest.cc",
++      "../browser/nearby_sharing/nearby_notification_manager_unittest.cc",
++      "../browser/nearby_sharing/nearby_per_session_discovery_manager_unittest.cc",
++      "../browser/nearby_sharing/nearby_process_manager_unittest.cc",
++      "../browser/nearby_sharing/nearby_share_settings_unittest.cc",
++      "../browser/nearby_sharing/nearby_sharing_service_impl_unittest.cc",
++      "../browser/nearby_sharing/paired_key_verification_runner_unittest.cc",
++      "../browser/nearby_sharing/webrtc_signaling_messenger_unittest.cc",
+       "../browser/notifications/chrome_ash_message_center_client_unittest.cc",
+       "../browser/notifications/web_page_notifier_controller_unittest.cc",
+       "../browser/policy/printing_restrictions_policy_handler_unittest.cc",
+@@ -4714,10 +4701,23 @@ test("unit_tests") {
+       "//ash/resources/vector_icons",
+       "//ash/strings",
+       "//chrome/browser/chromeos:test_support",
++      "//chrome/browser/nearby_sharing/certificates:test_support",
++      "//chrome/browser/nearby_sharing/certificates:unit_tests",
++      "//chrome/browser/nearby_sharing/client:unit_tests",
++      "//chrome/browser/nearby_sharing/contacts:test_support",
++      "//chrome/browser/nearby_sharing/local_device_data:test_support",
++      "//chrome/browser/nearby_sharing/local_device_data:unit_tests",
++      "//chrome/browser/nearby_sharing/logging:unit_tests",
++      "//chrome/browser/nearby_sharing/proto",
++      "//chrome/browser/nearby_sharing/scheduling:unit_tests",
+       "//chrome/browser/resources/chromeos/zip_archiver/cpp:ziparchiver_unittests",
+       "//chrome/browser/ui/app_list/search/search_result_ranker:app_launch_predictor_proto",
+       "//chrome/browser/ui/app_list/search/search_result_ranker:recurrence_ranker_proto",
+       "//chrome/services/printing:pdf_thumbnailer_test",
++      "//chrome/services/sharing:unit_tests",
++      "//chrome/services/sharing/nearby:unit_tests",
++      "//chrome/services/sharing/nearby/decoder:unit_tests",
++      "//chrome/services/sharing/nearby/platform_v2:unit_tests",
+       "//chromeos/assistant:buildflags",
+       "//chromeos/services/machine_learning/public/cpp:test_support",
+       "//components/arc:arc_test_support",
+diff -up chromium-86.0.4240.111/chrome/test/data/webui/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/test/data/webui/BUILD.gn
+--- chromium-86.0.4240.111/chrome/test/data/webui/BUILD.gn.disable-nearby_sharing	2020-10-22 10:52:43.932014752 -0400
++++ chromium-86.0.4240.111/chrome/test/data/webui/BUILD.gn	2020-10-22 10:53:57.654650679 -0400
+@@ -390,10 +390,13 @@ group("modulize") {
+     "./cr_components:modulize",
+     "./cr_components/chromeos:modulize",
+     "./cr_elements:modulize",
+-    "./nearby_share/shared:modulize",
+     "./resources:modulize",
+     "./settings:modulize",
+   ]
++
++  if (is_chromeos) {
++    deps += [ "./nearby_share/shared:modulize" ]
++  }
+ }
+ 
+ js_modulizer("modulize_local") {
+@@ -415,8 +418,6 @@ group("closure_compile") {
+     ":closure_compile_local",
+     "cr_components:closure_compile",
+     "cr_elements:closure_compile",
+-    "nearby_share:closure_compile",
+-    "nearby_share/shared:closure_compile",
+     "print_preview:closure_compile",
+     "settings:closure_compile",
+     "signin:closure_compile",
+@@ -428,6 +429,8 @@ group("closure_compile") {
+     deps += [
+       "chromeos/account_manager:closure_compile",
+       "chromeos/gaia_action_buttons:closure_compile",
++      "nearby_share:closure_compile",
++      "nearby_share/shared:closure_compile",
+     ]
+   }
+   if (enable_tab_search) {
+diff -up chromium-86.0.4240.111/chrome/test/data/webui/nearby_share/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/test/data/webui/nearby_share/BUILD.gn
+--- chromium-86.0.4240.111/chrome/test/data/webui/nearby_share/BUILD.gn.disable-nearby_sharing	2020-10-22 10:54:34.775970912 -0400
++++ chromium-86.0.4240.111/chrome/test/data/webui/nearby_share/BUILD.gn	2020-10-22 10:54:46.864075184 -0400
+@@ -2,6 +2,8 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++assert(is_chromeos, "Nearby Share is CrOS only")
++
+ import("//third_party/closure_compiler/compile_js.gni")
+ 
+ js_type_check("closure_compile") {
+diff -up chromium-86.0.4240.111/chrome/test/data/webui/nearby_share/shared/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/test/data/webui/nearby_share/shared/BUILD.gn
+--- chromium-86.0.4240.111/chrome/test/data/webui/nearby_share/shared/BUILD.gn.disable-nearby_sharing	2020-10-22 10:54:59.769186503 -0400
++++ chromium-86.0.4240.111/chrome/test/data/webui/nearby_share/shared/BUILD.gn	2020-10-22 10:55:19.761358952 -0400
+@@ -6,6 +6,8 @@ import("//third_party/closure_compiler/c
+ import("//ui/webui/resources/tools/js_modulizer.gni")
+ import("../../namespace_rewrites.gni")
+ 
++assert(is_chromeos, "Nearby Share is CrOS only")
++
+ js_modulizer("modulize") {
+   input_files = [
+     "fake_nearby_share_settings.js",
+diff -up chromium-86.0.4240.111/chrome/utility/BUILD.gn.disable-nearby_sharing chromium-86.0.4240.111/chrome/utility/BUILD.gn
+--- chromium-86.0.4240.111/chrome/utility/BUILD.gn.disable-nearby_sharing	2020-10-22 10:55:36.484503205 -0400
++++ chromium-86.0.4240.111/chrome/utility/BUILD.gn	2020-10-22 10:56:33.962999047 -0400
+@@ -105,8 +105,6 @@ static_library("utility") {
+     deps += [
+       "//chrome/common:mojo_bindings",
+       "//chrome/common/importer:interfaces",
+-      "//chrome/services/sharing",
+-      "//chrome/services/sharing/public/mojom",
+       "//chrome/services/speech:lib",
+       "//components/autofill/core/common",
+       "//services/proxy_resolver:lib",
+@@ -158,6 +156,8 @@ static_library("utility") {
+   if (is_chromeos) {
+     deps += [
+       "//chrome/services/file_util",
++      "//chrome/services/sharing",
++      "//chrome/services/sharing/public/mojom:mojom",
+       "//chromeos/assistant:buildflags",
+       "//chromeos/services/ime:lib",
+       "//chromeos/services/ime/public/mojom",
+diff -up chromium-86.0.4240.111/chrome/utility/services.cc.disable-nearby_sharing chromium-86.0.4240.111/chrome/utility/services.cc
+--- chromium-86.0.4240.111/chrome/utility/services.cc.disable-nearby_sharing	2020-10-22 10:57:41.428581007 -0400
++++ chromium-86.0.4240.111/chrome/utility/services.cc	2020-10-22 10:59:20.073427761 -0400
+@@ -40,8 +40,6 @@
+ 
+ #if !defined(OS_ANDROID)
+ #include "chrome/common/importer/profile_import.mojom.h"
+-#include "chrome/services/sharing/public/mojom/sharing.mojom.h"
+-#include "chrome/services/sharing/sharing_impl.h"
+ #include "chrome/services/speech/speech_recognition_service_impl.h"
+ #include "chrome/utility/importer/profile_import_impl.h"
+ #include "components/mirroring/service/mirroring_service.h"
+@@ -84,6 +82,8 @@
+ #include "components/services/paint_preview_compositor/public/mojom/paint_preview_compositor.mojom.h"
+ 
+ #if defined(OS_CHROMEOS)
++#include "chrome/services/sharing/public/mojom/sharing.mojom.h"  // nogncheck
++#include "chrome/services/sharing/sharing_impl.h"
+ #include "chromeos/assistant/buildflags.h"  // nogncheck
+ #include "chromeos/services/ime/ime_service.h"
+ #include "chromeos/services/ime/public/mojom/input_engine.mojom.h"
+@@ -162,10 +162,6 @@ auto RunMirroringService(
+       std::move(receiver), content::UtilityThread::Get()->GetIOTaskRunner());
+ }
+ 
+-auto RunSharing(mojo::PendingReceiver<sharing::mojom::Sharing> receiver) {
+-  return std::make_unique<sharing::SharingImpl>(std::move(receiver));
+-}
+-
+ auto RunSpeechRecognitionService(
+     mojo::PendingReceiver<media::mojom::SpeechRecognitionService> receiver) {
+   return std::make_unique<speech::SpeechRecognitionServiceImpl>(
+@@ -234,6 +230,10 @@ auto RunImeService(
+   return std::make_unique<chromeos::ime::ImeService>(std::move(receiver));
+ }
+ 
++auto RunSharing(mojo::PendingReceiver<sharing::mojom::Sharing> receiver) {
++  return std::make_unique<sharing::SharingImpl>(std::move(receiver));
++}
++
+ auto RunTtsService(
+     mojo::PendingReceiver<chromeos::tts::mojom::TtsService> receiver) {
+   return std::make_unique<chromeos::tts::TtsService>(std::move(receiver));
+@@ -277,7 +277,6 @@ mojo::ServiceFactory* GetMainThreadServi
+ #if !defined(OS_ANDROID)
+     RunProfileImporter,
+     RunMirroringService,
+-    RunSharing,
+     RunSpeechRecognitionService,
+ #endif
+ 
+@@ -319,6 +318,7 @@ mojo::ServiceFactory* GetMainThreadServi
+ 
+ #if defined(OS_CHROMEOS)
+     RunImeService,
++    RunSharing,
+     RunTtsService,
+ #if BUILDFLAG(ENABLE_CROS_LIBASSISTANT)
+     RunAssistantAudioDecoder,
+--- chromium-86.0.4240.111/chrome/browser/chrome_browser_interface_binders.cc.disable-nearby_sharing	2020-10-23 11:27:09.341639045 -0400
++++ chromium-86.0.4240.111/chrome/browser/chrome_browser_interface_binders.cc	2020-10-23 11:33:52.598575049 -0400
+@@ -117,9 +117,6 @@
+ #include "chrome/browser/ui/webui/downloads/downloads.mojom.h"
+ #include "chrome/browser/ui/webui/downloads/downloads_ui.h"
+ #include "chrome/browser/ui/webui/media/media_feeds_ui.h"
+-#include "chrome/browser/ui/webui/nearby_share/nearby_share.mojom.h"
+-#include "chrome/browser/ui/webui/nearby_share/nearby_share_dialog_ui.h"
+-#include "chrome/browser/ui/webui/nearby_share/public/mojom/nearby_share_settings.mojom.h"
+ #include "chrome/browser/ui/webui/new_tab_page/new_tab_page.mojom.h"
+ #include "chrome/browser/ui/webui/new_tab_page/new_tab_page_ui.h"
+ #include "chrome/browser/ui/webui/read_later/read_later.mojom.h"
+@@ -162,6 +159,9 @@
+ #include "chrome/browser/ui/webui/chromeos/multidevice_setup/multidevice_setup_dialog.h"
+ #include "chrome/browser/ui/webui/chromeos/network_ui.h"
+ #include "chrome/browser/ui/webui/internals/web_app/web_app_internals.mojom.h"
++#include "chrome/browser/ui/webui/nearby_share/nearby_share.mojom.h"
++#include "chrome/browser/ui/webui/nearby_share/nearby_share_dialog_ui.h"
++#include "chrome/browser/ui/webui/nearby_share/public/mojom/nearby_share_settings.mojom.h"
+ #include "chrome/browser/ui/webui/settings/chromeos/os_settings_ui.h"
+ #include "chrome/browser/ui/webui/settings/chromeos/search/search.mojom.h"
+ #include "chrome/browser/ui/webui/settings/chromeos/search/user_action_recorder.mojom.h"
+@@ -525,12 +525,6 @@
+   RegisterWebUIControllerInterfaceBinder<downloads::mojom::PageHandlerFactory,
+                                          DownloadsUI>(map);
+ 
+-  if (base::FeatureList::IsEnabled(features::kNearbySharing)) {
+-    RegisterWebUIControllerInterfaceBinder<
+-        nearby_share::mojom::DiscoveryManager,
+-        nearby_share::NearbyShareDialogUI>(map);
+-  }
+-
+   RegisterWebUIControllerInterfaceBinder<
+       new_tab_page::mojom::PageHandlerFactory, NewTabPageUI>(map);
+ 
+@@ -673,16 +667,13 @@
+         nearby_share::mojom::NearbyShareSettings,
+         chromeos::settings::OSSettingsUI, nearby_share::NearbyShareDialogUI>(
+         map);
++    RegisterWebUIControllerInterfaceBinder<
++        nearby_share::mojom::DiscoveryManager,
++        nearby_share::NearbyShareDialogUI>(map);
+   }
+ #endif  // defined(OS_CHROMEOS)
+ 
+ #if !defined(OS_ANDROID) && !defined(OS_CHROMEOS)
+-  if (base::FeatureList::IsEnabled(features::kNearbySharing)) {
+-    RegisterWebUIControllerInterfaceBinder<
+-        nearby_share::mojom::NearbyShareSettings,
+-        nearby_share::NearbyShareDialogUI>(map);
+-  }
+-  
+   if (base::FeatureList::IsEnabled(features::kNewProfilePicker)) {
+     RegisterWebUIControllerInterfaceBinder<
+         customize_themes::mojom::CustomizeThemesHandlerFactory,
