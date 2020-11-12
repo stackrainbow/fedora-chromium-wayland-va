@@ -184,8 +184,8 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4240.198
-Release:	1%{?dist}
+Version:       %{majorversion}.0.4240.198
+Release:       2%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -307,6 +307,9 @@ Patch205:	chromium-86.0.4240.75-fix-vaapi-on-intel.patch
 
 # Apply these patches to work around EPEL8 issues
 Patch300:	chromium-76.0.3809.132-rhel8-force-disable-use_gnome_keyring.patch
+
+# And fixes for new compilers
+Patch400:       %{name}-gcc11.patch
 
 # Use chromium-latest.py to generate clean tarball from released build tarballs, found here:
 # http://build.chromium.org/buildbot/official/
@@ -928,6 +931,8 @@ udev.
 %if 0%{?rhel} == 8
 %patch300 -p1 -b .disblegnomekeyring
 %endif
+
+%patch400 -p1 -b .gcc11
 
 # Change shebang in all relevant files in this directory and all subdirectories
 # See `man find` for how the `-exec command {} +` syntax works
@@ -1926,6 +1931,10 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Thu Nov 12 2020 Jeff Law <law@fedoraproject.org> - 86.0.4240.198-1
+- Fix missing #inclues for gcc-11
+- Fix bogus volatile caught by gcc-11
+
 * Thu Nov 12 2020 Tom Callaway <spot@fedoraproject.org> - 86.0.4240.198-1
 - update to 86.0.4240.198
 
