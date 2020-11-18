@@ -177,15 +177,15 @@ BuildRequires:  libicu-devel >= 5.4
 %global chromoting_client_id %nil
 %endif
 
-%global majorversion 86
+%global majorversion 87
 
 %if %{freeworld}
 Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:       %{majorversion}.0.4240.198
-Release:       2%{?dist}
+Version:	%{majorversion}.0.4280.66
+Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -240,8 +240,6 @@ Patch53:	chromium-77.0.3865.75-gcc-include-memory.patch
 Patch54:	chromium-79-gcc-protobuf-alignas.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-78-protobuf-RepeatedPtrField-export.patch
 Patch55:	chromium-78-protobuf-RepeatedPtrField-export.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-80-QuicStreamSendBuffer-deleted-move-constructor.patch
-Patch56:	chromium-80-QuicStreamSendBuffer-deleted-move-constructor.patch
 # ../../third_party/perfetto/include/perfetto/base/task_runner.h:48:55: error: 'uint32_t' has not been declared
 Patch57:	chromium-80.0.3987.87-missing-cstdint-header.patch
 # Missing <cstring> (thanks c++17)
@@ -249,22 +247,19 @@ Patch58:	chromium-80.0.3987.106-missing-cstring-header.patch
 # prepare for using system ffmpeg (clean)
 # http://svnweb.mageia.org/packages/cauldron/chromium-browser-stable/current/SOURCES/chromium-53-ffmpeg-no-deprecation-errors.patch?view=markup
 Patch59:	chromium-53-ffmpeg-no-deprecation-errors.patch
-# Work around aarch64 gcc bug (PR95726)
-# Patch60:	chromium-83.0.4103.97-gcc10-aarch64-hack.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-84-blink-disable-clang-format.patch
 Patch61:	chromium-84-blink-disable-clang-format.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-fix-char_traits.patch
 Patch62:	chromium-fix-char_traits.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-86-ConsumeDurationNumber-constexpr.patch
-Patch63:	chromium-86-ConsumeDurationNumber-constexpr.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-86-ImageMemoryBarrierData-init.patch
-Patch64:	chromium-86-ImageMemoryBarrierData-init.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-86-nearby-explicit.patch
-Patch65:	chromium-86-nearby-explicit.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-86-nearby-include.patch
-Patch66:	chromium-86-nearby-include.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-86-ServiceWorkerRunningInfo-noexcept.patch
-Patch67:	chromium-86-ServiceWorkerRunningInfo-noexcept.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-87-CursorFactory-include.patch
+Patch63:	chromium-87-CursorFactory-include.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-87-openscreen-include.patch
+Patch64:	chromium-87-openscreen-include.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-87-ServiceWorkerContainerHost-crash.patch
+Patch65:	chromium-87-ServiceWorkerContainerHost-crash.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-88-vaapi-attribute.patch
+Patch66:	chromium-88-vaapi-attribute.patch
+
 # Silence GCC warnings during gn compile
 Patch68:	chromium-84.0.4147.105-gn-gcc-cleanup.patch
 # Fix missing cstring in remoting code
@@ -273,8 +268,6 @@ Patch69:	chromium-84.0.4147.125-remoting-cstring.patch
 Patch70:	chromium-84.0.4147.125-i686-fix_textrels.patch
 # Work around binutils bug in aarch64 (F33+)
 Patch71:	chromium-84.0.4147.125-aarch64-clearkeycdm-binutils-workaround.patch
-# https://github.com/chromium/chromium/commit/53478caee862624fc6d73516f8d64253854b146f
-Patch72:	chromium-85.0.4183.102-invalid-end-CookieMonster-53478ca.patch
 
 # Use lstdc++ on EPEL7 only
 Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
@@ -882,23 +875,19 @@ udev.
 %patch53 -p1 -b .gcc-include-memory
 %patch54 -p1 -b .base-gcc-no-alignas
 %patch55 -p1 -b .protobuf-export
-%patch56 -p1 -b .gcc-quiche
 %patch57 -p1 -b .missing-cstdint
 %patch58 -p1 -b .missing-cstring
 %patch59 -p1 -b .ffmpeg-deprecations
-# %%patch60 -p1 -b .gcc10-aarch64-hack
 %patch61 -p1 -b .blink-disable-clang-format
 %patch62 -p1 -b .fix-char_traits
-%patch63 -p1 -b .ConsumeDurationNumber-constexpr
-%patch64 -p1 -b .ImageMemoryBarrierData-init
-%patch65 -p1 -b .nearby-explicit
-%patch66 -p1 -b .nearby-include
-%patch67 -p1 -b .ServiceWorkerRunningInfo-noexcept
+%patch63 -p1 -b .CursorFactory-include
+%patch64 -p1 -b .openscreen-include
+%patch65 -p1 -b .ServiceWorkerContainerHost-crash
+%patch66 -p1 -b .vaapi-attribute
 %patch68 -p1 -b .gn-gcc-cleanup
 %patch69 -p1 -b .remoting-cstring
 %patch70 -p1 -b .i686-textrels
 %patch71 -p1 -b .aarch64-clearkeycdm-binutils-workaround
-%patch72 -p1 -b .invalid-end-CookieMonster
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -1931,6 +1920,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Wed Nov 18 2020 Tom Callaway <spot@fedoraproject.org> - 87.0.4280.66-1
+- update to 87.0.4280.66
+
 * Thu Nov 12 2020 Jeff Law <law@fedoraproject.org> - 86.0.4240.198-1
 - Fix missing #inclues for gcc-11
 - Fix bogus volatile caught by gcc-11
