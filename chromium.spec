@@ -1067,7 +1067,7 @@ CHROMIUM_HEADLESS_GN_DEFINES+=' use_ozone=true ozone_auto_platforms=false ozone_
 CHROMIUM_HEADLESS_GN_DEFINES+=' headless_use_embedded_resources=false icu_use_data_file=false v8_use_external_startup_data=false'
 CHROMIUM_HEADLESS_GN_DEFINES+=' enable_nacl=false enable_print_preview=false enable_remoting=false use_alsa=false'
 CHROMIUM_HEADLESS_GN_DEFINES+=' use_cups=false use_dbus=false use_gio=false use_kerberos=false use_libpci=false'
-CHROMIUM_HEADLESS_GN_DEFINES+=' use_pulseaudio=false use_udev=false use_gtk=false use_glib=false'
+CHROMIUM_HEADLESS_GN_DEFINES+=' use_pulseaudio=false use_udev=false use_gtk=false use_glib=false use_x11=false'
 export CHROMIUM_HEADLESS_GN_DEFINES
 
 %if 0%{?rhel} == 7
@@ -1084,6 +1084,7 @@ ln -s %{_bindir}/node third_party/node/linux/node-linux-x64/bin/node
 # Gentoo's Chromium ebuild) are the libraries that needs to be preserved.
 build/linux/unbundle/remove_bundled_libraries.py \
 	'base/third_party/cityhash' \
+	'base/third_party/cityhash_v103' \
 	'base/third_party/double_conversion' \
 	'base/third_party/dynamic_annotations' \
 	'base/third_party/icu' \
@@ -1100,7 +1101,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'courgette/third_party' \
 	'net/third_party/mozilla_security_manager' \
 	'net/third_party/nss' \
-	'net/third_party/quic' \
+	'net/third_party/quiche' \
 	'net/third_party/uri_template' \
 	'third_party/abseil-cpp' \
 	'third_party/adobe' \
@@ -1156,9 +1157,9 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/depot_tools' \
 	'third_party/devscripts' \
 	'third_party/devtools-frontend' \
-	'third_party/devtools-frontend/src/third_party/axe-core' \
 	'third_party/devtools-frontend/src/third_party/typescript' \
 	'third_party/devtools-frontend/src/front_end/third_party/acorn' \
+	'third_party/devtools-frontend/src/front_end/third_party/axe-core' \
 	'third_party/devtools-frontend/src/front_end/third_party/chromium' \
 	'third_party/devtools-frontend/src/front_end/third_party/codemirror' \
 	'third_party/devtools-frontend/src/front_end/third_party/fabricjs' \
@@ -1168,6 +1169,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/devtools-frontend/src/front_end/third_party/lit-html' \
 	'third_party/devtools-frontend/src/front_end/third_party/lodash-isequal' \
 	'third_party/devtools-frontend/src/front_end/third_party/marked' \
+	'third_party/devtools-frontend/src/front_end/third_party/puppeteer' \
 	'third_party/devtools-frontend/src/front_end/third_party/wasmparser' \
 	'third_party/dom_distiller_js' \
 	'third_party/emoji-segmenter' \
@@ -1259,6 +1261,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
         'third_party/ply' \
 	'third_party/polymer' \
 	'third_party/private-join-and-compute' \
+	'third_party/private_membership' \
 	'third_party/protobuf' \
 	'third_party/protobuf/third_party/six' \
 	'third_party/pyjson5' \
@@ -1271,6 +1274,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/s2cellid' \
 	'third_party/schema_org' \
 	'third_party/securemessage' \
+	'third_party/shell-encryption' \
 	'third_party/simplejson' \
 	'third_party/sinonjs' \
 	'third_party/skia' \
