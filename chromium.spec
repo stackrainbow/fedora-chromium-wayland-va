@@ -1274,6 +1274,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/s2cellid' \
 	'third_party/schema_org' \
 	'third_party/securemessage' \
+	'third_party/shaka-player' \
 	'third_party/shell-encryption' \
 	'third_party/simplejson' \
 	'third_party/sinonjs' \
