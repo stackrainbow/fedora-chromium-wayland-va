@@ -287,10 +287,6 @@ Patch107:	chromium-84.0.4147.89-el8-arm-incompatible-ints.patch
 # libdrm on EL7 is rather old and chromium assumes newer
 # This gets us by for now
 Patch108:	chromium-85.0.4183.83-el7-old-libdrm.patch
-# Move nearby_share code to chromeos only on EL7
-# Why? Because something in it fails to build on EL7 (and only there)
-# And upstream later sets it to chromeos only anyway
-Patch109:	chromium-86.0.4240.111-el7-limit-nearby-sharing-to-chromeos.patch
 
 # VAAPI
 # Upstream turned VAAPI on in Linux in 86
@@ -901,7 +897,6 @@ udev.
 %patch103 -p1 -b .epel7-kcmp
 %patch104 -p1 -b .el7cups
 %patch108 -p1 -b .el7-old-libdrm
-%patch109 -p1 -b .disable-nearby_sharing
 %endif
 
 %if 0%{?rhel} == 8
