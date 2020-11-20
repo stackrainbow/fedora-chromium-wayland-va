@@ -283,10 +283,12 @@ Patch106:	chromium-77-clang.patch
 # ARM failures on el8 related to int clashes
 # error: incompatible types when initializing type 'int64_t' {aka 'long int'} using type 'int64x1_t'
 # note: expected 'int8x16_t' but argument is of type 'uint8x16_t'
-Patch107:	chromium-84.0.4147.89-el8-arm-incompatible-ints.patch
+# Patch107:	chromium-84.0.4147.89-el8-arm-incompatible-ints.patch
 # libdrm on EL7 is rather old and chromium assumes newer
 # This gets us by for now
 Patch108:	chromium-85.0.4183.83-el7-old-libdrm.patch
+# EL-7 does not have sys/random.h
+Patch109:	chromium-87.0.4280.66-el7-no-sys-random.patch
 
 # VAAPI
 # Upstream turned VAAPI on in Linux in 86
@@ -897,10 +899,11 @@ udev.
 %patch103 -p1 -b .epel7-kcmp
 %patch104 -p1 -b .el7cups
 %patch108 -p1 -b .el7-old-libdrm
+%patch109 -p1 -b .el7-no-sys-random
 %endif
 
 %if 0%{?rhel} == 8
-%patch107 -p1 -b .el8-arm-incompatible-ints
+# %%patch107 -p1 -b .el8-arm-incompatible-ints
 %endif
 
 # Feature specific patches
