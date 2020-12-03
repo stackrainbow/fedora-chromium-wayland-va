@@ -184,7 +184,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4280.66
+Version:	%{majorversion}.0.4280.88
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -1923,6 +1923,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Thu Dec  3 2020 Tom Callaway <spot@fedoraproject.org> - 87.0.4280.88-1
+- update to 87.0.4280.88
+
 * Wed Nov 18 2020 Tom Callaway <spot@fedoraproject.org> - 87.0.4280.66-1
 - update to 87.0.4280.66
 
