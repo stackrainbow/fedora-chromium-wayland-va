@@ -1,0 +1,11 @@
+diff -up chromium-87.0.4280.88/components/federated_learning/floc_constants.cc.missing-limits chromium-87.0.4280.88/components/federated_learning/floc_constants.cc
+--- chromium-87.0.4280.88/components/federated_learning/floc_constants.cc.missing-limits	2020-12-16 13:51:38.675421401 -0500
++++ chromium-87.0.4280.88/components/federated_learning/floc_constants.cc	2020-12-16 13:51:50.625467423 -0500
+@@ -3,6 +3,7 @@
+ // found in the LICENSE file.
+ 
+ #include "components/federated_learning/floc_constants.h"
++#include <limits>
+ 
+ namespace federated_learning {
+ 

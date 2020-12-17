@@ -185,7 +185,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 Name:		chromium%{chromium_channel}
 %endif
 Version:	%{majorversion}.0.4280.88
-Release:	1%{?dist}
+Release:	1%{?dist}.1
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -268,6 +268,11 @@ Patch69:	chromium-84.0.4147.125-remoting-cstring.patch
 Patch70:	chromium-84.0.4147.125-i686-fix_textrels.patch
 # Work around binutils bug in aarch64 (F33+)
 Patch71:	chromium-84.0.4147.125-aarch64-clearkeycdm-binutils-workaround.patch
+# error: 'size_t' does not name a type
+# note: 'size_t' is defined in header '<cstddef>'; did you forget to '#include <cstddef>'?
+Patch72:	chromium-87.0.4280.88-dns_server_iterator-missing-cstddef.patch
+# ../../components/federated_learning/floc_constants.cc:13:28: error: 'numeric_limits' is not a member of 'std'
+Patch73:	chromium-87.0.4280.88-floc_constants-missing-limits.patch
 
 # Use lstdc++ on EPEL7 only
 Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
@@ -886,6 +891,8 @@ udev.
 %patch69 -p1 -b .remoting-cstring
 %patch70 -p1 -b .i686-textrels
 %patch71 -p1 -b .aarch64-clearkeycdm-binutils-workaround
+%patch72 -p1 -b .missing-cstddef
+%patch73 -p1 -b .missing-limits
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -1923,6 +1930,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Thu Dec 17 2020 Tom Callaway <spot@fedoraproject.org> - 87.0.4280.88-1.1
+- add two patches for missing headers to build with gcc 11
+
 * Thu Dec  3 2020 Tom Callaway <spot@fedoraproject.org> - 87.0.4280.88-1
 - update to 87.0.4280.88
 
