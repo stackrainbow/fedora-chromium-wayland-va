@@ -184,8 +184,8 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4280.88
-Release:	2%{?dist}
+Version:	%{majorversion}.0.4280.141
+Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -1930,6 +1930,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Wed Jan 13 2020 Tom Callaway <spot@fedoraproject.org> - 87.0.4280.141-1
+- update to 87.0.4280.141
+
 * Wed Dec 30 2020 Tom Callaway <spot@fedoraproject.org> - 87.0.4280.88-2
 - rebuild against new gcc (rawhide)
 
