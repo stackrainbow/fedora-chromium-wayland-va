@@ -5,6 +5,14 @@
 %global numjobs 8
 %endif
 
+# This flag is so I can build things very fast on a giant system.
+# Do not enable in Koji builds.
+%global use_all_cpus 0
+
+%if %{use_all_cpus}
+%global numjobs %{_smp_build_ncpus}
+%endif
+
 # Fancy build status, so we at least know, where we are..
 # %1 where
 # %2 what
