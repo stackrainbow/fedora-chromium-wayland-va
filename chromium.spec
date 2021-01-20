@@ -51,9 +51,8 @@
 %global nsuffix %{nil}
 %endif
 
-# Some people wish not to use the Fedora Google API keys. Mmkay.
-# Expect stuff to break in weird ways if you disable.
-%global useapikeys 1
+# Disabled because of Google, starting with Chromium 88.
+%global useapikeys 0
 
 # Leave this alone, please.
 %global builddir out/Release
@@ -161,6 +160,19 @@ BuildRequires:  libicu-devel >= 5.4
 %global bundleharfbuzz 0
 %endif
 
+### From 2013 until early 2021, Google permitted distribution builds of
+### Chromium to access Google APIs that added significant features to
+### Chromium including, but not limited to, Sync and geolocation.
+### As of March 15, 2021, any Chromium builds which pass API keys
+### during build will prevent end-users from signing into their
+### Google account.
+
+### With Chromium 88, I have removed the calls to "google_default_client_id"
+### and "google_default_client_secret" to comply with their changes.
+
+### Honestly, at this point, you might be better off looking for a different
+### FOSS browser.
+
 ### Google API keys (see http://www.chromium.org/developers/how-tos/api-keys)
 ### Note: These are for Fedora use ONLY.
 ### For your own distribution, please get your own set of keys.
@@ -177,14 +189,14 @@ BuildRequires:  libicu-devel >= 5.4
 %global chromoting_client_id %nil
 %endif
 
-%global majorversion 87
+%global majorversion 88
 
 %if %{freeworld}
 Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4280.141
+Version:	%{majorversion}.0.4324.96
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -213,7 +225,7 @@ Patch4:		chromium-60.0.3112.78-jpeg-nomangle.patch
 # Do not mangle zlib
 Patch5:		chromium-77.0.3865.75-no-zlib-mangle.patch
 # Do not use unrar code, it is non-free
-Patch6:		chromium-86.0.4240.75-norar.patch
+Patch6:		chromium-88.0.4324.11-norar.patch
 # Use Gentoo's Widevine hack
 # https://gitweb.gentoo.org/repo/gentoo.git/tree/www-client/chromium/files/chromium-widevine-r3.patch
 Patch7:		chromium-71.0.3578.98-widevine-r3.patch
@@ -241,38 +253,44 @@ Patch54:	chromium-79-gcc-protobuf-alignas.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-78-protobuf-RepeatedPtrField-export.patch
 Patch55:	chromium-78-protobuf-RepeatedPtrField-export.patch
 # ../../third_party/perfetto/include/perfetto/base/task_runner.h:48:55: error: 'uint32_t' has not been declared
-Patch57:	chromium-80.0.3987.87-missing-cstdint-header.patch
+Patch56:	chromium-80.0.3987.87-missing-cstdint-header.patch
 # Missing <cstring> (thanks c++17)
-Patch58:	chromium-80.0.3987.106-missing-cstring-header.patch
+Patch57:	chromium-80.0.3987.106-missing-cstring-header.patch
 # prepare for using system ffmpeg (clean)
 # http://svnweb.mageia.org/packages/cauldron/chromium-browser-stable/current/SOURCES/chromium-53-ffmpeg-no-deprecation-errors.patch?view=markup
-Patch59:	chromium-53-ffmpeg-no-deprecation-errors.patch
+Patch58:	chromium-53-ffmpeg-no-deprecation-errors.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-84-blink-disable-clang-format.patch
-Patch61:	chromium-84-blink-disable-clang-format.patch
+Patch59:	chromium-84-blink-disable-clang-format.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-fix-char_traits.patch
-Patch62:	chromium-fix-char_traits.patch
+Patch60:	chromium-fix-char_traits.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-87-CursorFactory-include.patch
-Patch63:	chromium-87-CursorFactory-include.patch
+Patch61:	chromium-87-CursorFactory-include.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-87-openscreen-include.patch
-Patch64:	chromium-87-openscreen-include.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-87-ServiceWorkerContainerHost-crash.patch
-Patch65:	chromium-87-ServiceWorkerContainerHost-crash.patch
+Patch62:	chromium-87-openscreen-include.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-88-AXTreeFormatter-include.patch
+Patch63:	chromium-88-AXTreeFormatter-include.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-88-vaapi-attribute.patch
-Patch66:	chromium-88-vaapi-attribute.patch
-
+Patch64:	chromium-88-vaapi-attribute.patch
 # Silence GCC warnings during gn compile
-Patch68:	chromium-84.0.4147.105-gn-gcc-cleanup.patch
+Patch65:	chromium-84.0.4147.105-gn-gcc-cleanup.patch
 # Fix missing cstring in remoting code
-Patch69:	chromium-84.0.4147.125-remoting-cstring.patch
+Patch66:	chromium-84.0.4147.125-remoting-cstring.patch
 # Apply fix_textrels hack for i686 (even without lld)
-Patch70:	chromium-84.0.4147.125-i686-fix_textrels.patch
+Patch67:	chromium-84.0.4147.125-i686-fix_textrels.patch
 # Work around binutils bug in aarch64 (F33+)
-Patch71:	chromium-84.0.4147.125-aarch64-clearkeycdm-binutils-workaround.patch
-# error: 'size_t' does not name a type
-# note: 'size_t' is defined in header '<cstddef>'; did you forget to '#include <cstddef>'?
-Patch72:	chromium-87.0.4280.88-dns_server_iterator-missing-cstddef.patch
-# ../../components/federated_learning/floc_constants.cc:13:28: error: 'numeric_limits' is not a member of 'std'
-Patch73:	chromium-87.0.4280.88-floc_constants-missing-limits.patch
+Patch68:	chromium-84.0.4147.125-aarch64-clearkeycdm-binutils-workaround.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-88-BookmarkModelObserver-include.patch
+Patch69:	chromium-88-BookmarkModelObserver-include.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-88-CompositorFrameReporter-dcheck.patch
+Patch70:	chromium-88-CompositorFrameReporter-dcheck.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-88-dawn-static.patch
+Patch71:	chromium-88-dawn-static.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-88-federated_learning-include.patch
+Patch72:	chromium-88-federated_learning-include.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-88-ityp-include.patch
+Patch73:	chromium-88-ityp-include.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-88-StringPool-include.patch
+Patch74:	chromium-88-StringPool-include.patch
 
 # Use lstdc++ on EPEL7 only
 Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
@@ -297,7 +315,7 @@ Patch109:	chromium-87.0.4280.66-el7-no-sys-random.patch
 
 # VAAPI
 # Upstream turned VAAPI on in Linux in 86
-Patch202:	chromium-86.0.4240.75-enable-hardware-accelerated-mjpeg.patch
+Patch202:	chromium-88.0.4324.11-enable-hardware-accelerated-mjpeg.patch
 Patch203:	chromium-86.0.4240.75-vaapi-i686-fpermissive.patch
 Patch205:	chromium-86.0.4240.75-fix-vaapi-on-intel.patch
 
@@ -878,21 +896,25 @@ udev.
 %patch53 -p1 -b .gcc-include-memory
 %patch54 -p1 -b .base-gcc-no-alignas
 %patch55 -p1 -b .protobuf-export
-%patch57 -p1 -b .missing-cstdint
-%patch58 -p1 -b .missing-cstring
-%patch59 -p1 -b .ffmpeg-deprecations
-%patch61 -p1 -b .blink-disable-clang-format
-%patch62 -p1 -b .fix-char_traits
-%patch63 -p1 -b .CursorFactory-include
-%patch64 -p1 -b .openscreen-include
-%patch65 -p1 -b .ServiceWorkerContainerHost-crash
-%patch66 -p1 -b .vaapi-attribute
-%patch68 -p1 -b .gn-gcc-cleanup
-%patch69 -p1 -b .remoting-cstring
-%patch70 -p1 -b .i686-textrels
-%patch71 -p1 -b .aarch64-clearkeycdm-binutils-workaround
-%patch72 -p1 -b .missing-cstddef
-%patch73 -p1 -b .missing-limits
+%patch56 -p1 -b .missing-cstdint
+%patch57 -p1 -b .missing-cstring
+%patch58 -p1 -b .ffmpeg-deprecations
+%patch59 -p1 -b .blink-disable-clang-format
+%patch60 -p1 -b .fix-char_traits
+%patch61 -p1 -b .CursorFactory-include
+%patch62 -p1 -b .openscreen-include
+%patch63 -p1 -b .AXTreeFormatter-include
+%patch64 -p1 -b .vaapi-attribute
+%patch65 -p1 -b .gn-gcc-cleanup
+%patch66 -p1 -b .remoting-cstring
+%patch67 -p1 -b .i686-textrels
+%patch68 -p1 -b .aarch64-clearkeycdm-binutils-workaround
+%patch69 -p1 -b .BookmarkModelObserver-include
+%patch70 -p1 -b .CompositorFrameReporter-dcheck
+%patch71 -p1 -b .dawn-static
+%patch72 -p1 -b .federated_learning-include
+%patch73 -p1 -b .ityp-include
+%patch74 -p1 -b .StringPool-include
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -1019,7 +1041,9 @@ CHROMIUM_CORE_GN_DEFINES+=' is_debug=false'
 %ifarch x86_64 aarch64
 CHROMIUM_CORE_GN_DEFINES+=' system_libdir="lib64"'
 %endif
+%if %{useapikeys}
 CHROMIUM_CORE_GN_DEFINES+=' google_api_key="%{api_key}" google_default_client_id="%{default_client_id}" google_default_client_secret="%{default_client_secret}"'
+%endif
 CHROMIUM_CORE_GN_DEFINES+=' is_clang=false use_sysroot=false fieldtrial_testing_like_official_build=true use_lld=false rtc_enable_symbol_export=true'
 %if %{use_gold}
 CHROMIUM_CORE_GN_DEFINES+=' use_gold=true'
@@ -1184,6 +1208,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
         'third_party/flatbuffers' \
 	'third_party/fontconfig' \
 	'third_party/freetype' \
+	'third_party/fusejs' \
 	'third_party/glslang' \
 	'third_party/google_input_tools' \
 	'third_party/google_input_tools/third_party/closure_library' \
@@ -1223,6 +1248,8 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/libvpx/source/libvpx/third_party/x86inc' \
 	'third_party/libwebm' \
 	'third_party/libwebp' \
+	'third_party/libx11' \
+	'third_party/libxcb-keysyms' \
 	'third_party/libxml' \
 	'third_party/libxml/chromium' \
 	'third_party/libxslt' \
@@ -1321,6 +1348,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/widevine' \
         'third_party/woff2' \
 	'third_party/wuffs' \
+	'third_party/x11proto' \
 	'third_party/xcbproto' \
         'third_party/xdg-utils' \
 	'third_party/zxcvbn-cpp' \
@@ -1930,14 +1958,22 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
-* Wed Jan 13 2021 Tom Callaway <spot@fedoraproject.org> - 87.0.4280.141-1
+* Wed Jan 20 2021 Tom Callaway <spot@fedoraproject.org> - 88.0.4324.96-1
+- 88 goes from beta to stable
+- disable use of api keys (Google shut off API access)
+
+* Wed Jan 13 2021 Tom Callaway <spot@fedoraproject.org>
 - update to 87.0.4280.141
 
-* Wed Dec 30 2020 Tom Callaway <spot@fedoraproject.org> - 87.0.4280.88-2
-- rebuild against new gcc (rawhide)
+* Wed Dec 30 2020 Tom Callaway <spot@fedoraproject.org> - 88.0.4324.50-1
+- update to 88.0.4324.50
+- drop patches 74 & 75 (applied upstream)
 
-* Thu Dec 17 2020 Tom Callaway <spot@fedoraproject.org> - 87.0.4280.88-1.1
+* Thu Dec 17 2020 Tom Callaway <spot@fedoraproject.org>
 - add two patches for missing headers to build with gcc 11
+
+* Thu Dec  3 2020 Tom Callaway <spot@fedoraproject.org> - 88.0.4324.27-1
+- dev release to prepare for next stable
 
 * Thu Dec  3 2020 Tom Callaway <spot@fedoraproject.org> - 87.0.4280.88-1
 - update to 87.0.4280.88
