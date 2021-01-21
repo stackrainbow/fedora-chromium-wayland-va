@@ -31,8 +31,13 @@
 # This doesn't work and it doesn't even build as of Chromium 83
 %global build_remoting 1
 
-# We'd like to always have this on.
+# We'd like to always have this on...
+# ... but the libva in EL7 is too old.
+%if 0%{?rhel} == 7
+%global use_vaapi 0
+%else
 %global use_vaapi 1
+%endif
 
 # Seems like we might need this sometimes
 # Practically, no. But it's here in case we do.
