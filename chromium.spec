@@ -1098,6 +1098,8 @@ CHROMIUM_BROWSER_GN_DEFINES+=' enable_widevine=true'
 %if 0%{?fedora} >= 28
 CHROMIUM_BROWSER_GN_DEFINES+=' use_vaapi=true'
 %endif
+%else
+CHROMIUM_BROWSER_GN_DEFINES+=' use_vaapi=false'
 %endif
 %if 0%{?fedora}
 CHROMIUM_BROWSER_GN_DEFINES+=' rtc_use_pipewire=true rtc_link_pipewire=true'
