@@ -210,7 +210,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 Name:		chromium%{chromium_channel}
 %endif
 Version:	%{majorversion}.0.4324.96
-Release:	1%{?dist}
+Release:	2%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -304,6 +304,9 @@ Patch72:	chromium-88-federated_learning-include.patch
 Patch73:	chromium-88-ityp-include.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-88-StringPool-include.patch
 Patch74:	chromium-88-StringPool-include.patch
+# Fix sandbox code to properly handle the new way that glibc handles fstat in Fedora 34+
+# Thanks to Kevin Kofler for the fix.
+Patch75:	chromium-88.0.4324.96-fstatfix.patch
 
 # Use lstdc++ on EPEL7 only
 Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
@@ -928,6 +931,7 @@ udev.
 %patch72 -p1 -b .federated_learning-include
 %patch73 -p1 -b .ityp-include
 %patch74 -p1 -b .StringPool-include
+%patch75 -p1 -b .fstatfix
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -1971,6 +1975,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Mon Jan 25 2021 Tom Callaway <spot@fedoraproject.org> - 88.0.4324.96-2
+- apply fix from Kevin Kofler for new glibc fstat sandbox handling
+
 * Wed Jan 20 2021 Tom Callaway <spot@fedoraproject.org> - 88.0.4324.96-1
 - 88 goes from beta to stable
 - disable use of api keys (Google shut off API access)
