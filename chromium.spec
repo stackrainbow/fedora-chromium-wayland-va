@@ -65,7 +65,9 @@
 %endif
 
 # Disabled because of Google, starting with Chromium 88.
-%global useapikeys 0
+%global userestrictedapikeys 0
+# We can still use the api key though. For now.
+%global useapikey 1
 
 # Leave this alone, please.
 %global builddir out/Release
@@ -176,8 +178,8 @@ BuildRequires:  libicu-devel >= 5.4
 ### From 2013 until early 2021, Google permitted distribution builds of
 ### Chromium to access Google APIs that added significant features to
 ### Chromium including, but not limited to, Sync and geolocation.
-### As of March 15, 2021, any Chromium builds which pass API keys
-### during build will prevent end-users from signing into their
+### As of March 15, 2021, any Chromium builds which pass client_id and/or
+### client_secret during build will prevent end-users from signing into their
 ### Google account.
 
 ### With Chromium 88, I have removed the calls to "google_default_client_id"
@@ -190,13 +192,17 @@ BuildRequires:  libicu-devel >= 5.4
 ### Note: These are for Fedora use ONLY.
 ### For your own distribution, please get your own set of keys.
 ### http://lists.debian.org/debian-legal/2013/11/msg00006.html
-%if %{useapikeys}
+%if %{useapikey}
 %global api_key AIzaSyDUIXvzVrt5OkVsgXhQ6NFfvWlA44by-aw
+%else
+%global api_key %nil
+%endif
+
+%if %{userestrictedapikeys}
 %global default_client_id 449907151817.apps.googleusercontent.com
 %global default_client_secret miEreAep8nuvTdvLums6qyLK
 %global chromoting_client_id 449907151817-8vnlfih032ni8c4jjps9int9t86k546t.apps.googleusercontent.com 
 %else
-%global api_key %nil
 %global default_client_id %nil
 %global default_client_secret %nil
 %global chromoting_client_id %nil
@@ -209,7 +215,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4324.96
+Version:	%{majorversion}.0.4324.146
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -304,6 +310,9 @@ Patch72:	chromium-88-federated_learning-include.patch
 Patch73:	chromium-88-ityp-include.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-88-StringPool-include.patch
 Patch74:	chromium-88-StringPool-include.patch
+# Fix sandbox code to properly handle the new way that glibc handles fstat in Fedora 34+
+# Thanks to Kevin Kofler for the fix.
+Patch75:	chromium-88.0.4324.96-fstatfix.patch
 
 # Use lstdc++ on EPEL7 only
 Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
@@ -928,6 +937,7 @@ udev.
 %patch72 -p1 -b .federated_learning-include
 %patch73 -p1 -b .ityp-include
 %patch74 -p1 -b .StringPool-include
+%patch75 -p1 -b .fstatfix
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -1054,8 +1064,11 @@ CHROMIUM_CORE_GN_DEFINES+=' is_debug=false'
 %ifarch x86_64 aarch64
 CHROMIUM_CORE_GN_DEFINES+=' system_libdir="lib64"'
 %endif
-%if %{useapikeys}
-CHROMIUM_CORE_GN_DEFINES+=' google_api_key="%{api_key}" google_default_client_id="%{default_client_id}" google_default_client_secret="%{default_client_secret}"'
+%if %{useapikey}
+CHROMIUM_CORE_GN_DEFINES+=' google_api_key="%{api_key}"'
+%endif
+%if %{userestrictedapikeys}
+CHROMIUM_CORE_GN_DEFINES+=' google_default_client_id="%{default_client_id}" google_default_client_secret="%{default_client_secret}"'
 %endif
 CHROMIUM_CORE_GN_DEFINES+=' is_clang=false use_sysroot=false fieldtrial_testing_like_official_build=true use_lld=false rtc_enable_symbol_export=true'
 %if %{use_gold}
@@ -1973,6 +1986,18 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Tue Feb  2 2021 Tom Callaway <spot@fedoraproject.org> - 88.0.4234.146-1
+- update to 88.0.4234.146
+
+* Tue Feb  2 2021 Tom Callaway <spot@fedoraproject.org> - 88.0.4234.96-4
+- turn on the API key (just the API key, not the client_id or client_secret)
+
+* Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 88.0.4324.96-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
+
+* Mon Jan 25 2021 Tom Callaway <spot@fedoraproject.org> - 88.0.4324.96-2
+- apply fix from Kevin Kofler for new glibc fstat sandbox handling
+
 * Wed Jan 20 2021 Tom Callaway <spot@fedoraproject.org> - 88.0.4324.96-1
 - 88 goes from beta to stable
 - disable use of api keys (Google shut off API access)
