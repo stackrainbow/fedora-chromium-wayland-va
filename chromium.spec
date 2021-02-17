@@ -313,6 +313,8 @@ Patch74:	chromium-88-StringPool-include.patch
 # Fix sandbox code to properly handle the new way that glibc handles fstat in Fedora 34+
 # Thanks to Kevin Kofler for the fix.
 Patch75:	chromium-88.0.4324.96-fstatfix.patch
+# Rawhide (f35) glibc defines SIGSTKSZ as a long instead of a constant
+Patch76:	chromium-88.0.4324.182-rawhide-gcc-std-max-fix.patch
 
 # Use lstdc++ on EPEL7 only
 Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
@@ -938,6 +940,9 @@ udev.
 %patch73 -p1 -b .ityp-include
 %patch74 -p1 -b .StringPool-include
 %patch75 -p1 -b .fstatfix
+%if 0%{?fedora} >= 35
+%patch76 -p1 -b .sigstkszfix
+%endif
 
 # Fedora branded user agent
 %if 0%{?fedora}
