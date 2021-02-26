@@ -216,7 +216,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 Name:		chromium%{chromium_channel}
 %endif
 Version:	%{majorversion}.0.4324.182
-Release:	1%{?dist}
+Release:	2%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -313,6 +313,10 @@ Patch74:	chromium-88-StringPool-include.patch
 # Fix sandbox code to properly handle the new way that glibc handles fstat in Fedora 34+
 # Thanks to Kevin Kofler for the fix.
 Patch75:	chromium-88.0.4324.96-fstatfix.patch
+# Rawhide (f35) glibc defines SIGSTKSZ as a long instead of a constant
+Patch76:	chromium-88.0.4324.182-rawhide-gcc-std-max-fix.patch
+# Fix symbol visibility with gcc on swiftshader's libEGL
+Patch77:	chromium-88.0.4324.182-gcc-fix-swiftshader-libEGL-visibility.patch
 
 # Use lstdc++ on EPEL7 only
 Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
@@ -938,6 +942,10 @@ udev.
 %patch73 -p1 -b .ityp-include
 %patch74 -p1 -b .StringPool-include
 %patch75 -p1 -b .fstatfix
+%if 0%{?fedora} >= 35
+%patch76 -p1 -b .sigstkszfix
+%endif
+%patch77 -p1 -b .gcc-swiftshader-visibility
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -1986,6 +1994,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Thu Feb 25 2021 Tom Callaway <spot@fedoraproject.org> - 88.0.4234.182-2
+- fix swiftshader symbols in libEGL/libGLESv2 with gcc
+
 * Wed Feb 17 2021 Tom Callaway <spot@fedoraproject.org> - 88.0.4234.182-1
 - update to 88.0.4234.182
 
