@@ -1971,6 +1971,10 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 * Thu Mar  4 2021 Tom Callaway <spot@fedoraproject.org> - 89.0.4389.72-1
 - update to 89.0.4389.72
 
+* Tue Mar 02 2021 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 88.0.4324.182-3
+- Rebuilt for updated systemd-rpm-macros
+  See https://pagure.io/fesco/issue/2583.
+
 * Thu Feb 25 2021 Tom Callaway <spot@fedoraproject.org> - 88.0.4234.182-2
 - fix swiftshader symbols in libEGL/libGLESv2 with gcc
 
