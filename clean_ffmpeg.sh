@@ -107,7 +107,6 @@ header_files="	libavcodec/x86/inline_asm.h \
 		libavcodec/mpeg12vlc.h \
 		libavcodec/mpegaudio.h \
 		libavcodec/mpegaudiodecheader.h \
-		libavcodec/mpegaudiodectab.h \
 		libavcodec/mpegaudiodsp.h \
 		libavcodec/mpegaudio_tablegen.h \
 		libavcodec/mpegpicture.h \
