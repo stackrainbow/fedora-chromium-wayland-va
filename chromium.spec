@@ -215,7 +215,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4389.72
+Version:	%{majorversion}.0.4389.82
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -496,6 +496,7 @@ BuildRequires:	libva-devel
 BuildRequires:	libwebp-devel
 %endif
 BuildRequires:	libxslt-devel
+BuildRequires:	libxshmfence-devel
 # Same here, it seems.
 # BuildRequires:	libyuv-devel
 BuildRequires:	mesa-libGL-devel
@@ -1143,7 +1144,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'net/third_party/quiche' \
 	'net/third_party/uri_template' \
 	'third_party/abseil-cpp' \
-	'third_party/adobe' \
 	'third_party/angle' \
 	'third_party/angle/src/common/third_party/base' \
 	'third_party/angle/src/common/third_party/smhasher' \
@@ -1152,13 +1152,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/angle/src/third_party/libXNVCtrl' \
 	'third_party/angle/src/third_party/trace_event' \
 	'third_party/angle/src/third_party/volk' \
-	'third_party/angle/third_party/glslang' \
-	'third_party/angle/third_party/spirv-headers' \
-	'third_party/angle/third_party/spirv-tools' \
-	'third_party/angle/third_party/vulkan-headers' \
-	'third_party/angle/third_party/vulkan-loader' \
-	'third_party/angle/third_party/vulkan-tools' \
-	'third_party/angle/third_party/vulkan-validation-layers' \
 	'third_party/apple_apsl' \
 	'third_party/axe-core' \
 	'third_party/blanketjs' \
@@ -1219,14 +1212,12 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/fontconfig' \
 	'third_party/freetype' \
 	'third_party/fusejs' \
-	'third_party/glslang' \
 	'third_party/google_input_tools' \
 	'third_party/google_input_tools/third_party/closure_library' \
 	'third_party/google_input_tools/third_party/closure_library/third_party/closure' \
 	'third_party/google_trust_services' \
 	'third_party/googletest' \
 	'third_party/grpc' \
-	'third_party/grpc/src/third_party/nanopb' \
 	'third_party/harfbuzz-ng' \
 	'third_party/hunspell' \
 	'third_party/iccjpeg' \
@@ -1253,7 +1244,9 @@ build/linux/unbundle/remove_bundled_libraries.py \
         'third_party/libsrtp' \
 	'third_party/libsync' \
 	'third_party/libudev' \
+	'third_party/liburlpattern' \
 	'third_party/libusb' \
+	'third_party/libva_protected_content' \
 	'third_party/libvpx' \
 	'third_party/libvpx/source/libvpx/third_party/x86inc' \
 	'third_party/libwebm' \
@@ -1273,6 +1266,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 %endif
 	'third_party/mesa' \
 	'third_party/metrics_proto' \
+	'third_party/minigbm' \
 	'third_party/modp_b64' \
 	'third_party/nasm' \
 	'third_party/nearby' \
@@ -1299,6 +1293,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
         'third_party/pdfium/third_party/libtiff' \
 	'third_party/pdfium/third_party/skia_shared' \
 	'third_party/perfetto' \
+	'third_party/perfetto/protos/third_party/chromium' \
 	'third_party/pffft' \
         'third_party/ply' \
 	'third_party/polymer' \
@@ -1316,7 +1311,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/s2cellid' \
 	'third_party/schema_org' \
 	'third_party/securemessage' \
-	'third_party/shaka-player' \
 	'third_party/shell-encryption' \
 	'third_party/simplejson' \
 	'third_party/sinonjs' \
@@ -1328,8 +1322,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/smhasher' \
 	'third_party/snappy' \
 	'third_party/speech-dispatcher' \
-	'third_party/spirv-headers' \
-	'third_party/SPIRV-Tools' \
 	'third_party/sqlite' \
 	'third_party/swiftshader' \
 	'third_party/swiftshader/third_party/astc-encoder' \
@@ -1968,6 +1960,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Mon Mar  8 2021 Tom Callaway <spot@fedoraproject.org> - 89.0.4389.82-1
+- update to 89.0.4389.82
+
 * Thu Mar  4 2021 Tom Callaway <spot@fedoraproject.org> - 89.0.4389.72-1
 - update to 89.0.4389.72
 
