@@ -208,15 +208,15 @@ BuildRequires:  libicu-devel >= 5.4
 %global chromoting_client_id %nil
 %endif
 
-%global majorversion 88
+%global majorversion 89
 
 %if %{freeworld}
 Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4324.182
-Release:	2%{?dist}
+Version:	%{majorversion}.0.4389.82
+Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -234,7 +234,7 @@ License:	BSD and LGPLv2+ and ASL 2.0 and IJG and MIT and GPLv2+ and ISC and Open
 ### Chromium Fedora Patches ###
 Patch0:		chromium-70.0.3538.67-sandbox-pie.patch
 # Use /etc/chromium for initial_prefs
-Patch1:		chromium-86.0.4240.75-initial_prefs-etc-path.patch
+Patch1:		chromium-89.0.4389.72-initial_prefs-etc-path.patch
 # Use gn system files
 Patch2:		chromium-67.0.3396.62-gn-system.patch
 # Do not prefix libpng functions
@@ -244,7 +244,7 @@ Patch4:		chromium-60.0.3112.78-jpeg-nomangle.patch
 # Do not mangle zlib
 Patch5:		chromium-77.0.3865.75-no-zlib-mangle.patch
 # Do not use unrar code, it is non-free
-Patch6:		chromium-88.0.4324.11-norar.patch
+Patch6:		chromium-89.0.4389.72-norar.patch
 # Use Gentoo's Widevine hack
 # https://gitweb.gentoo.org/repo/gentoo.git/tree/www-client/chromium/files/chromium-widevine-r3.patch
 Patch7:		chromium-71.0.3578.98-widevine-r3.patch
@@ -253,43 +253,39 @@ Patch8:		chromium-83.0.4103.61-disable-fontconfig-cache-magic.patch
 # drop rsp clobber, which breaks gcc9 (thanks to Jeff Law)
 Patch9:	chromium-78.0.3904.70-gcc9-drop-rsp-clobber.patch
 # Try to load widevine from other places
-Patch10:	chromium-86.0.4240.75-widevine-other-locations.patch
+Patch10:	chromium-89.0.4389.72-widevine-other-locations.patch
 # Try to fix version.py for Rawhide
 Patch11:	chromium-71.0.3578.98-py2-bootstrap.patch
 # Add "Fedora" to the user agent string
 Patch12:	chromium-86.0.4240.75-fedora-user-agent.patch
 
-# rename function to avoid conflict with rawhide glibc "gettid()"
-Patch50:	chromium-75.0.3770.80-grpc-gettid-fix.patch
 # Needs to be submitted..
 Patch51:	chromium-76.0.3809.100-gcc-remoting-constexpr.patch
 # https://gitweb.gentoo.org/repo/gentoo.git/tree/www-client/chromium/files/chromium-unbundle-zlib.patch
 Patch52:	chromium-81.0.4044.92-unbundle-zlib.patch
 # Needs to be submitted..
 Patch53:	chromium-77.0.3865.75-gcc-include-memory.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-79-gcc-protobuf-alignas.patch
-Patch54:	chromium-79-gcc-protobuf-alignas.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-78-protobuf-RepeatedPtrField-export.patch
 Patch55:	chromium-78-protobuf-RepeatedPtrField-export.patch
 # ../../third_party/perfetto/include/perfetto/base/task_runner.h:48:55: error: 'uint32_t' has not been declared
 Patch56:	chromium-80.0.3987.87-missing-cstdint-header.patch
 # Missing <cstring> (thanks c++17)
-Patch57:	chromium-80.0.3987.106-missing-cstring-header.patch
+Patch57:	chromium-89.0.4389.72-missing-cstring-header.patch
 # prepare for using system ffmpeg (clean)
 # http://svnweb.mageia.org/packages/cauldron/chromium-browser-stable/current/SOURCES/chromium-53-ffmpeg-no-deprecation-errors.patch?view=markup
 Patch58:	chromium-53-ffmpeg-no-deprecation-errors.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-84-blink-disable-clang-format.patch
-Patch59:	chromium-84-blink-disable-clang-format.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-fix-char_traits.patch
-Patch60:	chromium-fix-char_traits.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-87-CursorFactory-include.patch
-Patch61:	chromium-87-CursorFactory-include.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-87-openscreen-include.patch
-Patch62:	chromium-87-openscreen-include.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-88-AXTreeFormatter-include.patch
-Patch63:	chromium-88-AXTreeFormatter-include.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-88-vaapi-attribute.patch
-Patch64:	chromium-88-vaapi-attribute.patch
+# https://github.com/stha09/chromium-patches/blob/chromium-89-patchset-7/chromium-89-dawn-include.patch
+Patch60:	chromium-89-dawn-include.patch
+# https://github.com/stha09/chromium-patches/blob/chromium-89-patchset-7/chromium-89-quiche-dcheck.patch
+Patch61:	chromium-89-quiche-dcheck.patch
+# https://github.com/stha09/chromium-patches/blob/chromium-89-patchset-7/chromium-89-quiche-private.patch
+Patch62:	chromium-89-quiche-private.patch
+# https://github.com/stha09/chromium-patches/blob/chromium-89-patchset-7/chromium-89-skia-CropRect.patch
+Patch63:	chromium-89-skia-CropRect.patch
+# https://github.com/stha09/chromium-patches/blob/chromium-89-patchset-7/chromium-89-AXTreeSerializer-include.patch
+Patch64:	chromium-89-AXTreeSerializer-include.patch
+
+
 # Silence GCC warnings during gn compile
 Patch65:	chromium-84.0.4147.105-gn-gcc-cleanup.patch
 # Fix missing cstring in remoting code
@@ -298,18 +294,6 @@ Patch66:	chromium-84.0.4147.125-remoting-cstring.patch
 Patch67:	chromium-84.0.4147.125-i686-fix_textrels.patch
 # Work around binutils bug in aarch64 (F33+)
 Patch68:	chromium-84.0.4147.125-aarch64-clearkeycdm-binutils-workaround.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-88-BookmarkModelObserver-include.patch
-Patch69:	chromium-88-BookmarkModelObserver-include.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-88-CompositorFrameReporter-dcheck.patch
-Patch70:	chromium-88-CompositorFrameReporter-dcheck.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-88-dawn-static.patch
-Patch71:	chromium-88-dawn-static.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-88-federated_learning-include.patch
-Patch72:	chromium-88-federated_learning-include.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-88-ityp-include.patch
-Patch73:	chromium-88-ityp-include.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-88-StringPool-include.patch
-Patch74:	chromium-88-StringPool-include.patch
 # Fix sandbox code to properly handle the new way that glibc handles fstat in Fedora 34+
 # Thanks to Kevin Kofler for the fix.
 Patch75:	chromium-88.0.4324.96-fstatfix.patch
@@ -341,7 +325,7 @@ Patch109:	chromium-87.0.4280.66-el7-no-sys-random.patch
 
 # VAAPI
 # Upstream turned VAAPI on in Linux in 86
-Patch202:	chromium-88.0.4324.11-enable-hardware-accelerated-mjpeg.patch
+Patch202:	chromium-89.0.4389.72-enable-hardware-accelerated-mjpeg.patch
 Patch203:	chromium-86.0.4240.75-vaapi-i686-fpermissive.patch
 Patch205:	chromium-86.0.4240.75-fix-vaapi-on-intel.patch
 
@@ -512,6 +496,7 @@ BuildRequires:	libva-devel
 BuildRequires:	libwebp-devel
 %endif
 BuildRequires:	libxslt-devel
+BuildRequires:	libxshmfence-devel
 # Same here, it seems.
 # BuildRequires:	libyuv-devel
 BuildRequires:	mesa-libGL-devel
@@ -904,7 +889,8 @@ udev.
 %patch1 -p1 -b .etc
 %patch2 -p1 -b .gnsystem
 %patch3 -p1 -b .nolibpngprefix
-%patch4 -p1 -b .nolibjpegmangle
+# Upstream accidentally made the same change in 89, but they've already reverted it for 90+ so this patch will return
+# %%patch4 -p1 -b .nolibjpegmangle
 %patch5 -p1 -b .nozlibmangle
 %patch6 -p1 -b .nounrar
 %patch7 -p1 -b .widevine-hack
@@ -914,33 +900,24 @@ udev.
 %patch11 -p1 -b .py2
 
 # Short term fixes (usually gcc and backports)
-%patch50 -p1 -b .gettid-fix
 %patch51 -p1 -b .gcc-remoting-constexpr
 %if 0%{?fedora} || 0%{?rhel} >= 8
 %patch52 -p1 -b .unbundle-zlib
 %endif
 %patch53 -p1 -b .gcc-include-memory
-%patch54 -p1 -b .base-gcc-no-alignas
 %patch55 -p1 -b .protobuf-export
 %patch56 -p1 -b .missing-cstdint
 %patch57 -p1 -b .missing-cstring
 %patch58 -p1 -b .ffmpeg-deprecations
-%patch59 -p1 -b .blink-disable-clang-format
-%patch60 -p1 -b .fix-char_traits
-%patch61 -p1 -b .CursorFactory-include
-%patch62 -p1 -b .openscreen-include
-%patch63 -p1 -b .AXTreeFormatter-include
-%patch64 -p1 -b .vaapi-attribute
+%patch60 -p1 -b .dawn-include
+%patch61 -p1 -b .quiche-dcheck
+%patch62 -p1 -b .quiche-private
+%patch63 -p1 -b .skia-CropRect
+%patch64 -p1 -b .AXTreeSerializer-include
 %patch65 -p1 -b .gn-gcc-cleanup
 %patch66 -p1 -b .remoting-cstring
 %patch67 -p1 -b .i686-textrels
 %patch68 -p1 -b .aarch64-clearkeycdm-binutils-workaround
-%patch69 -p1 -b .BookmarkModelObserver-include
-%patch70 -p1 -b .CompositorFrameReporter-dcheck
-%patch71 -p1 -b .dawn-static
-%patch72 -p1 -b .federated_learning-include
-%patch73 -p1 -b .ityp-include
-%patch74 -p1 -b .StringPool-include
 %patch75 -p1 -b .fstatfix
 %if 0%{?fedora} >= 35
 %patch76 -p1 -b .sigstkszfix
@@ -1169,7 +1146,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'net/third_party/quiche' \
 	'net/third_party/uri_template' \
 	'third_party/abseil-cpp' \
-	'third_party/adobe' \
 	'third_party/angle' \
 	'third_party/angle/src/common/third_party/base' \
 	'third_party/angle/src/common/third_party/smhasher' \
@@ -1178,13 +1154,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/angle/src/third_party/libXNVCtrl' \
 	'third_party/angle/src/third_party/trace_event' \
 	'third_party/angle/src/third_party/volk' \
-	'third_party/angle/third_party/glslang' \
-	'third_party/angle/third_party/spirv-headers' \
-	'third_party/angle/third_party/spirv-tools' \
-	'third_party/angle/third_party/vulkan-headers' \
-	'third_party/angle/third_party/vulkan-loader' \
-	'third_party/angle/third_party/vulkan-tools' \
-	'third_party/angle/third_party/vulkan-validation-layers' \
 	'third_party/apple_apsl' \
 	'third_party/axe-core' \
 	'third_party/blanketjs' \
@@ -1245,14 +1214,12 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/fontconfig' \
 	'third_party/freetype' \
 	'third_party/fusejs' \
-	'third_party/glslang' \
 	'third_party/google_input_tools' \
 	'third_party/google_input_tools/third_party/closure_library' \
 	'third_party/google_input_tools/third_party/closure_library/third_party/closure' \
 	'third_party/google_trust_services' \
 	'third_party/googletest' \
 	'third_party/grpc' \
-	'third_party/grpc/src/third_party/nanopb' \
 	'third_party/harfbuzz-ng' \
 	'third_party/hunspell' \
 	'third_party/iccjpeg' \
@@ -1279,7 +1246,9 @@ build/linux/unbundle/remove_bundled_libraries.py \
         'third_party/libsrtp' \
 	'third_party/libsync' \
 	'third_party/libudev' \
+	'third_party/liburlpattern' \
 	'third_party/libusb' \
+	'third_party/libva_protected_content' \
 	'third_party/libvpx' \
 	'third_party/libvpx/source/libvpx/third_party/x86inc' \
 	'third_party/libwebm' \
@@ -1299,6 +1268,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 %endif
 	'third_party/mesa' \
 	'third_party/metrics_proto' \
+	'third_party/minigbm' \
 	'third_party/modp_b64' \
 	'third_party/nasm' \
 	'third_party/nearby' \
@@ -1325,6 +1295,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
         'third_party/pdfium/third_party/libtiff' \
 	'third_party/pdfium/third_party/skia_shared' \
 	'third_party/perfetto' \
+	'third_party/perfetto/protos/third_party/chromium' \
 	'third_party/pffft' \
         'third_party/ply' \
 	'third_party/polymer' \
@@ -1342,7 +1313,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/s2cellid' \
 	'third_party/schema_org' \
 	'third_party/securemessage' \
-	'third_party/shaka-player' \
 	'third_party/shell-encryption' \
 	'third_party/simplejson' \
 	'third_party/sinonjs' \
@@ -1354,8 +1324,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/smhasher' \
 	'third_party/snappy' \
 	'third_party/speech-dispatcher' \
-	'third_party/spirv-headers' \
-	'third_party/SPIRV-Tools' \
 	'third_party/sqlite' \
 	'third_party/swiftshader' \
 	'third_party/swiftshader/third_party/astc-encoder' \
@@ -1994,6 +1962,16 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Mon Mar  8 2021 Tom Callaway <spot@fedoraproject.org> - 89.0.4389.82-1
+- update to 89.0.4389.82
+
+* Thu Mar  4 2021 Tom Callaway <spot@fedoraproject.org> - 89.0.4389.72-1
+- update to 89.0.4389.72
+
+* Tue Mar 02 2021 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 88.0.4324.182-3
+- Rebuilt for updated systemd-rpm-macros
+  See https://pagure.io/fesco/issue/2583.
+
 * Thu Feb 25 2021 Tom Callaway <spot@fedoraproject.org> - 88.0.4234.182-2
 - fix swiftshader symbols in libEGL/libGLESv2 with gcc
 
