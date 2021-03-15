@@ -216,7 +216,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 Name:		chromium%{chromium_channel}
 %endif
 Version:	%{majorversion}.0.4389.82
-Release:	1%{?dist}
+Release:	2%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -301,6 +301,10 @@ Patch75:	chromium-88.0.4324.96-fstatfix.patch
 Patch76:	chromium-88.0.4324.182-rawhide-gcc-std-max-fix.patch
 # Fix symbol visibility with gcc on swiftshader's libEGL
 Patch77:	chromium-88.0.4324.182-gcc-fix-swiftshader-libEGL-visibility.patch
+# Include support for futex_time64 (64bit time on 32bit platforms)
+# https://chromium.googlesource.com/chromium/src/+/955a586c63c4f99fb734e44221db63f5b2ca25a9%5E%21/#F0
+Patch78:	chromium-89.0.4389.82-support-futex_time64.patch
+
 
 # Use lstdc++ on EPEL7 only
 Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
@@ -923,6 +927,7 @@ udev.
 %patch76 -p1 -b .sigstkszfix
 %endif
 %patch77 -p1 -b .gcc-swiftshader-visibility
+%patch78 -p1 -b .futex-time64
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -1960,6 +1965,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Mon Mar 15 2021 Tom Callaway <spot@fedoraproject.org> - 89.0.4389.82-2
+- add support for futex_time64
+
 * Mon Mar  8 2021 Tom Callaway <spot@fedoraproject.org> - 89.0.4389.82-1
 - update to 89.0.4389.82
 
