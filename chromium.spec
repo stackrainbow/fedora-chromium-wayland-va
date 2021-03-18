@@ -215,8 +215,8 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4389.82
-Release:	2%{?dist}
+Version:	%{majorversion}.0.4389.90
+Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -226,7 +226,7 @@ Summary:	Chromium media libraries built with all possible codecs
 Summary:	A WebKit (Blink) powered web browser built with all possible codecs
 %endif
 %else
-Summary:	A WebKit (Blink) powered web browser
+Summary:	A WebKit (Blink) powered web browser that Google doesn't want you to use
 %endif
 Url:		http://www.chromium.org/Home
 License:	BSD and LGPLv2+ and ASL 2.0 and IJG and MIT and GPLv2+ and ISC and OpenSSL and (MPLv1.1 or GPLv2 or LGPLv2)
@@ -304,6 +304,8 @@ Patch77:	chromium-88.0.4324.182-gcc-fix-swiftshader-libEGL-visibility.patch
 # Include support for futex_time64 (64bit time on 32bit platforms)
 # https://chromium.googlesource.com/chromium/src/+/955a586c63c4f99fb734e44221db63f5b2ca25a9%5E%21/#F0
 Patch78:	chromium-89.0.4389.82-support-futex_time64.patch
+# Do not download proprietary widevine module in the background (thanks Debian)
+Patch79:	chromium-89.0.4389.82-widevine-no-download.patch
 
 
 # Use lstdc++ on EPEL7 only
@@ -928,6 +930,7 @@ udev.
 %endif
 %patch77 -p1 -b .gcc-swiftshader-visibility
 %patch78 -p1 -b .futex-time64
+%patch79 -p1 -b .widevine-no-download
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -1965,6 +1968,10 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Thu Mar 18 2021 Tom Callaway <spot@fedoraproject.org> - 89.0.4389.90-1
+- update to 89.0.4389.90
+- disable auto-download of widevine binary only blob
+
 * Mon Mar 15 2021 Tom Callaway <spot@fedoraproject.org> - 89.0.4389.82-2
 - add support for futex_time64
 
