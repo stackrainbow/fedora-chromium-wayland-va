@@ -215,7 +215,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4389.82
+Version:	%{majorversion}.0.4389.90
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -226,7 +226,7 @@ Summary:	Chromium media libraries built with all possible codecs
 Summary:	A WebKit (Blink) powered web browser built with all possible codecs
 %endif
 %else
-Summary:	A WebKit (Blink) powered web browser
+Summary:	A WebKit (Blink) powered web browser that Google doesn't want you to use
 %endif
 Url:		http://www.chromium.org/Home
 License:	BSD and LGPLv2+ and ASL 2.0 and IJG and MIT and GPLv2+ and ISC and OpenSSL and (MPLv1.1 or GPLv2 or LGPLv2)
@@ -301,6 +301,12 @@ Patch75:	chromium-88.0.4324.96-fstatfix.patch
 Patch76:	chromium-88.0.4324.182-rawhide-gcc-std-max-fix.patch
 # Fix symbol visibility with gcc on swiftshader's libEGL
 Patch77:	chromium-88.0.4324.182-gcc-fix-swiftshader-libEGL-visibility.patch
+# Include support for futex_time64 (64bit time on 32bit platforms)
+# https://chromium.googlesource.com/chromium/src/+/955a586c63c4f99fb734e44221db63f5b2ca25a9%5E%21/#F0
+Patch78:	chromium-89.0.4389.82-support-futex_time64.patch
+# Do not download proprietary widevine module in the background (thanks Debian)
+Patch79:	chromium-89.0.4389.82-widevine-no-download.patch
+
 
 # Use lstdc++ on EPEL7 only
 Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
@@ -330,7 +336,7 @@ Patch203:	chromium-86.0.4240.75-vaapi-i686-fpermissive.patch
 Patch205:	chromium-86.0.4240.75-fix-vaapi-on-intel.patch
 
 # Apply these patches to work around EPEL8 issues
-Patch300:	chromium-88.0.4324.96-rhel8-force-disable-use_gnome_keyring.patch
+Patch300:	chromium-89.0.4389.82-rhel8-force-disable-use_gnome_keyring.patch
 
 # And fixes for new compilers
 Patch400:       %{name}-gcc11.patch
@@ -923,6 +929,8 @@ udev.
 %patch76 -p1 -b .sigstkszfix
 %endif
 %patch77 -p1 -b .gcc-swiftshader-visibility
+%patch78 -p1 -b .futex-time64
+%patch79 -p1 -b .widevine-no-download
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -1962,6 +1970,13 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Thu Mar 18 2021 Tom Callaway <spot@fedoraproject.org> - 89.0.4389.90-1
+- update to 89.0.4389.90
+- disable auto-download of widevine binary only blob
+
+* Mon Mar 15 2021 Tom Callaway <spot@fedoraproject.org> - 89.0.4389.82-2
+- add support for futex_time64
+
 * Mon Mar  8 2021 Tom Callaway <spot@fedoraproject.org> - 89.0.4389.82-1
 - update to 89.0.4389.82
 
