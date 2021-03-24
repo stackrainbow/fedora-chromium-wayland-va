@@ -306,6 +306,9 @@ Patch77:	chromium-88.0.4324.182-gcc-fix-swiftshader-libEGL-visibility.patch
 Patch78:	chromium-89.0.4389.82-support-futex_time64.patch
 # Do not download proprietary widevine module in the background (thanks Debian)
 Patch79:	chromium-89.0.4389.82-widevine-no-download.patch
+# Fix crashes with components/cast_*
+# Thanks to Gentoo
+Patch80:	https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-89-EnumTable-crash.patch
 
 
 # Use lstdc++ on EPEL7 only
@@ -931,6 +934,7 @@ udev.
 %patch77 -p1 -b .gcc-swiftshader-visibility
 %patch78 -p1 -b .futex-time64
 %patch79 -p1 -b .widevine-no-download
+%patch80 -p1 -b .EnumTable-crash
 
 # Fedora branded user agent
 %if 0%{?fedora}
