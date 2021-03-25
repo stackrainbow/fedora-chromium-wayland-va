@@ -216,7 +216,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 Name:		chromium%{chromium_channel}
 %endif
 Version:	%{majorversion}.0.4389.90
-Release:	2%{?dist}
+Release:	3%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -309,6 +309,8 @@ Patch79:	chromium-89.0.4389.82-widevine-no-download.patch
 # Fix crashes with components/cast_*
 # Thanks to Gentoo
 Patch80:	https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-89-EnumTable-crash.patch
+# Fix build issues with newer libva
+Patch81:	https://github.com/chromium/chromium/commit/7ae60470cdb0bea4548a0f5e8271b359f9450c79.patch
 
 
 # Use lstdc++ on EPEL7 only
@@ -935,6 +937,7 @@ udev.
 %patch78 -p1 -b .futex-time64
 %patch79 -p1 -b .widevine-no-download
 %patch80 -p1 -b .EnumTable-crash
+%patch81 -p1 -b .libva-forward-compat
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -1974,6 +1977,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Thu Mar 25 2021 Tom Callaway <spot@fedoraproject.org> - 89.0.4389.90-3
+- apply upstream fix for newer system libva
+
 * Wed Mar 24 2021 Tom Callaway <spot@fedoraproject.org> - 89.0.4389.90-2
 - fix crashes with components/cast_*
 
