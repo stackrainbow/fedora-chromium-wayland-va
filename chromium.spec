@@ -208,14 +208,14 @@ BuildRequires:  libicu-devel >= 5.4
 %global chromoting_client_id %nil
 %endif
 
-%global majorversion 89
+%global majorversion 90
 
 %if %{freeworld}
 Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4389.128
+Version:	%{majorversion}.0.4430.85
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -274,17 +274,16 @@ Patch57:	chromium-89.0.4389.72-missing-cstring-header.patch
 # prepare for using system ffmpeg (clean)
 # http://svnweb.mageia.org/packages/cauldron/chromium-browser-stable/current/SOURCES/chromium-53-ffmpeg-no-deprecation-errors.patch?view=markup
 Patch58:	chromium-53-ffmpeg-no-deprecation-errors.patch
-# https://github.com/stha09/chromium-patches/blob/chromium-89-patchset-7/chromium-89-dawn-include.patch
-Patch60:	chromium-89-dawn-include.patch
-# https://github.com/stha09/chromium-patches/blob/chromium-89-patchset-7/chromium-89-quiche-dcheck.patch
-Patch61:	chromium-89-quiche-dcheck.patch
-# https://github.com/stha09/chromium-patches/blob/chromium-89-patchset-7/chromium-89-quiche-private.patch
-Patch62:	chromium-89-quiche-private.patch
-# https://github.com/stha09/chromium-patches/blob/chromium-89-patchset-7/chromium-89-skia-CropRect.patch
-Patch63:	chromium-89-skia-CropRect.patch
-# https://github.com/stha09/chromium-patches/blob/chromium-89-patchset-7/chromium-89-AXTreeSerializer-include.patch
-Patch64:	chromium-89-AXTreeSerializer-include.patch
-
+# https://github.com/stha09/chromium-patches/blob/master/chromium-90-angle-constexpr.patch
+Patch59:	chromium-90-angle-constexpr.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-90-CrossThreadCopier-qualification.patch
+Patch60:	chromium-90-CrossThreadCopier-qualification.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-90-quantization_utils-include.patch
+Patch61:	chromium-90-quantization_utils-include.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-90-ruy-include.patch
+Patch62:	chromium-90-ruy-include.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-90-TokenizedOutput-include.patch
+Patch63:	chromium-90-TokenizedOutput-include.patch
 
 # Silence GCC warnings during gn compile
 Patch65:	chromium-84.0.4147.105-gn-gcc-cleanup.patch
@@ -296,7 +295,7 @@ Patch67:	chromium-84.0.4147.125-i686-fix_textrels.patch
 Patch68:	chromium-84.0.4147.125-aarch64-clearkeycdm-binutils-workaround.patch
 # Fix sandbox code to properly handle the new way that glibc handles fstat in Fedora 34+
 # Thanks to Kevin Kofler for the fix.
-Patch75:	chromium-88.0.4324.96-fstatfix.patch
+Patch75:	chromium-90.0.4430.72-fstatfix.patch
 # Rawhide (f35) glibc defines SIGSTKSZ as a long instead of a constant
 Patch76:	chromium-88.0.4324.182-rawhide-gcc-std-max-fix.patch
 # Fix symbol visibility with gcc on swiftshader's libEGL
@@ -305,14 +304,10 @@ Patch77:	chromium-88.0.4324.182-gcc-fix-swiftshader-libEGL-visibility.patch
 # https://chromium.googlesource.com/chromium/src/+/955a586c63c4f99fb734e44221db63f5b2ca25a9%5E%21/#F0
 Patch78:	chromium-89.0.4389.82-support-futex_time64.patch
 # Do not download proprietary widevine module in the background (thanks Debian)
-Patch79:	chromium-89.0.4389.82-widevine-no-download.patch
+Patch79:	chromium-90.0.4430.72-widevine-no-download.patch
 # Fix crashes with components/cast_*
 # Thanks to Gentoo
 Patch80:	https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-89-EnumTable-crash.patch
-# Fix build issues with newer libva ...
-Patch81:	https://github.com/chromium/chromium/commit/7ae60470cdb0bea4548a0f5e8271b359f9450c79.patch
-# ... this one is just for F35+
-Patch82:	https://github.com/chromium/chromium/commit/e0b362edd9b49143b89fc76c4a31dd5603b6fbd0.patch
 
 
 # Use lstdc++ on EPEL7 only
@@ -524,6 +519,7 @@ BuildRequires:	pkgconfig(gtk+-3.0)
 %else
 BuildRequires:	pkgconfig(gtk+-2.0)
 %endif
+BuildRequires:	pipewire-devel
 BuildRequires:	/usr/bin/python2
 BuildRequires:	python2-devel
 %if 0%{?bundlepylibs}
@@ -596,11 +592,12 @@ BuildRequires:	google-noto-sans-khmer-fonts
 BuildRequires:	google-noto-emoji-color-fonts
 %if 0%{?fedora} >= 30
 BuildRequires:	google-noto-sans-symbols2-fonts
-BuildRequires:	google-noto-sans-tibetan-fonts
 %else
 Source114:	https://github.com/googlefonts/noto-fonts/blob/master/unhinted/NotoSansSymbols2/NotoSansSymbols2-Regular.ttf
-Source115:	https://github.com/googlefonts/noto-fonts/blob/master/hinted/NotoSansTibetan/NotoSansTibetan-Regular.ttf
 %endif
+# There used to be a copy of this font file here, but it looks like NotoSansTibetan is no more.
+# And yet, the chromium code still wants it.
+Source115:	https://github.com/googlefonts/noto-fonts/blob/master/hinted/NotoSansTibetan/NotoSansTibetan-Regular.ttf
 %endif
 # using the built from source version on aarch64
 BuildRequires:	ninja-build
@@ -922,11 +919,12 @@ udev.
 %patch56 -p1 -b .missing-cstdint
 %patch57 -p1 -b .missing-cstring
 %patch58 -p1 -b .ffmpeg-deprecations
-%patch60 -p1 -b .dawn-include
-%patch61 -p1 -b .quiche-dcheck
-%patch62 -p1 -b .quiche-private
-%patch63 -p1 -b .skia-CropRect
-%patch64 -p1 -b .AXTreeSerializer-include
+%patch59 -p1 -b .angle-constexpr
+%patch60 -p1 -b .CrossThreadCopier-qualification
+%patch61 -p1 -b .quantization_utils-include
+%patch62 -p1 -b .ruy-include
+%patch63 -p1 -b .TokenizedOutput
+
 %patch65 -p1 -b .gn-gcc-cleanup
 %patch66 -p1 -b .remoting-cstring
 %patch67 -p1 -b .i686-textrels
@@ -939,10 +937,6 @@ udev.
 %patch78 -p1 -b .futex-time64
 %patch79 -p1 -b .widevine-no-download
 %patch80 -p1 -b .EnumTable-crash
-%patch81 -p1 -b .libva-forward-compat
-%if 0%{?fedora} >= 35
-%patch82 -p1 -b .libva-no-legacy
-%endif
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -1056,10 +1050,11 @@ cp -a /usr/share/fonts/lohit-devanagari/Lohit-Devanagari.ttf /usr/share/fonts/lo
 cp -a /usr/share/fonts/google-noto/NotoSansKhmer-Regular.ttf .
 cp -a /usr/share/fonts/google-noto-emoji/NotoColorEmoji.ttf .
 %if 0%{?fedora} >= 30
-cp -a /usr/share/fonts/google-noto/NotoSansSymbols2-Regular.ttf /usr/share/fonts/google-noto/NotoSansTibetan-Regular.ttf .
+cp -a /usr/share/fonts/google-noto/NotoSansSymbols2-Regular.ttf .
 %else
-cp -a %{SOURCE114} %{SOURCE115} .
+cp -a %{SOURCE114} .
 %endif
+cp -a %{SOURCE115} .
 popd
 %endif
 
@@ -1226,14 +1221,19 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/devtools-frontend/src/front_end/third_party/puppeteer' \
 	'third_party/devtools-frontend/src/front_end/third_party/wasmparser' \
 	'third_party/dom_distiller_js' \
+	'third_party/eigen3' \
 	'third_party/emoji-segmenter' \
 	'third_party/expat' \
+	'third_party/farmhash' \
+	'third_party/fdlibm' \
 	'third_party/ffmpeg' \
+	'third_party/fft2d' \
 	'third_party/flac' \
         'third_party/flatbuffers' \
 	'third_party/fontconfig' \
 	'third_party/freetype' \
 	'third_party/fusejs' \
+	'third_party/gemmlowp' \
 	'third_party/google_input_tools' \
 	'third_party/google_input_tools/third_party/closure_library' \
 	'third_party/google_input_tools/third_party/closure_library/third_party/closure' \
@@ -1253,10 +1253,12 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/libXNVCtrl' \
 	'third_party/libaddressinput' \
 	'third_party/libaom' \
+	'third_party/libaom/source/libaom/third_party/fastfeat' \
 	'third_party/libaom/source/libaom/third_party/vector' \
 	'third_party/libaom/source/libaom/third_party/x86inc' \
 	'third_party/libavif' \
 	'third_party/libdrm' \
+	'third_party/libgav1' \
 	'third_party/libgifcodec' \
 	'third_party/libjingle' \
 	'third_party/libjpeg_turbo' \
@@ -1279,6 +1281,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/libxml/chromium' \
 	'third_party/libxslt' \
 	'third_party/libyuv' \
+	'third_party/libzip' \
 	'third_party/lottie' \
 	'third_party/lss' \
 	'third_party/lzma_sdk' \
@@ -1330,6 +1333,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/re2' \
 %endif
 	'third_party/rnnoise' \
+	'third_party/ruy' \
 	'third_party/s2cellid' \
 	'third_party/schema_org' \
 	'third_party/securemessage' \
@@ -1353,10 +1357,17 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/swiftshader/third_party/subzero' \
 	'third_party/swiftshader/third_party/SPIRV-Headers' \
 	'third_party/tcmalloc' \
+	'third_party/tensorflow-text' \
 	'third_party/test_fonts' \
+	'third_party/tflite' \
+	'third_party/tflite/src/third_party/eigen3' \
+	'third_party/tflite/src/third_party/fft2d' \
+	'third_party/tflite-support' \
+	'third_party/tint' \
 	'third_party/ukey2' \
         'third_party/usb_ids' \
 	'third_party/usrsctp' \
+	'third_party/utf' \
 	'third_party/vulkan' \
 	'third_party/wayland' \
 	'third_party/web-animations-js' \
@@ -1982,6 +1993,12 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Wed Apr 21 2021 Tom Callaway <spot@fedoraproject.org> - 90.0.4430.85-1
+- update to 90.0.4430.85
+
+* Fri Apr 16 2021 Tom Callaway <spot@fedoraproject.org> - 90.0.4430.72-1
+- update to 90.0.4430.72
+
 * Wed Apr 14 2021 Tom Callaway <spot@fedoraproject.org> - 89.0.4389.128-1
 - update to 89.0.4389.128
 
