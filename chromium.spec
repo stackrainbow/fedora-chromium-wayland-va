@@ -439,7 +439,7 @@ BuildRequires:	pulseaudio-libs-devel
 
 # For screen sharing on Wayland, currently Fedora only thing - no epel
 %if 0%{?fedora}
-BuildRequires:	pkgconfig(libpipewire-0.2)
+BuildRequires:	pkgconfig(libpipewire-0.3)
 %endif
 
 # for /usr/bin/appstream-util
@@ -517,7 +517,6 @@ BuildRequires:	pkgconfig(gtk+-3.0)
 %else
 BuildRequires:	pkgconfig(gtk+-2.0)
 %endif
-BuildRequires:	pipewire-devel
 BuildRequires:	/usr/bin/python2
 BuildRequires:	python2-devel
 %if 0%{?bundlepylibs}
