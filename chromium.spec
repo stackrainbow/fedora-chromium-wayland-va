@@ -328,8 +328,6 @@ Patch106:	chromium-77-clang.patch
 # libdrm on EL7 is rather old and chromium assumes newer
 # This gets us by for now
 Patch108:	chromium-85.0.4183.83-el7-old-libdrm.patch
-# EL-7 does not have sys/random.h
-Patch109:	chromium-87.0.4280.66-el7-no-sys-random.patch
 
 # VAAPI
 # Upstream turned VAAPI on in Linux in 86
@@ -950,7 +948,6 @@ udev.
 %patch103 -p1 -b .epel7-kcmp
 %patch104 -p1 -b .el7cups
 %patch108 -p1 -b .el7-old-libdrm
-%patch109 -p1 -b .el7-no-sys-random
 %endif
 
 %if 0%{?rhel} == 8
