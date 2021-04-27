@@ -215,7 +215,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4430.85
+Version:	%{majorversion}.0.4430.93
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -315,7 +315,7 @@ Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
 # el7 only patch
 Patch102:	chromium-80.0.3987.132-el7-noexcept.patch
 # No linux/kcmp.h on EPEL7
-Patch103:	chromium-86.0.4240.75-epel7-no-kcmp-h.patch
+Patch103:	chromium-90.0.4430.85-epel7-no-kcmp-h.patch
 # Use old cups (chromium's code workaround breaks on gcc)
 # Revert: https://github.com/chromium/chromium/commit/c3213f8779ddc427e89d982514185ed5e4c94e91
 Patch104:	chromium-84.0.4147.89-epel7-old-cups.patch
@@ -328,8 +328,6 @@ Patch106:	chromium-77-clang.patch
 # libdrm on EL7 is rather old and chromium assumes newer
 # This gets us by for now
 Patch108:	chromium-85.0.4183.83-el7-old-libdrm.patch
-# EL-7 does not have sys/random.h
-Patch109:	chromium-87.0.4280.66-el7-no-sys-random.patch
 
 # VAAPI
 # Upstream turned VAAPI on in Linux in 86
@@ -441,7 +439,7 @@ BuildRequires:	pulseaudio-libs-devel
 
 # For screen sharing on Wayland, currently Fedora only thing - no epel
 %if 0%{?fedora}
-BuildRequires:	pkgconfig(libpipewire-0.2)
+BuildRequires:	pkgconfig(libpipewire-0.3)
 %endif
 
 # for /usr/bin/appstream-util
@@ -519,7 +517,6 @@ BuildRequires:	pkgconfig(gtk+-3.0)
 %else
 BuildRequires:	pkgconfig(gtk+-2.0)
 %endif
-BuildRequires:	pipewire-devel
 BuildRequires:	/usr/bin/python2
 BuildRequires:	python2-devel
 %if 0%{?bundlepylibs}
@@ -950,7 +947,6 @@ udev.
 %patch103 -p1 -b .epel7-kcmp
 %patch104 -p1 -b .el7cups
 %patch108 -p1 -b .el7-old-libdrm
-%patch109 -p1 -b .el7-no-sys-random
 %endif
 
 %if 0%{?rhel} == 8
@@ -1993,6 +1989,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Tue Apr 27 2021 Tom Callaway <spot@fedoraproject.org> - 90.0.4430.93-1
+- update to 90.0.4430.93
+
 * Wed Apr 21 2021 Tom Callaway <spot@fedoraproject.org> - 90.0.4430.85-1
 - update to 90.0.4430.85
 
