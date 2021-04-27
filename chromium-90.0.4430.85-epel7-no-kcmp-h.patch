@@ -1,7 +1,7 @@
 diff -up chromium-90.0.4430.85/mojo/core/channel_linux.cc.epel7-kcmp chromium-90.0.4430.85/mojo/core/channel_linux.cc
 --- chromium-90.0.4430.85/mojo/core/channel_linux.cc.epel7-kcmp	2021-04-27 11:42:46.207245608 -0400
 +++ chromium-90.0.4430.85/mojo/core/channel_linux.cc	2021-04-27 11:43:21.941841419 -0400
-@@ -37,6 +37,22 @@
+@@ -37,6 +37,25 @@
  #include "mojo/core/core.h"
  #include "mojo/core/embedder/features.h"
  
@@ -19,6 +19,9 @@ diff -up chromium-90.0.4430.85/mojo/core/channel_linux.cc.epel7-kcmp chromium-90
 +#endif
 +#ifndef F_ADD_SEALS
 +#define F_ADD_SEALS (F_LINUX_SPECIFIC_BASE + 9)
++#endif
++#ifndef F_GET_SEALS
++#define F_GET_SEALS (F_LINUX_SPECIFIC_BASE + 10)
 +#endif
 +
  namespace mojo {
