@@ -314,8 +314,8 @@ Patch80:	https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/fil
 Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
 # el7 only patch
 Patch102:	chromium-80.0.3987.132-el7-noexcept.patch
-# No linux/kcmp.h on EPEL7
-Patch103:	chromium-90.0.4430.85-epel7-no-kcmp-h.patch
+# Work around old and missing headers on EPEL7
+Patch103:	chromium-90.0.4430.93-epel7-old-headers-workarounds.patch
 # Use old cups (chromium's code workaround breaks on gcc)
 # Revert: https://github.com/chromium/chromium/commit/c3213f8779ddc427e89d982514185ed5e4c94e91
 Patch104:	chromium-84.0.4147.89-epel7-old-cups.patch
@@ -944,7 +944,7 @@ udev.
 %if 0%{?rhel} == 7
 # %%patch101 -p1 -b .epel7
 # %%patch102 -p1 -b .el7-noexcept
-%patch103 -p1 -b .epel7-kcmp
+%patch103 -p1 -b .epel7-header-workarounds
 %patch104 -p1 -b .el7cups
 %patch108 -p1 -b .el7-old-libdrm
 %endif
