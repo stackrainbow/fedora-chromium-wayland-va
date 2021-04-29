@@ -32,8 +32,8 @@
 %global build_remoting 1
 
 # We'd like to always have this on...
-# ... but the libva in EL7 is too old.
-%if 0%{?rhel} == 7
+# ... but the libva in EL7 (and EL8) is too old.
+%if 0%{?rhel} == 7 || 0%{?rhel} == 8
 %global use_vaapi 0
 %else
 %global use_vaapi 1
@@ -144,7 +144,7 @@ BuildRequires:  libicu-devel >= 5.4
 %global gtk3 1
 
 %if 0%{?rhel} == 7 || 0%{?rhel} == 8
-%global dts_version 10
+%global dts_version 9
 
 %global bundleopus 1
 %global bundlelibusbx 1
@@ -328,6 +328,10 @@ Patch106:	chromium-77-clang.patch
 # libdrm on EL7 is rather old and chromium assumes newer
 # This gets us by for now
 Patch108:	chromium-85.0.4183.83-el7-old-libdrm.patch
+# error: no matching function for call to 'std::basic_string<char>::erase(std::basic_string<char>::const_iterator, __gnu_cxx::__normal_iterator<const char*, std::basic_string<char> >&)'
+#   33 |   property_name.erase(property_name.cbegin(), cur);
+# Not sure how this EVER worked anywhere, but it only seems to fail on EPEL-7.
+Patch109:	chromium-90.0.4430.93-epel7-erase-fix.patch
 
 # VAAPI
 # Upstream turned VAAPI on in Linux in 86
@@ -947,6 +951,7 @@ udev.
 %patch103 -p1 -b .epel7-header-workarounds
 %patch104 -p1 -b .el7cups
 %patch108 -p1 -b .el7-old-libdrm
+%patch109 -p1 -b .el7-erase-fix
 %endif
 
 %if 0%{?rhel} == 8
