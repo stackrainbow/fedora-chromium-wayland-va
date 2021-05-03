@@ -332,6 +332,10 @@ Patch108:	chromium-85.0.4183.83-el7-old-libdrm.patch
 #   33 |   property_name.erase(property_name.cbegin(), cur);
 # Not sure how this EVER worked anywhere, but it only seems to fail on EPEL-7.
 Patch109:	chromium-90.0.4430.93-epel7-erase-fix.patch
+# Again, not sure how epel8 is the only one to hit this...
+# AARCH64 neon symbols need to be prefixed too to prevent multiple definition issue at linktime
+Patch110:	chromium-90.0.4430.93-epel8-aarch64-libpng16-symbol-prefixes.patch
+
 
 # VAAPI
 # Upstream turned VAAPI on in Linux in 86
@@ -956,6 +960,7 @@ udev.
 
 %if 0%{?rhel} == 8
 # %%patch107 -p1 -b .el8-arm-incompatible-ints
+%patch110 -p1 -b .el8-aarch64-libpng16-symbol-prefixes
 %endif
 
 # Feature specific patches
