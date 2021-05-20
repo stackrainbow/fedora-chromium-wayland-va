@@ -32,8 +32,8 @@
 %global build_remoting 1
 
 # We'd like to always have this on...
-# ... but the libva in EL7 is too old.
-%if 0%{?rhel} == 7
+# ... but the libva in EL7 (and EL8) is too old.
+%if 0%{?rhel} == 7 || 0%{?rhel} == 8
 %global use_vaapi 0
 %else
 %global use_vaapi 1
@@ -215,7 +215,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4430.93
+Version:	%{majorversion}.0.4430.212
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -314,8 +314,8 @@ Patch80:	https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/fil
 Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
 # el7 only patch
 Patch102:	chromium-80.0.3987.132-el7-noexcept.patch
-# No linux/kcmp.h on EPEL7
-Patch103:	chromium-90.0.4430.85-epel7-no-kcmp-h.patch
+# Work around old and missing headers on EPEL7
+Patch103:	chromium-90.0.4430.93-epel7-old-headers-workarounds.patch
 # Use old cups (chromium's code workaround breaks on gcc)
 # Revert: https://github.com/chromium/chromium/commit/c3213f8779ddc427e89d982514185ed5e4c94e91
 Patch104:	chromium-84.0.4147.89-epel7-old-cups.patch
@@ -328,6 +328,14 @@ Patch106:	chromium-77-clang.patch
 # libdrm on EL7 is rather old and chromium assumes newer
 # This gets us by for now
 Patch108:	chromium-85.0.4183.83-el7-old-libdrm.patch
+# error: no matching function for call to 'std::basic_string<char>::erase(std::basic_string<char>::const_iterator, __gnu_cxx::__normal_iterator<const char*, std::basic_string<char> >&)'
+#   33 |   property_name.erase(property_name.cbegin(), cur);
+# Not sure how this EVER worked anywhere, but it only seems to fail on EPEL-7.
+Patch109:	chromium-90.0.4430.93-epel7-erase-fix.patch
+# Again, not sure how epel8 is the only one to hit this...
+# AARCH64 neon symbols need to be prefixed too to prevent multiple definition issue at linktime
+Patch110:	chromium-90.0.4430.93-epel8-aarch64-libpng16-symbol-prefixes.patch
+
 
 # VAAPI
 # Upstream turned VAAPI on in Linux in 86
@@ -944,13 +952,15 @@ udev.
 %if 0%{?rhel} == 7
 # %%patch101 -p1 -b .epel7
 # %%patch102 -p1 -b .el7-noexcept
-%patch103 -p1 -b .epel7-kcmp
+%patch103 -p1 -b .epel7-header-workarounds
 %patch104 -p1 -b .el7cups
 %patch108 -p1 -b .el7-old-libdrm
+%patch109 -p1 -b .el7-erase-fix
 %endif
 
 %if 0%{?rhel} == 8
 # %%patch107 -p1 -b .el8-arm-incompatible-ints
+%patch110 -p1 -b .el8-aarch64-libpng16-symbol-prefixes
 %endif
 
 # Feature specific patches
@@ -1989,6 +1999,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Tue May 18 2021 Tom Callaway <spot@fedoraproject.org> - 90.0.4430.212-1
+- update to 90.0.4430.212
+
 * Tue Apr 27 2021 Tom Callaway <spot@fedoraproject.org> - 90.0.4430.93-1
 - update to 90.0.4430.93
 
