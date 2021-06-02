@@ -5,7 +5,7 @@ diff -up chromium-91.0.4472.77/build/config/compiler/BUILD.gn.aarch-cxxflags chr
        cflags += [ "-Wno-psabi" ]
      }
  
-+    if (current_cpu == "arm" && !is_clang) {
++    if (current_cpu == "arm64" && !is_clang) {
 +      cflags_cc += [ "-flax-vector-conversions" ]
 +    }
 +
