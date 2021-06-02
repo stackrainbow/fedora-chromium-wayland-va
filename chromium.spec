@@ -7,7 +7,7 @@
 
 # This flag is so I can build things very fast on a giant system.
 # Do not enable in Koji builds.
-%global use_all_cpus 0
+%global use_all_cpus 1
 
 %if %{use_all_cpus}
 %global numjobs %{_smp_build_ncpus}
@@ -208,14 +208,14 @@ BuildRequires:  libicu-devel >= 5.4
 %global chromoting_client_id %nil
 %endif
 
-%global majorversion 90
+%global majorversion 91
 
 %if %{freeworld}
 Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4430.212
+Version:	%{majorversion}.0.4472.77
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -234,7 +234,7 @@ License:	BSD and LGPLv2+ and ASL 2.0 and IJG and MIT and GPLv2+ and ISC and Open
 ### Chromium Fedora Patches ###
 Patch0:		chromium-70.0.3538.67-sandbox-pie.patch
 # Use /etc/chromium for initial_prefs
-Patch1:		chromium-89.0.4389.72-initial_prefs-etc-path.patch
+Patch1:		chromium-91.0.4472.77-initial_prefs-etc-path.patch
 # Use gn system files
 Patch2:		chromium-67.0.3396.62-gn-system.patch
 # Do not prefix libpng functions
@@ -249,7 +249,7 @@ Patch6:		chromium-89.0.4389.72-norar.patch
 # https://gitweb.gentoo.org/repo/gentoo.git/tree/www-client/chromium/files/chromium-widevine-r3.patch
 Patch7:		chromium-71.0.3578.98-widevine-r3.patch
 # Disable fontconfig cache magic that breaks remoting
-Patch8:		chromium-83.0.4103.61-disable-fontconfig-cache-magic.patch
+Patch8:		chromium-91.0.4472.77-disable-fontconfig-cache-magic.patch
 # drop rsp clobber, which breaks gcc9 (thanks to Jeff Law)
 Patch9:	chromium-78.0.3904.70-gcc9-drop-rsp-clobber.patch
 # Try to load widevine from other places
@@ -274,16 +274,20 @@ Patch57:	chromium-89.0.4389.72-missing-cstring-header.patch
 # prepare for using system ffmpeg (clean)
 # http://svnweb.mageia.org/packages/cauldron/chromium-browser-stable/current/SOURCES/chromium-53-ffmpeg-no-deprecation-errors.patch?view=markup
 Patch58:	chromium-53-ffmpeg-no-deprecation-errors.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-90-angle-constexpr.patch
-Patch59:	chromium-90-angle-constexpr.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-90-CrossThreadCopier-qualification.patch
-Patch60:	chromium-90-CrossThreadCopier-qualification.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-90-quantization_utils-include.patch
-Patch61:	chromium-90-quantization_utils-include.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-91-pcscan-vector-types.patch
+Patch59:	chromium-91-pcscan-vector-types.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-91-libyuv-aarch64.patch
+Patch60:	chromium-91-libyuv-aarch64.patch
+# Update third_party/highway to 0.12.2
+# this is needed for sane arm/aarch64
+Patch61:	chromium-91.0.4472.77-update-highway-0.12.2.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-90-ruy-include.patch
 Patch62:	chromium-90-ruy-include.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-90-TokenizedOutput-include.patch
-Patch63:	chromium-90-TokenizedOutput-include.patch
+# Extra CXXFLAGS for aarch64
+Patch63:	chromium-91.0.4472.77-aarch64-cxxflags-addition.patch
+# Fix issue where closure_compiler thinks java is only allowed in android builds
+# https://bugs.chromium.org/p/chromium/issues/detail?id=1192875
+Patch64:	chromium-91.0.4472.77-java-only-allowed-in-android-builds.patch
 
 # Silence GCC warnings during gn compile
 Patch65:	chromium-84.0.4147.105-gn-gcc-cleanup.patch
@@ -300,9 +304,6 @@ Patch75:	chromium-90.0.4430.72-fstatfix.patch
 Patch76:	chromium-88.0.4324.182-rawhide-gcc-std-max-fix.patch
 # Fix symbol visibility with gcc on swiftshader's libEGL
 Patch77:	chromium-88.0.4324.182-gcc-fix-swiftshader-libEGL-visibility.patch
-# Include support for futex_time64 (64bit time on 32bit platforms)
-# https://chromium.googlesource.com/chromium/src/+/955a586c63c4f99fb734e44221db63f5b2ca25a9%5E%21/#F0
-Patch78:	chromium-89.0.4389.82-support-futex_time64.patch
 # Do not download proprietary widevine module in the background (thanks Debian)
 Patch79:	chromium-90.0.4430.72-widevine-no-download.patch
 # Fix crashes with components/cast_*
@@ -409,6 +410,7 @@ BuildRequires:	harfbuzz-devel >= 2.4.0
 %endif
 BuildRequires:	libatomic
 BuildRequires:	libcap-devel
+BuildRequires:	libcurl-devel
 %if 0%{?bundlelibdrm}
 #nothing
 %else
@@ -924,12 +926,12 @@ udev.
 %patch56 -p1 -b .missing-cstdint
 %patch57 -p1 -b .missing-cstring
 %patch58 -p1 -b .ffmpeg-deprecations
-%patch59 -p1 -b .angle-constexpr
-%patch60 -p1 -b .CrossThreadCopier-qualification
-%patch61 -p1 -b .quantization_utils-include
+%patch59 -p1 -b .pcscan-vector-types
+%patch60 -p1 -b .libyuv-aarch64
+%patch61 -p1 -b .update-highway-0.12.2
 %patch62 -p1 -b .ruy-include
-%patch63 -p1 -b .TokenizedOutput
-
+%patch63 -p1 -b .aarch64-cxxflags-addition
+%patch64 -p1 -b .java-only-allowed
 %patch65 -p1 -b .gn-gcc-cleanup
 %patch66 -p1 -b .remoting-cstring
 %patch67 -p1 -b .i686-textrels
@@ -939,7 +941,6 @@ udev.
 %patch76 -p1 -b .sigstkszfix
 %endif
 %patch77 -p1 -b .gcc-swiftshader-visibility
-%patch78 -p1 -b .futex-time64
 %patch79 -p1 -b .widevine-no-download
 %patch80 -p1 -b .EnumTable-crash
 
@@ -1209,6 +1210,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/cros_system_api' \
 	'third_party/dav1d' \
 	'third_party/dawn' \
+	'third_party/dawn/third_party/khronos' \
 	'third_party/depot_tools' \
 	'third_party/devscripts' \
 	'third_party/devtools-frontend' \
@@ -1247,6 +1249,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/googletest' \
 	'third_party/grpc' \
 	'third_party/harfbuzz-ng' \
+	'third_party/highway' \
 	'third_party/hunspell' \
 	'third_party/iccjpeg' \
 	'third_party/icu' \
@@ -1268,6 +1271,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/libgifcodec' \
 	'third_party/libjingle' \
 	'third_party/libjpeg_turbo' \
+	'third_party/libjxl' \
 	'third_party/libphonenumber' \
 	'third_party/libpng' \
 	'third_party/libsecret' \
@@ -1341,7 +1345,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/rnnoise' \
 	'third_party/ruy' \
 	'third_party/s2cellid' \
-	'third_party/schema_org' \
 	'third_party/securemessage' \
 	'third_party/shell-encryption' \
 	'third_party/simplejson' \
@@ -1378,6 +1381,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/wayland' \
 	'third_party/web-animations-js' \
 	'third_party/webdriver' \
+	'third_party/webgpu-cts' \
 	'third_party/webrtc' \
 	'third_party/webrtc/common_audio/third_party/ooura' \
 	'third_party/webrtc/common_audio/third_party/spl_sqrt_floor' \
@@ -1943,6 +1947,10 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 %lang(vi) %{chromium_path}/locales/vi.pak*
 %lang(zh_CN) %{chromium_path}/locales/zh-CN.pak*
 %lang(zh_TW) %{chromium_path}/locales/zh-TW.pak*
+# These are psuedolocales, not real ones.
+# So we just include them always.
+%{chromium_path}/locales/ar-XB.pak*
+%{chromium_path}/locales/en-XA.pak*
 
 %if %{build_headless}
 %files headless
@@ -1999,6 +2007,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Tue Jun  1 2021 Tom Callaway <spot@fedoraproject.org> - 91.0.4472.77-1
+- update to 91.0.4472.77
+
 * Tue May 18 2021 Tom Callaway <spot@fedoraproject.org> - 90.0.4430.212-1
 - update to 90.0.4430.212
 
