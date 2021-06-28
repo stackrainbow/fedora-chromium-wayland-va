@@ -332,7 +332,7 @@ Patch108:	chromium-85.0.4183.83-el7-old-libdrm.patch
 # error: no matching function for call to 'std::basic_string<char>::erase(std::basic_string<char>::const_iterator, __gnu_cxx::__normal_iterator<const char*, std::basic_string<char> >&)'
 #   33 |   property_name.erase(property_name.cbegin(), cur);
 # Not sure how this EVER worked anywhere, but it only seems to fail on EPEL-7.
-Patch109:	chromium-90.0.4430.93-epel7-erase-fix.patch
+Patch109:	chromium-91.0.4472.114-epel7-erase-fix.patch
 # Again, not sure how epel8 is the only one to hit this...
 # AARCH64 neon symbols need to be prefixed too to prevent multiple definition issue at linktime
 Patch110:	chromium-90.0.4430.93-epel8-aarch64-libpng16-symbol-prefixes.patch
