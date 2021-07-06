@@ -216,7 +216,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 Name:		chromium%{chromium_channel}
 %endif
 Version:	%{majorversion}.0.4472.114
-Release:	1%{?dist}
+Release:	2%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -309,6 +309,8 @@ Patch79:	chromium-90.0.4430.72-widevine-no-download.patch
 # Fix crashes with components/cast_*
 # Thanks to Gentoo
 Patch80:	https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-89-EnumTable-crash.patch
+# Fix crashes with ThemeService, thanks OpenSUSE
+Patch81:	chromium-91-1190561-boo1186948.patch
 
 
 # Use lstdc++ on EPEL7 only
@@ -943,6 +945,7 @@ udev.
 %patch77 -p1 -b .gcc-swiftshader-visibility
 %patch79 -p1 -b .widevine-no-download
 %patch80 -p1 -b .EnumTable-crash
+%patch81 -p1 -b .ThemeService-crash
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -2007,6 +2010,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Tue Jul  6 2021 Tom Callaway <spot@fedoraproject.org> - 91.0.4472.114-2
+- fix ThemeService crash (thanks OpenSUSE)
+
 * Wed Jun 23 2021 Tom Callaway <spot@fedoraproject.org> - 91.0.4472.114-1
 - update to 91.0.4472.114
 
