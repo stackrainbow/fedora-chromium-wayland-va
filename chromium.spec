@@ -208,15 +208,15 @@ BuildRequires:  libicu-devel >= 5.4
 %global chromoting_client_id %nil
 %endif
 
-%global majorversion 91
+%global majorversion 92
 
 %if %{freeworld}
 Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4472.164
-Release:	2%{?dist}
+Version:	%{majorversion}.0.4515.107
+Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -244,18 +244,18 @@ Patch4:		chromium-60.0.3112.78-jpeg-nomangle.patch
 # Do not mangle zlib
 Patch5:		chromium-77.0.3865.75-no-zlib-mangle.patch
 # Do not use unrar code, it is non-free
-Patch6:		chromium-89.0.4389.72-norar.patch
+Patch6:		chromium-92.0.4515.107-norar.patch
 # Use Gentoo's Widevine hack
 # https://gitweb.gentoo.org/repo/gentoo.git/tree/www-client/chromium/files/chromium-widevine-r3.patch
 Patch7:		chromium-71.0.3578.98-widevine-r3.patch
 # Disable fontconfig cache magic that breaks remoting
 Patch8:		chromium-91.0.4472.77-disable-fontconfig-cache-magic.patch
 # drop rsp clobber, which breaks gcc9 (thanks to Jeff Law)
-Patch9:	chromium-78.0.3904.70-gcc9-drop-rsp-clobber.patch
+Patch9:		chromium-78.0.3904.70-gcc9-drop-rsp-clobber.patch
 # Try to load widevine from other places
-Patch10:	chromium-89.0.4389.72-widevine-other-locations.patch
+Patch10:	chromium-92.0.4515.107-widevine-other-locations.patch
 # Try to fix version.py for Rawhide
-Patch11:	chromium-71.0.3578.98-py2-bootstrap.patch
+Patch11:	chromium-92.0.4515.107-py2-bootstrap.patch
 # Add "Fedora" to the user agent string
 Patch12:	chromium-86.0.4240.75-fedora-user-agent.patch
 
@@ -274,13 +274,11 @@ Patch57:	chromium-89.0.4389.72-missing-cstring-header.patch
 # prepare for using system ffmpeg (clean)
 # http://svnweb.mageia.org/packages/cauldron/chromium-browser-stable/current/SOURCES/chromium-53-ffmpeg-no-deprecation-errors.patch?view=markup
 Patch58:	chromium-53-ffmpeg-no-deprecation-errors.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-91-pcscan-vector-types.patch
-Patch59:	chromium-91-pcscan-vector-types.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-91-libyuv-aarch64.patch
 Patch60:	chromium-91-libyuv-aarch64.patch
 # Update third_party/highway to 0.12.2
 # this is needed for sane arm/aarch64
-Patch61:	chromium-91.0.4472.77-update-highway-0.12.2.patch
+Patch61:	chromium-92.0.4515.107-update-highway-0.12.2.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-90-ruy-include.patch
 Patch62:	chromium-90-ruy-include.patch
 # Extra CXXFLAGS for aarch64
@@ -290,7 +288,7 @@ Patch63:	chromium-91.0.4472.77-aarch64-cxxflags-addition.patch
 Patch64:	chromium-91.0.4472.77-java-only-allowed-in-android-builds.patch
 
 # Silence GCC warnings during gn compile
-Patch65:	chromium-84.0.4147.105-gn-gcc-cleanup.patch
+Patch65:	chromium-92.0.4515.107-gn-gcc-cleanup.patch
 # Fix missing cstring in remoting code
 Patch66:	chromium-84.0.4147.125-remoting-cstring.patch
 # Apply fix_textrels hack for i686 (even without lld)
@@ -301,16 +299,16 @@ Patch68:	chromium-84.0.4147.125-aarch64-clearkeycdm-binutils-workaround.patch
 # Thanks to Kevin Kofler for the fix.
 Patch75:	chromium-90.0.4430.72-fstatfix.patch
 # Rawhide (f35) glibc defines SIGSTKSZ as a long instead of a constant
-Patch76:	chromium-88.0.4324.182-rawhide-gcc-std-max-fix.patch
+Patch76:	chromium-92.0.4515.107-rawhide-gcc-std-max-fix.patch
 # Fix symbol visibility with gcc on swiftshader's libEGL
 Patch77:	chromium-88.0.4324.182-gcc-fix-swiftshader-libEGL-visibility.patch
 # Do not download proprietary widevine module in the background (thanks Debian)
 Patch79:	chromium-90.0.4430.72-widevine-no-download.patch
 # Fix crashes with components/cast_*
 # Thanks to Gentoo
-Patch80:	https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-89-EnumTable-crash.patch
-# Fix crashes with ThemeService, thanks OpenSUSE
-Patch81:	chromium-91-1190561-boo1186948.patch
+Patch80:	chromium-92.0.4515.107-EnumTable-crash.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-92-v8-constexpr.patch
+Patch82:	chromium-92-v8-constexpr.patch
 
 
 # Use lstdc++ on EPEL7 only
@@ -928,7 +926,6 @@ udev.
 %patch56 -p1 -b .missing-cstdint
 %patch57 -p1 -b .missing-cstring
 %patch58 -p1 -b .ffmpeg-deprecations
-%patch59 -p1 -b .pcscan-vector-types
 %patch60 -p1 -b .libyuv-aarch64
 %patch61 -p1 -b .update-highway-0.12.2
 %patch62 -p1 -b .ruy-include
@@ -945,7 +942,7 @@ udev.
 %patch77 -p1 -b .gcc-swiftshader-visibility
 %patch79 -p1 -b .widevine-no-download
 %patch80 -p1 -b .EnumTable-crash
-%patch81 -p1 -b .ThemeService-crash
+%patch82 -p1 -b .v8-constexpr
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -1222,7 +1219,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/devtools-frontend/src/front_end/third_party/axe-core' \
 	'third_party/devtools-frontend/src/front_end/third_party/chromium' \
 	'third_party/devtools-frontend/src/front_end/third_party/codemirror' \
-	'third_party/devtools-frontend/src/front_end/third_party/fabricjs' \
 	'third_party/devtools-frontend/src/front_end/third_party/i18n' \
 	'third_party/devtools-frontend/src/front_end/third_party/intl-messageformat' \
 	'third_party/devtools-frontend/src/front_end/third_party/lighthouse' \
@@ -1375,7 +1371,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/tflite/src/third_party/eigen3' \
 	'third_party/tflite/src/third_party/fft2d' \
 	'third_party/tflite-support' \
-	'third_party/tint' \
 	'third_party/ukey2' \
         'third_party/usb_ids' \
 	'third_party/usrsctp' \
@@ -2010,6 +2005,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Mon Jul 26 2021 Tom Callaway <spot@fedoraproject.org> - 92.0.4515.107-1
+- update to 92.0.4515.107
+
 * Wed Jul 21 2021 Fedora Release Engineering <releng@fedoraproject.org> - 91.0.4472.164-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
 
