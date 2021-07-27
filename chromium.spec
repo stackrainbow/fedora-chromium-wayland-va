@@ -255,7 +255,7 @@ Patch9:		chromium-78.0.3904.70-gcc9-drop-rsp-clobber.patch
 # Try to load widevine from other places
 Patch10:	chromium-92.0.4515.107-widevine-other-locations.patch
 # Try to fix version.py for Rawhide
-Patch11:	chromium-92.0.4515.107-py2-bootstrap.patch
+Patch11:	chromium-92.0.4515.107-py3-bootstrap.patch
 # Add "Fedora" to the user agent string
 Patch12:	chromium-86.0.4240.75-fedora-user-agent.patch
 
@@ -527,17 +527,17 @@ BuildRequires:	pkgconfig(gtk+-3.0)
 %else
 BuildRequires:	pkgconfig(gtk+-2.0)
 %endif
-BuildRequires:	/usr/bin/python2
-BuildRequires:	python2-devel
+BuildRequires:	/usr/bin/python3
+BuildRequires:	python3-devel
 %if 0%{?bundlepylibs}
 # Using bundled bits, do nothing.
 %else
 %if 0%{?fedora}
-BuildRequires:	python2-beautifulsoup4
-BuildRequires:	python2-beautifulsoup
-BuildRequires:	python2-html5lib
-BuildRequires:	python2-markupsafe
-BuildRequires:	python2-ply
+BuildRequires:	python3-beautifulsoup4
+# BuildRequires:	python2-beautifulsoup
+BuildRequires:	python3-html5lib
+BuildRequires:	python3-markupsafe
+BuildRequires:	python3-ply
 %else
 BuildRequires:	python-beautifulsoup4
 BuildRequires:	python-BeautifulSoup
@@ -545,7 +545,7 @@ BuildRequires:	python-html5lib
 BuildRequires:	python-markupsafe
 BuildRequires:	python-ply
 %endif
-BuildRequires:	python2-simplejson
+BuildRequires:	python3-simplejson
 %endif
 %if 0%{?bundlere2}
 # Using bundled bits, do nothing.
@@ -857,7 +857,7 @@ Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
 Requires: xorg-x11-server-Xvfb
-Requires: python2-psutil
+Requires: python3-psutil
 %if 0%{?shared}
 Requires: chromium-libs%{_isa} = %{version}-%{release}
 %else
@@ -981,7 +981,7 @@ udev.
 
 # Change shebang in all relevant files in this directory and all subdirectories
 # See `man find` for how the `-exec command {} +` syntax works
-find -type f -exec sed -iE '1s=^#! */usr/bin/\(python\|env python\)[23]\?=#!%{__python2}=' {} +
+find -type f -exec sed -iE '1s=^#! */usr/bin/\(python\|env python\)[23]\?=#!%{__python3}=' {} +
 
 %if 0%{?asan}
 export CC="clang"
@@ -1159,6 +1159,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'base/third_party/valgrind' \
 	'base/third_party/xdg_mime' \
 	'base/third_party/xdg_user_dirs' \
+	'buildtools/third_party/eu-strip' \
 	'buildtools/third_party/libc++' \
 	'buildtools/third_party/libc++abi' \
 	'chrome/third_party/mozilla_security_manager' \
@@ -1219,6 +1220,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/devtools-frontend/src/front_end/third_party/axe-core' \
 	'third_party/devtools-frontend/src/front_end/third_party/chromium' \
 	'third_party/devtools-frontend/src/front_end/third_party/codemirror' \
+	'third_party/devtools-frontend/src/front_end/third_party/diff' \
 	'third_party/devtools-frontend/src/front_end/third_party/i18n' \
 	'third_party/devtools-frontend/src/front_end/third_party/intl-messageformat' \
 	'third_party/devtools-frontend/src/front_end/third_party/lighthouse' \
@@ -1410,8 +1412,8 @@ build/linux/unbundle/remove_bundled_libraries.py \
 %if ! 0%{?bundlepylibs}
 # Look, I don't know. This package is spit and chewing gum. Sorry.
 rm -rf third_party/markupsafe
-ln -s %{python2_sitearch}/markupsafe third_party/markupsafe
-# We should look on removing other python2 packages as well i.e. ply
+ln -s %{python3_sitearch}/markupsafe third_party/markupsafe
+# We should look on removing other python packages as well i.e. ply
 %endif
 
 # Fix hardcoded path in remoting code
@@ -1497,24 +1499,24 @@ sed -i 's|exec "${THIS_DIR}/ninja-linux${LONG_BIT}"|exec "/usr/bin/ninja-build"|
 %endif
 
 # Check that there is no system 'google' module, shadowing bundled ones:
-if python2 -c 'import google ; print google.__path__' 2> /dev/null ; then \
-    echo "Python 2 'google' module is defined, this will shadow modules of this build"; \
+if python3 -c 'import google ; print google.__path__' 2> /dev/null ; then \
+    echo "Python 3 'google' module is defined, this will shadow modules of this build"; \
     exit 1 ; \
 fi
 
 tools/gn/bootstrap/bootstrap.py -v --no-clean --gn-gen-args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES"
-%{builddir}/gn --script-executable=/usr/bin/python2 gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES" %{builddir}
+%{builddir}/gn --script-executable=/usr/bin/python3 gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES" %{builddir}
 
 %if %{freeworld}
 # do not need to do headless gen
 %else
 %if %{build_headless}
-%{builddir}/gn --script-executable=/usr/bin/python2 gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_HEADLESS_GN_DEFINES" %{headlessbuilddir}
+%{builddir}/gn --script-executable=/usr/bin/python3 gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_HEADLESS_GN_DEFINES" %{headlessbuilddir}
 %endif
 %endif
 
 %if %{build_remoting}
-%{builddir}/gn --script-executable=/usr/bin/python2 gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES" %{remotingbuilddir}
+%{builddir}/gn --script-executable=/usr/bin/python3 gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES" %{remotingbuilddir}
 %endif
 
 %if %{bundlelibusbx}
@@ -1550,7 +1552,8 @@ tar xf %{SOURCE20}
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 %endif
 
-export PYTHONPATH="../../third_party/pyjson5/src:../../third_party/catapult/third_party/google-endpoints:../../xcb-proto-1.14"
+# export PYTHONPATH="../../third_party/pyjson5/src:../../third_party/catapult/third_party/google-endpoints:../../xcb-proto-1.14"
+export PYTHONPATH="../../third_party/pyjson5/src:../../xcb-proto-1.14"
 
 echo
 # Now do the full browser
@@ -2007,6 +2010,7 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 %changelog
 * Mon Jul 26 2021 Tom Callaway <spot@fedoraproject.org> - 92.0.4515.107-1
 - update to 92.0.4515.107
+- drop python2 deps (finally)
 
 * Wed Jul 21 2021 Fedora Release Engineering <releng@fedoraproject.org> - 91.0.4472.164-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
