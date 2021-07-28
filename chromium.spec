@@ -31,6 +31,15 @@
 # This doesn't work and it doesn't even build as of Chromium 83
 %global build_remoting 1
 
+# This will probably be possible with Chromium 93
+%global build_with_python3 0
+
+%if 0%{?build_with_python3}
+%global chromium_pybin %{__python3}
+%else
+%global chromium_pybin %{__python2}
+%endif
+
 # We'd like to always have this on...
 # ... but the libva in EL7 (and EL8) is too old.
 %if 0%{?rhel} == 7 || 0%{?rhel} == 8
@@ -527,8 +536,14 @@ BuildRequires:	pkgconfig(gtk+-3.0)
 %else
 BuildRequires:	pkgconfig(gtk+-2.0)
 %endif
-BuildRequires:	/usr/bin/python3
+BuildRequires:	%{chromium_pybin}
+%if 0%{?build_with_python3}
 BuildRequires:	python3-devel
+%else
+BuildRequires:	python2-devel
+%endif
+
+%if 0%{?build_with_python3}
 %if 0%{?bundlepylibs}
 # Using bundled bits, do nothing.
 %else
@@ -547,6 +562,28 @@ BuildRequires:	python-ply
 %endif
 BuildRequires:	python3-simplejson
 %endif
+%else
+%if 0%{?bundlepylibs}
+# Using bundled bits, do nothing.
+%else
+%if 0%{?fedora}
+BuildRequires:  python2-beautifulsoup4
+BuildRequires:  python2-beautifulsoup
+BuildRequires:  python2-html5lib
+BuildRequires:  python2-markupsafe
+BuildRequires:  python2-ply
+%else
+BuildRequires:  python-beautifulsoup4
+BuildRequires:  python-BeautifulSoup
+BuildRequires:  python-html5lib
+BuildRequires:  python-markupsafe
+BuildRequires:  python-ply
+%endif
+BuildRequires:  python2-simplejson
+%endif
+%endif
+
+
 %if 0%{?bundlere2}
 # Using bundled bits, do nothing.
 %else
@@ -857,7 +894,11 @@ Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
 Requires: xorg-x11-server-Xvfb
+%if 0%{?build_with_python3}
 Requires: python3-psutil
+%else
+Requires: python2-psutil
+%endif
 %if 0%{?shared}
 Requires: chromium-libs%{_isa} = %{version}-%{release}
 %else
@@ -914,7 +955,9 @@ udev.
 %patch8 -p1 -b .nofontconfigcache
 %patch9 -p1 -b .gcc9
 %patch10 -p1 -b .widevine-other-locations
-%patch11 -p1 -b .py2
+%if 0%{?build_with_python3}
+%patch11 -p1 -b .py3
+%endif
 
 # Short term fixes (usually gcc and backports)
 %patch51 -p1 -b .gcc-remoting-constexpr
@@ -981,7 +1024,11 @@ udev.
 
 # Change shebang in all relevant files in this directory and all subdirectories
 # See `man find` for how the `-exec command {} +` syntax works
+%if 0%{?build_with_python3}
 find -type f -exec sed -iE '1s=^#! */usr/bin/\(python\|env python\)[23]\?=#!%{__python3}=' {} +
+%else
+find -type f -exec sed -iE '1s=^#! */usr/bin/\(python\|env python\)[23]\?=#!%{__python2}=' {} +
+%endif
 
 %if 0%{?asan}
 export CC="clang"
@@ -1412,7 +1459,11 @@ build/linux/unbundle/remove_bundled_libraries.py \
 %if ! 0%{?bundlepylibs}
 # Look, I don't know. This package is spit and chewing gum. Sorry.
 rm -rf third_party/markupsafe
+%if 0%{?build_with_python3}
 ln -s %{python3_sitearch}/markupsafe third_party/markupsafe
+%else
+ln -s %{python2_sitearch}/markupsafe third_party/markupsafe
+%endif
 # We should look on removing other python packages as well i.e. ply
 %endif
 
@@ -1499,24 +1550,29 @@ sed -i 's|exec "${THIS_DIR}/ninja-linux${LONG_BIT}"|exec "/usr/bin/ninja-build"|
 %endif
 
 # Check that there is no system 'google' module, shadowing bundled ones:
+%if 0%{?build_with_python3}
 if python3 -c 'import google ; print google.__path__' 2> /dev/null ; then \
     echo "Python 3 'google' module is defined, this will shadow modules of this build"; \
+%else
+if python2 -c 'import google ; print google.__path__' 2> /dev/null ; then \
+    echo "Python 2 'google' module is defined, this will shadow modules of this build"; \
+%endif
     exit 1 ; \
 fi
 
 tools/gn/bootstrap/bootstrap.py -v --no-clean --gn-gen-args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES"
-%{builddir}/gn --script-executable=/usr/bin/python3 gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES" %{builddir}
+%{builddir}/gn --script-executable=%{chromium_pybin} gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES" %{builddir}
 
 %if %{freeworld}
 # do not need to do headless gen
 %else
 %if %{build_headless}
-%{builddir}/gn --script-executable=/usr/bin/python3 gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_HEADLESS_GN_DEFINES" %{headlessbuilddir}
+%{builddir}/gn --script-executable=%{chromium_pybin} gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_HEADLESS_GN_DEFINES" %{headlessbuilddir}
 %endif
 %endif
 
 %if %{build_remoting}
-%{builddir}/gn --script-executable=/usr/bin/python3 gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES" %{remotingbuilddir}
+%{builddir}/gn --script-executable=%{chromium_pybin} gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES" %{remotingbuilddir}
 %endif
 
 %if %{bundlelibusbx}
