@@ -34,11 +34,9 @@
 # This will probably be possible with Chromium 93
 %global build_with_python3 0
 
-%if 0%{?build_with_python3}
+# So, Chromium 92+ needs to run with python3, but has special magic to force python2 where needed.
+# Kinda fishy, but it should go away soon and just all be python3.
 %global chromium_pybin %{__python3}
-%else
-%global chromium_pybin %{__python2}
-%endif
 
 # We'd like to always have this on...
 # ... but the libva in EL7 (and EL8) is too old.
@@ -537,9 +535,9 @@ BuildRequires:	pkgconfig(gtk+-3.0)
 BuildRequires:	pkgconfig(gtk+-2.0)
 %endif
 BuildRequires:	%{chromium_pybin}
-%if 0%{?build_with_python3}
 BuildRequires:	python3-devel
-%else
+%if ! %{build_with_python3}
+BuildRequires:	/usr/bin/python2
 BuildRequires:	python2-devel
 %endif
 
