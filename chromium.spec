@@ -316,6 +316,8 @@ Patch79:	chromium-90.0.4430.72-widevine-no-download.patch
 Patch80:	chromium-92.0.4515.107-EnumTable-crash.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-92-v8-constexpr.patch
 Patch82:	chromium-92-v8-constexpr.patch
+# Fixes for python3
+Patch83:	chromium-92.0.4515.107-py3-fixes.patch
 
 
 # Use lstdc++ on EPEL7 only
@@ -984,6 +986,7 @@ udev.
 %patch79 -p1 -b .widevine-no-download
 %patch80 -p1 -b .EnumTable-crash
 %patch82 -p1 -b .v8-constexpr
+%patch83 -p1 -b .py3fixes
 
 # Fedora branded user agent
 %if 0%{?fedora}
