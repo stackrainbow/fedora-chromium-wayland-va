@@ -31,12 +31,15 @@
 # This doesn't work and it doesn't even build as of Chromium 83
 %global build_remoting 1
 
-# This will probably be possible with Chromium 93
-%global build_with_python3 0
+# This will probably be truely possible with Chromium 93
+# Right now, we fake it a bit and pull in both python2 and python3 stacks. sorry.
+%global build_with_python3 1
 
-# So, Chromium 92+ needs to run with python3, but has special magic to force python2 where needed.
-# Kinda fishy, but it should go away soon and just all be python3.
+%if 0%{?build_with_python3}
 %global chromium_pybin %{__python3}
+%else
+%global chromium_pybin %{__python2}
+%endif
 
 # We'd like to always have this on...
 # ... but the libva in EL7 (and EL8) is too old.
@@ -262,7 +265,11 @@ Patch9:		chromium-78.0.3904.70-gcc9-drop-rsp-clobber.patch
 # Try to load widevine from other places
 Patch10:	chromium-92.0.4515.107-widevine-other-locations.patch
 # Try to fix version.py for Rawhide
-Patch11:	chromium-92.0.4515.107-py3-bootstrap.patch
+%if 0%{?build_with_python3}
+Patch11:        chromium-92.0.4515.107-py3-bootstrap.patch
+%else
+Patch11:	chromium-92.0.4515.107-py2-bootstrap.patch
+%endif
 # Add "Fedora" to the user agent string
 Patch12:	chromium-86.0.4240.75-fedora-user-agent.patch
 
@@ -537,13 +544,13 @@ BuildRequires:	pkgconfig(gtk+-3.0)
 BuildRequires:	pkgconfig(gtk+-2.0)
 %endif
 BuildRequires:	%{chromium_pybin}
-BuildRequires:	python3-devel
-%if ! %{build_with_python3}
-BuildRequires:	/usr/bin/python2
+# %%if ! %%{build_with_python3}
 BuildRequires:	python2-devel
-%endif
+# %%else
+BuildRequires:  python3-devel
+# %%endif
 
-%if 0%{?build_with_python3}
+# %%if 0%{?build_with_python3}
 %if 0%{?bundlepylibs}
 # Using bundled bits, do nothing.
 %else
@@ -562,7 +569,7 @@ BuildRequires:	python-ply
 %endif
 BuildRequires:	python3-simplejson
 %endif
-%else
+#%%else
 %if 0%{?bundlepylibs}
 # Using bundled bits, do nothing.
 %else
@@ -581,7 +588,7 @@ BuildRequires:  python-ply
 %endif
 BuildRequires:  python2-simplejson
 %endif
-%endif
+# %%endif
 
 
 %if 0%{?bundlere2}
