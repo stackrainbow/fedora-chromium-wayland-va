@@ -325,7 +325,8 @@ Patch80:	chromium-92.0.4515.107-EnumTable-crash.patch
 Patch82:	chromium-92-v8-constexpr.patch
 # Fixes for python3
 Patch83:	chromium-92.0.4515.107-py3-fixes.patch
-
+# Fix build with Freetype 2.11
+Patch84:	https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-freetype-2.11.patch
 
 # Use lstdc++ on EPEL7 only
 Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
@@ -994,6 +995,7 @@ udev.
 %patch80 -p1 -b .EnumTable-crash
 %patch82 -p1 -b .v8-constexpr
 %patch83 -p1 -b .py3fixes
+%patch84 -p1 -b .freetype-2.11
 
 # Fedora branded user agent
 %if 0%{?fedora}
