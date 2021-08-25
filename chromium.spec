@@ -1003,7 +1003,8 @@ udev.
 %patch83 -p1 -b .py3fixes
 %patch84 -p1 -b .freetype-2.11
 %patch85 -p1 -b .clone3
-%patch86 -p1 -b .clang-format-py3
+# Still using python2 in 92.
+# %%patch86 -p1 -b .clang-format-py3
 
 # Fedora branded user agent
 %if 0%{?fedora}
