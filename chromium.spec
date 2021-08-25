@@ -225,7 +225,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4515.107
+Version:	%{majorversion}.0.4515.159
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -327,6 +327,13 @@ Patch82:	chromium-92-v8-constexpr.patch
 Patch83:	chromium-92.0.4515.107-py3-fixes.patch
 # Fix build with Freetype 2.11
 Patch84:	https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-freetype-2.11.patch
+# https://bugs.chromium.org/p/chromium/issues/detail?id=1213452
+# https://chromium.googlesource.com/chromium/src/sandbox/+/482404adee4fc0487452c7ae5ac9c192b0f4fd30%5E%21/#F0
+# Needed for F35+, but safe everywhere
+Patch85:	chromium-92.0.4515.107-sandbox-clone3.patch
+# Clean up clang-format for python3
+# thanks to Jon Nettleton
+Patch86:	chromium-92-clang-format.patch
 
 # Use lstdc++ on EPEL7 only
 Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
@@ -353,7 +360,6 @@ Patch109:	chromium-90.0.4430.93-epel7-erase-fix.patch
 # Again, not sure how epel8 is the only one to hit this...
 # AARCH64 neon symbols need to be prefixed too to prevent multiple definition issue at linktime
 Patch110:	chromium-90.0.4430.93-epel8-aarch64-libpng16-symbol-prefixes.patch
-
 
 # VAAPI
 # Upstream turned VAAPI on in Linux in 86
@@ -996,6 +1002,8 @@ udev.
 %patch82 -p1 -b .v8-constexpr
 %patch83 -p1 -b .py3fixes
 %patch84 -p1 -b .freetype-2.11
+%patch85 -p1 -b .clone3
+%patch86 -p1 -b .clang-format-py3
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -2074,6 +2082,13 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Tue Aug 17 2021 Tom Callaway <spot@fedoraproject.org> - 92.0.4515.159-1
+- update to 92.0.4515.159
+
+* Mon Aug 16 2021 Tom Callaway <spot@fedoraproject.org> - 92.0.4515.131-1
+- update to 92.0.4515.131
+- apply upstream fix for clone3 crash
+
 * Mon Jul 26 2021 Tom Callaway <spot@fedoraproject.org> - 92.0.4515.107-1
 - update to 92.0.4515.107
 - drop python2 deps (finally)
