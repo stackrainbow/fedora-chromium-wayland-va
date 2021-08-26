@@ -484,6 +484,8 @@ BuildRequires:	libstdc++-devel, openssl-devel
 # Fedora tries to use system libs whenever it can.
 BuildRequires:	bzip2-devel
 BuildRequires:	dbus-glib-devel
+# For eu-strip
+BuildRequires:	elfutils
 BuildRequires:	elfutils-libelf-devel
 BuildRequires:	flac-devel
 %if 0%{?bundlefreetype}
@@ -1559,6 +1561,11 @@ sed -i '/${LONG_BIT}/ a \      aarch64)\' ../depot_tools/ninja
 sed -i '/aarch64)/ a \        exec "/usr/bin/ninja-build" "$@";;\' ../depot_tools/ninja
 %endif
 sed -i 's|exec "${THIS_DIR}/ninja-linux${LONG_BIT}"|exec "/usr/bin/ninja-build"|g' ../depot_tools/ninja
+
+# Get rid of the pre-built eu-strip binary, it is x86_64 and of mysterious origin
+rm -rf buildtools/third_party/eu-strip/bin/eu-strip
+# Replace it with a symlink to the Fedora copy
+ln -s %{_bindir}/eu-strip buildtools/third_party/eu-strip/bin/eu-strip
 
 %if 0%{?rhel} == 7
 . /opt/rh/devtoolset-%{dts_version}/enable
