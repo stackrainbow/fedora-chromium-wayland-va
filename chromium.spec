@@ -31,6 +31,16 @@
 # This doesn't work and it doesn't even build as of Chromium 83
 %global build_remoting 1
 
+# This will probably be truely possible with Chromium 93
+# Right now, we fake it a bit and pull in both python2 and python3 stacks. sorry.
+%global build_with_python3 1
+
+%if 0%{?build_with_python3}
+%global chromium_pybin %{__python3}
+%else
+%global chromium_pybin %{__python2}
+%endif
+
 # We'd like to always have this on...
 # ... but the libva in EL7 (and EL8) is too old.
 %if 0%{?rhel} == 7 || 0%{?rhel} == 8
@@ -208,14 +218,14 @@ BuildRequires:  libicu-devel >= 5.4
 %global chromoting_client_id %nil
 %endif
 
-%global majorversion 91
+%global majorversion 92
 
 %if %{freeworld}
 Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4472.164
+Version:	%{majorversion}.0.4515.159
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -244,18 +254,22 @@ Patch4:		chromium-60.0.3112.78-jpeg-nomangle.patch
 # Do not mangle zlib
 Patch5:		chromium-77.0.3865.75-no-zlib-mangle.patch
 # Do not use unrar code, it is non-free
-Patch6:		chromium-89.0.4389.72-norar.patch
+Patch6:		chromium-92.0.4515.107-norar.patch
 # Use Gentoo's Widevine hack
 # https://gitweb.gentoo.org/repo/gentoo.git/tree/www-client/chromium/files/chromium-widevine-r3.patch
 Patch7:		chromium-71.0.3578.98-widevine-r3.patch
 # Disable fontconfig cache magic that breaks remoting
 Patch8:		chromium-91.0.4472.77-disable-fontconfig-cache-magic.patch
 # drop rsp clobber, which breaks gcc9 (thanks to Jeff Law)
-Patch9:	chromium-78.0.3904.70-gcc9-drop-rsp-clobber.patch
+Patch9:		chromium-78.0.3904.70-gcc9-drop-rsp-clobber.patch
 # Try to load widevine from other places
-Patch10:	chromium-89.0.4389.72-widevine-other-locations.patch
+Patch10:	chromium-92.0.4515.107-widevine-other-locations.patch
 # Try to fix version.py for Rawhide
-Patch11:	chromium-71.0.3578.98-py2-bootstrap.patch
+%if 0%{?build_with_python3}
+Patch11:        chromium-92.0.4515.107-py3-bootstrap.patch
+%else
+Patch11:	chromium-92.0.4515.107-py2-bootstrap.patch
+%endif
 # Add "Fedora" to the user agent string
 Patch12:	chromium-86.0.4240.75-fedora-user-agent.patch
 
@@ -274,13 +288,11 @@ Patch57:	chromium-89.0.4389.72-missing-cstring-header.patch
 # prepare for using system ffmpeg (clean)
 # http://svnweb.mageia.org/packages/cauldron/chromium-browser-stable/current/SOURCES/chromium-53-ffmpeg-no-deprecation-errors.patch?view=markup
 Patch58:	chromium-53-ffmpeg-no-deprecation-errors.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-91-pcscan-vector-types.patch
-Patch59:	chromium-91-pcscan-vector-types.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-91-libyuv-aarch64.patch
 Patch60:	chromium-91-libyuv-aarch64.patch
 # Update third_party/highway to 0.12.2
 # this is needed for sane arm/aarch64
-Patch61:	chromium-91.0.4472.77-update-highway-0.12.2.patch
+Patch61:	chromium-92.0.4515.107-update-highway-0.12.2.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-90-ruy-include.patch
 Patch62:	chromium-90-ruy-include.patch
 # Extra CXXFLAGS for aarch64
@@ -290,7 +302,7 @@ Patch63:	chromium-91.0.4472.77-aarch64-cxxflags-addition.patch
 Patch64:	chromium-91.0.4472.77-java-only-allowed-in-android-builds.patch
 
 # Silence GCC warnings during gn compile
-Patch65:	chromium-84.0.4147.105-gn-gcc-cleanup.patch
+Patch65:	chromium-92.0.4515.107-gn-gcc-cleanup.patch
 # Fix missing cstring in remoting code
 Patch66:	chromium-84.0.4147.125-remoting-cstring.patch
 # Apply fix_textrels hack for i686 (even without lld)
@@ -301,17 +313,27 @@ Patch68:	chromium-84.0.4147.125-aarch64-clearkeycdm-binutils-workaround.patch
 # Thanks to Kevin Kofler for the fix.
 Patch75:	chromium-90.0.4430.72-fstatfix.patch
 # Rawhide (f35) glibc defines SIGSTKSZ as a long instead of a constant
-Patch76:	chromium-88.0.4324.182-rawhide-gcc-std-max-fix.patch
+Patch76:	chromium-92.0.4515.107-rawhide-gcc-std-max-fix.patch
 # Fix symbol visibility with gcc on swiftshader's libEGL
 Patch77:	chromium-88.0.4324.182-gcc-fix-swiftshader-libEGL-visibility.patch
 # Do not download proprietary widevine module in the background (thanks Debian)
 Patch79:	chromium-90.0.4430.72-widevine-no-download.patch
 # Fix crashes with components/cast_*
 # Thanks to Gentoo
-Patch80:	https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-89-EnumTable-crash.patch
-# Fix crashes with ThemeService, thanks OpenSUSE
-Patch81:	chromium-91-1190561-boo1186948.patch
-
+Patch80:	chromium-92.0.4515.107-EnumTable-crash.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-92-v8-constexpr.patch
+Patch82:	chromium-92-v8-constexpr.patch
+# Fixes for python3
+Patch83:	chromium-92.0.4515.107-py3-fixes.patch
+# Fix build with Freetype 2.11
+Patch84:	https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-freetype-2.11.patch
+# https://bugs.chromium.org/p/chromium/issues/detail?id=1213452
+# https://chromium.googlesource.com/chromium/src/sandbox/+/482404adee4fc0487452c7ae5ac9c192b0f4fd30%5E%21/#F0
+# Needed for F35+, but safe everywhere
+Patch85:	chromium-92.0.4515.107-sandbox-clone3.patch
+# Clean up clang-format for python3
+# thanks to Jon Nettleton
+Patch86:	chromium-92-clang-format.patch
 
 # Use lstdc++ on EPEL7 only
 Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
@@ -339,7 +361,6 @@ Patch109:	chromium-90.0.4430.93-epel7-erase-fix.patch
 # AARCH64 neon symbols need to be prefixed too to prevent multiple definition issue at linktime
 Patch110:	chromium-90.0.4430.93-epel8-aarch64-libpng16-symbol-prefixes.patch
 
-
 # VAAPI
 # Upstream turned VAAPI on in Linux in 86
 Patch202:	chromium-89.0.4389.72-enable-hardware-accelerated-mjpeg.patch
@@ -347,7 +368,7 @@ Patch203:	chromium-86.0.4240.75-vaapi-i686-fpermissive.patch
 Patch205:	chromium-86.0.4240.75-fix-vaapi-on-intel.patch
 
 # Apply these patches to work around EPEL8 issues
-Patch300:	chromium-89.0.4389.82-rhel8-force-disable-use_gnome_keyring.patch
+Patch300:	chromium-92.0.4515.107-rhel8-force-disable-use_gnome_keyring.patch
 
 # And fixes for new compilers
 Patch400:       %{name}-gcc11.patch
@@ -463,6 +484,8 @@ BuildRequires:	libstdc++-devel, openssl-devel
 # Fedora tries to use system libs whenever it can.
 BuildRequires:	bzip2-devel
 BuildRequires:	dbus-glib-devel
+# For eu-strip
+BuildRequires:	elfutils
 BuildRequires:	elfutils-libelf-devel
 BuildRequires:	flac-devel
 %if 0%{?bundlefreetype}
@@ -529,17 +552,23 @@ BuildRequires:	pkgconfig(gtk+-3.0)
 %else
 BuildRequires:	pkgconfig(gtk+-2.0)
 %endif
-BuildRequires:	/usr/bin/python2
+BuildRequires:	%{chromium_pybin}
+# %%if ! %%{build_with_python3}
 BuildRequires:	python2-devel
+# %%else
+BuildRequires:  python3-devel
+# %%endif
+
+# %%if 0%{?build_with_python3}
 %if 0%{?bundlepylibs}
 # Using bundled bits, do nothing.
 %else
 %if 0%{?fedora}
-BuildRequires:	python2-beautifulsoup4
-BuildRequires:	python2-beautifulsoup
-BuildRequires:	python2-html5lib
-BuildRequires:	python2-markupsafe
-BuildRequires:	python2-ply
+BuildRequires:	python3-beautifulsoup4
+# BuildRequires:	python2-beautifulsoup
+BuildRequires:	python3-html5lib
+BuildRequires:	python3-markupsafe
+BuildRequires:	python3-ply
 %else
 BuildRequires:	python-beautifulsoup4
 BuildRequires:	python-BeautifulSoup
@@ -547,8 +576,30 @@ BuildRequires:	python-html5lib
 BuildRequires:	python-markupsafe
 BuildRequires:	python-ply
 %endif
-BuildRequires:	python2-simplejson
+BuildRequires:	python3-simplejson
 %endif
+#%%else
+%if 0%{?bundlepylibs}
+# Using bundled bits, do nothing.
+%else
+%if 0%{?fedora}
+BuildRequires:  python2-beautifulsoup4
+BuildRequires:  python2-beautifulsoup
+BuildRequires:  python2-html5lib
+BuildRequires:  python2-markupsafe
+BuildRequires:  python2-ply
+%else
+BuildRequires:  python-beautifulsoup4
+BuildRequires:  python-BeautifulSoup
+BuildRequires:  python-html5lib
+BuildRequires:  python-markupsafe
+BuildRequires:  python-ply
+%endif
+BuildRequires:  python2-simplejson
+%endif
+# %%endif
+
+
 %if 0%{?bundlere2}
 # Using bundled bits, do nothing.
 %else
@@ -859,7 +910,11 @@ Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
 Requires: xorg-x11-server-Xvfb
+%if 0%{?build_with_python3}
+Requires: python3-psutil
+%else
 Requires: python2-psutil
+%endif
 %if 0%{?shared}
 Requires: chromium-libs%{_isa} = %{version}-%{release}
 %else
@@ -916,7 +971,9 @@ udev.
 %patch8 -p1 -b .nofontconfigcache
 %patch9 -p1 -b .gcc9
 %patch10 -p1 -b .widevine-other-locations
-%patch11 -p1 -b .py2
+%if 0%{?build_with_python3}
+%patch11 -p1 -b .py3
+%endif
 
 # Short term fixes (usually gcc and backports)
 %patch51 -p1 -b .gcc-remoting-constexpr
@@ -928,7 +985,6 @@ udev.
 %patch56 -p1 -b .missing-cstdint
 %patch57 -p1 -b .missing-cstring
 %patch58 -p1 -b .ffmpeg-deprecations
-%patch59 -p1 -b .pcscan-vector-types
 %patch60 -p1 -b .libyuv-aarch64
 %patch61 -p1 -b .update-highway-0.12.2
 %patch62 -p1 -b .ruy-include
@@ -945,7 +1001,12 @@ udev.
 %patch77 -p1 -b .gcc-swiftshader-visibility
 %patch79 -p1 -b .widevine-no-download
 %patch80 -p1 -b .EnumTable-crash
-%patch81 -p1 -b .ThemeService-crash
+%patch82 -p1 -b .v8-constexpr
+%patch83 -p1 -b .py3fixes
+%patch84 -p1 -b .freetype-2.11
+%patch85 -p1 -b .clone3
+# Still using python2 in 92.
+# %%patch86 -p1 -b .clang-format-py3
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -984,7 +1045,11 @@ udev.
 
 # Change shebang in all relevant files in this directory and all subdirectories
 # See `man find` for how the `-exec command {} +` syntax works
+%if 0%{?build_with_python3}
+find -type f -exec sed -iE '1s=^#! */usr/bin/\(python\|env python\)[23]\?=#!%{__python3}=' {} +
+%else
 find -type f -exec sed -iE '1s=^#! */usr/bin/\(python\|env python\)[23]\?=#!%{__python2}=' {} +
+%endif
 
 %if 0%{?asan}
 export CC="clang"
@@ -1162,6 +1227,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'base/third_party/valgrind' \
 	'base/third_party/xdg_mime' \
 	'base/third_party/xdg_user_dirs' \
+	'buildtools/third_party/eu-strip' \
 	'buildtools/third_party/libc++' \
 	'buildtools/third_party/libc++abi' \
 	'chrome/third_party/mozilla_security_manager' \
@@ -1222,7 +1288,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/devtools-frontend/src/front_end/third_party/axe-core' \
 	'third_party/devtools-frontend/src/front_end/third_party/chromium' \
 	'third_party/devtools-frontend/src/front_end/third_party/codemirror' \
-	'third_party/devtools-frontend/src/front_end/third_party/fabricjs' \
+	'third_party/devtools-frontend/src/front_end/third_party/diff' \
 	'third_party/devtools-frontend/src/front_end/third_party/i18n' \
 	'third_party/devtools-frontend/src/front_end/third_party/intl-messageformat' \
 	'third_party/devtools-frontend/src/front_end/third_party/lighthouse' \
@@ -1375,7 +1441,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/tflite/src/third_party/eigen3' \
 	'third_party/tflite/src/third_party/fft2d' \
 	'third_party/tflite-support' \
-	'third_party/tint' \
 	'third_party/ukey2' \
         'third_party/usb_ids' \
 	'third_party/usrsctp' \
@@ -1415,8 +1480,12 @@ build/linux/unbundle/remove_bundled_libraries.py \
 %if ! 0%{?bundlepylibs}
 # Look, I don't know. This package is spit and chewing gum. Sorry.
 rm -rf third_party/markupsafe
+%if 0%{?build_with_python3}
+ln -s %{python3_sitearch}/markupsafe third_party/markupsafe
+%else
 ln -s %{python2_sitearch}/markupsafe third_party/markupsafe
-# We should look on removing other python2 packages as well i.e. ply
+%endif
+# We should look on removing other python packages as well i.e. ply
 %endif
 
 # Fix hardcoded path in remoting code
@@ -1493,6 +1562,11 @@ sed -i '/aarch64)/ a \        exec "/usr/bin/ninja-build" "$@";;\' ../depot_tool
 %endif
 sed -i 's|exec "${THIS_DIR}/ninja-linux${LONG_BIT}"|exec "/usr/bin/ninja-build"|g' ../depot_tools/ninja
 
+# Get rid of the pre-built eu-strip binary, it is x86_64 and of mysterious origin
+rm -rf buildtools/third_party/eu-strip/bin/eu-strip
+# Replace it with a symlink to the Fedora copy
+ln -s %{_bindir}/eu-strip buildtools/third_party/eu-strip/bin/eu-strip
+
 %if 0%{?rhel} == 7
 . /opt/rh/devtoolset-%{dts_version}/enable
 %endif
@@ -1502,24 +1576,29 @@ sed -i 's|exec "${THIS_DIR}/ninja-linux${LONG_BIT}"|exec "/usr/bin/ninja-build"|
 %endif
 
 # Check that there is no system 'google' module, shadowing bundled ones:
+%if 0%{?build_with_python3}
+if python3 -c 'import google ; print google.__path__' 2> /dev/null ; then \
+    echo "Python 3 'google' module is defined, this will shadow modules of this build"; \
+%else
 if python2 -c 'import google ; print google.__path__' 2> /dev/null ; then \
     echo "Python 2 'google' module is defined, this will shadow modules of this build"; \
+%endif
     exit 1 ; \
 fi
 
 tools/gn/bootstrap/bootstrap.py -v --no-clean --gn-gen-args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES"
-%{builddir}/gn --script-executable=/usr/bin/python2 gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES" %{builddir}
+%{builddir}/gn --script-executable=%{chromium_pybin} gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES" %{builddir}
 
 %if %{freeworld}
 # do not need to do headless gen
 %else
 %if %{build_headless}
-%{builddir}/gn --script-executable=/usr/bin/python2 gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_HEADLESS_GN_DEFINES" %{headlessbuilddir}
+%{builddir}/gn --script-executable=%{chromium_pybin} gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_HEADLESS_GN_DEFINES" %{headlessbuilddir}
 %endif
 %endif
 
 %if %{build_remoting}
-%{builddir}/gn --script-executable=/usr/bin/python2 gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES" %{remotingbuilddir}
+%{builddir}/gn --script-executable=%{chromium_pybin} gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES" %{remotingbuilddir}
 %endif
 
 %if %{bundlelibusbx}
@@ -1555,7 +1634,8 @@ tar xf %{SOURCE20}
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 %endif
 
-export PYTHONPATH="../../third_party/pyjson5/src:../../third_party/catapult/third_party/google-endpoints:../../xcb-proto-1.14"
+# export PYTHONPATH="../../third_party/pyjson5/src:../../third_party/catapult/third_party/google-endpoints:../../xcb-proto-1.14"
+export PYTHONPATH="../../third_party/pyjson5/src:../../xcb-proto-1.14"
 
 echo
 # Now do the full browser
@@ -2010,6 +2090,20 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Tue Aug 17 2021 Tom Callaway <spot@fedoraproject.org> - 92.0.4515.159-1
+- update to 92.0.4515.159
+
+* Mon Aug 16 2021 Tom Callaway <spot@fedoraproject.org> - 92.0.4515.131-1
+- update to 92.0.4515.131
+- apply upstream fix for clone3 crash
+
+* Mon Jul 26 2021 Tom Callaway <spot@fedoraproject.org> - 92.0.4515.107-1
+- update to 92.0.4515.107
+- drop python2 deps (finally)
+
+* Wed Jul 21 2021 Fedora Release Engineering <releng@fedoraproject.org> - 91.0.4472.164-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
 * Fri Jul 16 2021 Tom Callaway <spot@fedoraproject.org> - 91.0.4472.164-1
 - update to 91.0.4472.164
 
