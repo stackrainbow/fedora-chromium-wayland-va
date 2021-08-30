@@ -329,7 +329,7 @@ Patch83:	chromium-92.0.4515.107-py3-fixes.patch
 Patch84:	https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-freetype-2.11.patch
 # https://bugs.chromium.org/p/chromium/issues/detail?id=1213452
 # https://chromium.googlesource.com/chromium/src/sandbox/+/482404adee4fc0487452c7ae5ac9c192b0f4fd30%5E%21/#F0
-# Needed for F35+, but safe everywhere
+# Needed for F35+, but safe everywhere (except epel8 which is too old to know about __NR_clone3)
 Patch85:	chromium-92.0.4515.107-sandbox-clone3.patch
 # Clean up clang-format for python3
 # thanks to Jon Nettleton
@@ -1007,7 +1007,9 @@ udev.
 %patch82 -p1 -b .v8-constexpr
 %patch83 -p1 -b .py3fixes
 %patch84 -p1 -b .freetype-2.11
+%if 0%{?fedora}
 %patch85 -p1 -b .clone3
+%endif
 # Still using python2 in 92.
 # %%patch86 -p1 -b .clang-format-py3
 
