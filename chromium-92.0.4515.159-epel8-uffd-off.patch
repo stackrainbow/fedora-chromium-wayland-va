@@ -6,7 +6,7 @@ diff -up chromium-92.0.4515.159/base/allocator/partition_allocator/partition_all
      (defined(OS_LINUX) || defined(OS_ANDROID))
  // TODO(bikineev): Enable for ChromeOS.
 -#define PA_STARSCAN_UFFD_WRITE_PROTECTOR_SUPPORTED
-+#define PA_STARSCAN_UFFD_WRITE_PROTECTOR_SUPPORTED 0
++// #define PA_STARSCAN_UFFD_WRITE_PROTECTOR_SUPPORTED
  #endif
  
  // POSIX is not only UNIX, e.g. macOS and other OSes. We do use Linux-specific
