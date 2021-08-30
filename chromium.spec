@@ -226,7 +226,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 Name:		chromium%{chromium_channel}
 %endif
 Version:	%{majorversion}.0.4515.159
-Release:	1%{?dist}
+Release:	2%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -360,6 +360,9 @@ Patch109:	chromium-90.0.4430.93-epel7-erase-fix.patch
 # Again, not sure how epel8 is the only one to hit this...
 # AARCH64 neon symbols need to be prefixed too to prevent multiple definition issue at linktime
 Patch110:	chromium-90.0.4430.93-epel8-aarch64-libpng16-symbol-prefixes.patch
+# The implementation of linux/userfaultfd.h in EL-8 is too old to support what Chromium wants to do. Turn off the relevant chromium code.
+Patch111:	chromium-92.0.4515.159-epel8-uffd-off.patch
+
 
 # VAAPI
 # Upstream turned VAAPI on in Linux in 86
@@ -1026,6 +1029,7 @@ udev.
 %if 0%{?rhel} == 8
 # %%patch107 -p1 -b .el8-arm-incompatible-ints
 %patch110 -p1 -b .el8-aarch64-libpng16-symbol-prefixes
+%patch111 -p1 -b .el8-uffd-off
 %endif
 
 # Feature specific patches
@@ -1704,6 +1708,7 @@ rm -rf %{buildroot}
 		%endif
 		cp -a chrome %{buildroot}%{chromium_path}/%{chromium_browser_channel}
 		cp -a chrome_sandbox %{buildroot}%{chromium_path}/chrome-sandbox
+		cp -a crashpad_handler %{buildroot}%{chromium_path}/crashpad_handler
 		cp -a ../../chrome/app/resources/manpage.1.in %{buildroot}%{_mandir}/man1/%{chromium_browser_channel}.1
 		sed -i "s|@@PACKAGE@@|%{chromium_browser_channel}|g" %{buildroot}%{_mandir}/man1/%{chromium_browser_channel}.1
 		sed -i "s|@@MENUNAME@@|%{chromium_menu_name}|g" %{buildroot}%{_mandir}/man1/%{chromium_browser_channel}.1
@@ -2090,6 +2095,10 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Mon Aug 30 2021 Tom Callaway <spot@fedoraproject.org> - 92.0.4515.159-2
+- disable userfaultd code in epel8
+- include crashpad_handler (it works a lot better when it doesn't immediately crash because of this missing file)
+
 * Tue Aug 17 2021 Tom Callaway <spot@fedoraproject.org> - 92.0.4515.159-1
 - update to 92.0.4515.159
 
