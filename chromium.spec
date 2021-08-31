@@ -1942,6 +1942,7 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 %dir %{chromium_path}
 %{chromium_path}/*.bin
 %{chromium_path}/chrome_*.pak
+%{chromium_path}/crashpad_handler
 %{chromium_path}/resources.pak
 %{chromium_path}/icudtl.dat
 %{chromium_path}/%{chromium_browser_channel}
