@@ -378,8 +378,6 @@ Patch109:	chromium-90.0.4430.93-epel7-erase-fix.patch
 # Again, not sure how epel8 is the only one to hit this...
 # AARCH64 neon symbols need to be prefixed too to prevent multiple definition issue at linktime
 Patch110:	chromium-90.0.4430.93-epel8-aarch64-libpng16-symbol-prefixes.patch
-# The implementation of linux/userfaultfd.h in EL-8 is too old to support what Chromium wants to do. Turn off the relevant chromium code.
-Patch111:	chromium-92.0.4515.159-epel8-uffd-off.patch
 
 
 # VAAPI
@@ -1054,7 +1052,6 @@ udev.
 %if 0%{?rhel} == 8
 # %%patch107 -p1 -b .el8-arm-incompatible-ints
 %patch110 -p1 -b .el8-aarch64-libpng16-symbol-prefixes
-%patch111 -p1 -b .el8-uffd-off
 %endif
 
 # Feature specific patches
