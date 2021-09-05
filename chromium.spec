@@ -423,8 +423,8 @@ Source15:	http://download.savannah.nongnu.org/releases/freebangfont/MuktiNarrow-
 Source16:	https://github.com/web-platform-tests/wpt/raw/master/fonts/Ahem.ttf
 Source17:	GardinerModBug.ttf
 Source18:	GardinerModCat.ttf
-# RHEL 7 needs newer nodejs
-%if 0%{?rhel} == 7
+# RHEL 7|8 needs newer nodejs
+%if 0%{?rhel} <= 8
 Source19:	https://nodejs.org/dist/latest-v12.x/node-v12.22.6-linux-x64.tar.xz
 Source21:	https://nodejs.org/dist/latest-v12.x/node-v12.22.6-linux-arm64.tar.xz
 %endif
