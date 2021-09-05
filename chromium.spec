@@ -1648,7 +1648,11 @@ tar xf %{SOURCE20}
 %endif
 
 # export PYTHONPATH="../../third_party/pyjson5/src:../../third_party/catapult/third_party/google-endpoints:../../xcb-proto-1.14"
+%if 0%{?rhel} == 8
+export PYTHONPATH="../../third_party/protobuf/third_party/six:../../third_party/pyjson5/src:../../xcb-proto-1.14:../../third_party/catapult/third_party/html5lib-1.1"
+%else
 export PYTHONPATH="../../third_party/pyjson5/src:../../xcb-proto-1.14:../../third_party/catapult/third_party/html5lib-1.1"
+%endif
 
 echo
 # Now do the full browser
