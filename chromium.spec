@@ -324,8 +324,6 @@ Patch81:	chromium-93-BluetoothLowEnergyScanFilter-include.patch
 Patch82:	chromium-93-ClassProperty-include.patch
 # Fixes for python3
 Patch83:	chromium-92.0.4515.107-py3-fixes.patch
-# Support older freetype than 2.11 (for epel8)
-Patch84:	chromium-93.0.4577.63-freetype-2.11.patch
 # Clean up clang-format for python3
 # thanks to Jon Nettleton
 Patch86:	chromium-93.0.4577.63-clang-format.patch
@@ -1023,7 +1021,6 @@ udev.
 %patch81 -p1 -b .BluetoothLowEnergyScanFilter-include
 %patch82 -p1 -b .ClassProperty-include
 %patch83 -p1 -b .py3fixes
-%patch84 -p1 -b .freetype-2.11
 %patch86 -p1 -b .clang-format-py3
 %patch87 -p1 -b .ContextSet-permissive
 %patch88 -p1 -b .DevToolsEmbedderMessageDispatcher-include
