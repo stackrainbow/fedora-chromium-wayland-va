@@ -425,7 +425,8 @@ Source17:	GardinerModBug.ttf
 Source18:	GardinerModCat.ttf
 # RHEL 7 needs newer nodejs
 %if 0%{?rhel} == 7
-Source19:	https://nodejs.org/dist/v10.15.3/node-v10.15.3-linux-x64.tar.gz
+Source19:	https://nodejs.org/dist/latest-v12.x/node-v12.22.6-linux-x64.tar.xz
+Source21:	https://nodejs.org/dist/latest-v12.x/node-v12.22.6-linux-arm64.tar.xz
 %endif
 # Bring xcb-proto with us (might need more than python on EPEL?)
 Source20:	https://www.x.org/releases/individual/proto/xcb-proto-1.14.tar.xz
@@ -479,8 +480,8 @@ BuildRequires:	minizip-compat-devel
 # BuildRequires:	minizip-devel
 %endif
 %endif
-# RHEL 7's nodejs is too old
-%if 0%{?rhel} == 7
+# RHEL 7|8's nodejs is too old
+%if 0%{?rhel} <= 8
 # Use bundled.
 %else
 BuildRequires:	nodejs
@@ -1228,10 +1229,18 @@ CHROMIUM_HEADLESS_GN_DEFINES+=' use_cups=false use_dbus=false use_gio=false use_
 CHROMIUM_HEADLESS_GN_DEFINES+=' use_pulseaudio=false use_udev=false use_gtk=false use_glib=false use_x11=false'
 export CHROMIUM_HEADLESS_GN_DEFINES
 
-%if 0%{?rhel} == 7
+%if 0%{?rhel} <= 8
 pushd third_party/node/linux
+%ifarch x86_64
 tar xf %{SOURCE19}
-mv node-v10.15.3-linux-x64 node-linux-x64
+mv node-v12.22.6-linux-x64 node-linux-x64
+%endif
+%ifarch aarch64
+tar xf %{SOURCE21}
+mv node-v12.22.6-linux-arm64 node-linux-arm64
+# This is weird, but whatever
+ln -s node-linux-arm64 node-linux-x64
+%endif
 popd
 %else
 mkdir -p third_party/node/linux/node-linux-x64/bin
