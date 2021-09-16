@@ -581,7 +581,7 @@ BuildRequires:  python3-devel
 %if 0%{?bundlepylibs}
 # Using bundled bits, do nothing.
 %else
-%if 0%{?fedora} || %{?rhel} >= 8
+%if 0%{?fedora} || 0%{?rhel} >= 8
 BuildRequires:	python3-beautifulsoup4
 # BuildRequires:	python2-beautifulsoup
 BuildRequires:	python3-html5lib
