@@ -224,7 +224,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4577.63
+Version:	%{majorversion}.0.4577.82
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -324,8 +324,6 @@ Patch81:	chromium-93-BluetoothLowEnergyScanFilter-include.patch
 Patch82:	chromium-93-ClassProperty-include.patch
 # Fixes for python3
 Patch83:	chromium-92.0.4515.107-py3-fixes.patch
-# Support older freetype than 2.11 (for epel8)
-Patch84:	chromium-93.0.4577.63-freetype-2.11.patch
 # Clean up clang-format for python3
 # thanks to Jon Nettleton
 Patch86:	chromium-93.0.4577.63-clang-format.patch
@@ -378,8 +376,6 @@ Patch109:	chromium-90.0.4430.93-epel7-erase-fix.patch
 # Again, not sure how epel8 is the only one to hit this...
 # AARCH64 neon symbols need to be prefixed too to prevent multiple definition issue at linktime
 Patch110:	chromium-90.0.4430.93-epel8-aarch64-libpng16-symbol-prefixes.patch
-# The implementation of linux/userfaultfd.h in EL-8 is too old to support what Chromium wants to do. Turn off the relevant chromium code.
-Patch111:	chromium-92.0.4515.159-epel8-uffd-off.patch
 
 
 # VAAPI
@@ -425,9 +421,10 @@ Source15:	http://download.savannah.nongnu.org/releases/freebangfont/MuktiNarrow-
 Source16:	https://github.com/web-platform-tests/wpt/raw/master/fonts/Ahem.ttf
 Source17:	GardinerModBug.ttf
 Source18:	GardinerModCat.ttf
-# RHEL 7 needs newer nodejs
-%if 0%{?rhel} == 7
-Source19:	https://nodejs.org/dist/v10.15.3/node-v10.15.3-linux-x64.tar.gz
+# RHEL 7|8 needs newer nodejs
+%if 0%{?rhel} <= 8
+Source19:	https://nodejs.org/dist/latest-v12.x/node-v12.22.6-linux-x64.tar.xz
+Source21:	https://nodejs.org/dist/latest-v12.x/node-v12.22.6-linux-arm64.tar.xz
 %endif
 # Bring xcb-proto with us (might need more than python on EPEL?)
 Source20:	https://www.x.org/releases/individual/proto/xcb-proto-1.14.tar.xz
@@ -481,8 +478,8 @@ BuildRequires:	minizip-compat-devel
 # BuildRequires:	minizip-devel
 %endif
 %endif
-# RHEL 7's nodejs is too old
-%if 0%{?rhel} == 7
+# RHEL 7|8's nodejs is too old
+%if 0%{?rhel} <= 8
 # Use bundled.
 %else
 BuildRequires:	nodejs
@@ -584,7 +581,7 @@ BuildRequires:  python3-devel
 %if 0%{?bundlepylibs}
 # Using bundled bits, do nothing.
 %else
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} >= 8
 BuildRequires:	python3-beautifulsoup4
 # BuildRequires:	python2-beautifulsoup
 BuildRequires:	python3-html5lib
@@ -1024,7 +1021,6 @@ udev.
 %patch81 -p1 -b .BluetoothLowEnergyScanFilter-include
 %patch82 -p1 -b .ClassProperty-include
 %patch83 -p1 -b .py3fixes
-%patch84 -p1 -b .freetype-2.11
 %patch86 -p1 -b .clang-format-py3
 %patch87 -p1 -b .ContextSet-permissive
 %patch88 -p1 -b .DevToolsEmbedderMessageDispatcher-include
@@ -1054,7 +1050,6 @@ udev.
 %if 0%{?rhel} == 8
 # %%patch107 -p1 -b .el8-arm-incompatible-ints
 %patch110 -p1 -b .el8-aarch64-libpng16-symbol-prefixes
-%patch111 -p1 -b .el8-uffd-off
 %endif
 
 # Feature specific patches
@@ -1231,10 +1226,18 @@ CHROMIUM_HEADLESS_GN_DEFINES+=' use_cups=false use_dbus=false use_gio=false use_
 CHROMIUM_HEADLESS_GN_DEFINES+=' use_pulseaudio=false use_udev=false use_gtk=false use_glib=false use_x11=false'
 export CHROMIUM_HEADLESS_GN_DEFINES
 
-%if 0%{?rhel} == 7
+%if 0%{?rhel} <= 8
 pushd third_party/node/linux
+%ifarch x86_64
 tar xf %{SOURCE19}
-mv node-v10.15.3-linux-x64 node-linux-x64
+mv node-v12.22.6-linux-x64 node-linux-x64
+%endif
+%ifarch aarch64
+tar xf %{SOURCE21}
+mv node-v12.22.6-linux-arm64 node-linux-arm64
+# This is weird, but whatever
+ln -s node-linux-arm64 node-linux-x64
+%endif
 popd
 %else
 mkdir -p third_party/node/linux/node-linux-x64/bin
@@ -1651,7 +1654,11 @@ tar xf %{SOURCE20}
 %endif
 
 # export PYTHONPATH="../../third_party/pyjson5/src:../../third_party/catapult/third_party/google-endpoints:../../xcb-proto-1.14"
+%if 0%{?rhel} == 8
+export PYTHONPATH="../../third_party/protobuf/third_party/six:../../third_party/pyjson5/src:../../xcb-proto-1.14:../../third_party/catapult/third_party/html5lib-1.1"
+%else
 export PYTHONPATH="../../third_party/pyjson5/src:../../xcb-proto-1.14:../../third_party/catapult/third_party/html5lib-1.1"
+%endif
 
 echo
 # Now do the full browser
@@ -2108,6 +2115,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Thu Sep 16 2021 Tom Callaway <spot@fedoraproject.org> - 93.0.4577.82-1
+- update to 93.0.4577.82
+
 * Thu Sep  2 2021 Tom Callaway <spot@fedoraproject.org> - 93.0.4577.63-1
 - update to 93.0.4577.63
 
