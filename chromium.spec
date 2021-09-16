@@ -1226,7 +1226,7 @@ CHROMIUM_HEADLESS_GN_DEFINES+=' use_cups=false use_dbus=false use_gio=false use_
 CHROMIUM_HEADLESS_GN_DEFINES+=' use_pulseaudio=false use_udev=false use_gtk=false use_glib=false use_x11=false'
 export CHROMIUM_HEADLESS_GN_DEFINES
 
-%if 0%{?rhel} <= 8
+%if 0%{?rhel} && 0%{?rhel} <= 8
 pushd third_party/node/linux
 %ifarch x86_64
 tar xf %{SOURCE19}
