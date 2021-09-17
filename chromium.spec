@@ -422,7 +422,7 @@ Source16:	https://github.com/web-platform-tests/wpt/raw/master/fonts/Ahem.ttf
 Source17:	GardinerModBug.ttf
 Source18:	GardinerModCat.ttf
 # RHEL 7|8 needs newer nodejs
-%if 0%{?rhel} <= 8
+%if 0%{?rhel} && 0%{?rhel} <= 8
 Source19:	https://nodejs.org/dist/latest-v12.x/node-v12.22.6-linux-x64.tar.xz
 Source21:	https://nodejs.org/dist/latest-v12.x/node-v12.22.6-linux-arm64.tar.xz
 %endif
@@ -479,7 +479,7 @@ BuildRequires:	minizip-compat-devel
 %endif
 %endif
 # RHEL 7|8's nodejs is too old
-%if 0%{?rhel} <= 8
+%if 0%{?rhel} && 0%{?rhel} <= 8
 # Use bundled.
 %else
 BuildRequires:	nodejs
