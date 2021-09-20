@@ -225,7 +225,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 Name:		chromium%{chromium_channel}
 %endif
 Version:	%{majorversion}.0.4577.82
-Release:	1%{?dist}
+Release:	2%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -349,6 +349,9 @@ Patch93:	chromium-93.0.4577.63-vector-fix.patch
 Patch94:	chromium-93.0.4577.63-remoting-nodestructor-fix.patch
 # include full UrlResponseHead header
 Patch95:	chromium-93.0.4577.63-mojo-header-fix.patch
+# Fix against HarfBuzz v3
+# Thanks to Jan Beich @ FreeBSD
+Patch96:	chromium-93.0.4577.82-harfbuzz3.patch
 
 
 # Use lstdc++ on EPEL7 only
@@ -1031,6 +1034,9 @@ udev.
 %patch93 -p1 -b .vector-fix
 %patch94 -p1 -b .remoting-nodestructor-fix
 %patch95 -p1 -b .mojo-header-fix
+%if 0%{?fedora} >= 36
+%patch96 -p1 -b .hbfix
+%endif
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -2115,6 +2121,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Mon Sep 20 2021 Tom Callaway <spot@fedoraproject.org> - 93.0.4577.82-2
+- add fix for harfbuzz v3 (thanks to Jan Beich @ FreeBSD)
+
 * Thu Sep 16 2021 Tom Callaway <spot@fedoraproject.org> - 93.0.4577.82-1
 - update to 93.0.4577.82
 
