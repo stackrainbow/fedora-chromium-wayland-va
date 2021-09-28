@@ -165,7 +165,12 @@ BuildRequires:  libicu-devel >= 5.4
 %global bundlelibdrm 1
 %global bundlefontconfig 1
 %else
+# As of Chromium 94, it uses functions in harfbuzz 2.9.0+, which is only found in F36+.
+%if 0%{?fedora} >= 36
 %global bundleharfbuzz 0
+%else
+%global bundleharfbuzz 1
+%endif
 %global bundleopus 1
 %global bundlelibusbx 0
 %global bundlelibwebp 0
