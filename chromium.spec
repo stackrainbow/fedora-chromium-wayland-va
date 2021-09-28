@@ -182,14 +182,6 @@ BuildRequires:  libicu-devel >= 5.4
 %global bundlefontconfig 0
 %endif
 
-# Needs at least harfbuzz 2.4.0 now.
-# 2019-09-13
-%if 0%{?fedora} < 31
-%global bundleharfbuzz 1
-%else
-%global bundleharfbuzz 0
-%endif
-
 ### From 2013 until early 2021, Google permitted distribution builds of
 ### Chromium to access Google APIs that added significant features to
 ### Chromium including, but not limited to, Sync and geolocation.
