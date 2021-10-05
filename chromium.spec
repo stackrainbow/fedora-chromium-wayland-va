@@ -222,7 +222,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4606.61
+Version:	%{majorversion}.0.4606.71
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -334,6 +334,8 @@ Patch95:	chromium-93.0.4577.63-mojo-header-fix.patch
 Patch96:	chromium-94.0.4606.54-webrtc-BUILD.gn-fix-multiple-defines.patch
 # Fix extra qualification error
 Patch97:	chromium-94.0.4606.61-remoting-extra-qualification.patch
+# From gentoo
+Patch98:	chromium-94.0.4606.71-InkDropHost-crash.patch
 
 
 # Use lstdc++ on EPEL7 only
@@ -1010,6 +1012,7 @@ udev.
 %patch95 -p1 -b .mojo-header-fix
 %patch96 -p1 -b .webrtc-BUILD.gn-fix-multiple-defines
 %patch97 -p1 -b .remoting-extra-qualification
+%patch98 -p1 -b .InkDropHost-crash
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -2095,6 +2098,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Tue Oct  5 2021 Tom Callaway <spot@fedoraproject.org> - 94.0.4606.71-1
+- update to 94.0.4606.71
+
 * Fri Sep 24 2021 Tom Callaway <spot@fedoraproject.org> - 94.0.4606.61-1
 - update to 94.0.4606.61
 
