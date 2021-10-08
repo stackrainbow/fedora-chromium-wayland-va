@@ -6,12 +6,15 @@
 %endif
 
 # This flag is so I can build things very fast on a giant system.
-# Do not enable in Koji builds.
+# Koji now likes this (as long as I don't build for every target at once).
 %global use_all_cpus 1
 
 %if %{use_all_cpus}
 %global numjobs %{_smp_build_ncpus}
 %endif
+
+# official builds have less debugging and go faster... but we have to shut some things off.
+%global official_build 1
 
 # Fancy build status, so we at least know, where we are..
 # %1 where
@@ -223,7 +226,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 Name:		chromium%{chromium_channel}
 %endif
 Version:	%{majorversion}.0.4606.71
-Release:	1%{?dist}
+Release:	2%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -310,13 +313,15 @@ Patch79:	chromium-93.0.4577.63-widevine-no-download.patch
 # Fix crashes with components/cast_*
 # Thanks to Gentoo
 Patch80:	chromium-92.0.4515.107-EnumTable-crash.patch
-
 # https://github.com/stha09/chromium-patches/blob/master/chromium-94-ConversionStorageSql-lambda.patch
 Patch81:	chromium-94-ConversionStorageSql-lambda.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-94-CustomSpaces-include.patch
 Patch82:	chromium-94-CustomSpaces-include.patch
 # Fixes for python3
 Patch83:	chromium-92.0.4515.107-py3-fixes.patch
+# Add missing cmath header
+Patch84:	chromium-94.0.4606.71-remoting-missing-cmath-header.patch
+
 # Clean up clang-format for python3
 # thanks to Jon Nettleton
 Patch86:	chromium-93.0.4577.63-clang-format.patch
@@ -336,6 +341,10 @@ Patch96:	chromium-94.0.4606.54-webrtc-BUILD.gn-fix-multiple-defines.patch
 Patch97:	chromium-94.0.4606.61-remoting-extra-qualification.patch
 # From gentoo
 Patch98:	chromium-94.0.4606.71-InkDropHost-crash.patch
+# From upstream
+# https://chromium.googlesource.com/chromium/src/+/403393b908cefaed09592a4f25fe2cbd46317a68%5E%21/#F0
+Patch99:	chromium-94.0.4606.71-PartitionFree-nullptr-fix.patch
+
 
 
 # Use lstdc++ on EPEL7 only
@@ -1006,6 +1015,7 @@ udev.
 %patch81 -p1 -b .ConversionStorageSql-lambda-include
 %patch82 -p1 -b .CustomSpaces-include
 %patch83 -p1 -b .py3fixes
+%patch84 -p1 -b .remoting-missing-cmath-header
 %patch86 -p1 -b .clang-format-py3
 %patch93 -p1 -b .vector-fix
 %patch94 -p1 -b .remoting-nodestructor-fix
@@ -1013,6 +1023,7 @@ udev.
 %patch96 -p1 -b .webrtc-BUILD.gn-fix-multiple-defines
 %patch97 -p1 -b .remoting-extra-qualification
 %patch98 -p1 -b .InkDropHost-crash
+%patch99 -p1 -b .PartitionFree-nullptr-fix
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -1144,6 +1155,10 @@ CHROMIUM_CORE_GN_DEFINES=""
 CHROMIUM_CORE_GN_DEFINES+=' is_debug=false'
 %ifarch x86_64 aarch64
 CHROMIUM_CORE_GN_DEFINES+=' system_libdir="lib64"'
+%endif
+%if %{official_build}
+CHROMIUM_CORE_GN_DEFINES+=' is_official_build=true use_thin_lto=false is_cfi=false chrome_pgo_phase=0 use_debug_fission=true'
+sed -i 's|OFFICIAL_BUILD|GOOGLE_CHROME_BUILD|g' tools/generate_shim_headers/generate_shim_headers.py
 %endif
 %if %{useapikey}
 CHROMIUM_CORE_GN_DEFINES+=' google_api_key="%{api_key}"'
@@ -2039,9 +2054,11 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 %lang(zh_CN) %{chromium_path}/locales/zh-CN.pak*
 %lang(zh_TW) %{chromium_path}/locales/zh-TW.pak*
 # These are psuedolocales, not real ones.
-# So we just include them always.
+# They only get generated when is_official_build=false
+%if ! %{official_build}
 %{chromium_path}/locales/ar-XB.pak*
 %{chromium_path}/locales/en-XA.pak*
+%endif
 
 %if %{build_headless}
 %files headless
@@ -2098,6 +2115,10 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Wed Oct  6 2021 Tom Callaway <spot@fedoraproject.org> - 94.0.4606.71-2
+- add official_build flag
+- apply upstream patch to handle nullptr correctly in PartitionGetSizeEstimate()
+
 * Tue Oct  5 2021 Tom Callaway <spot@fedoraproject.org> - 94.0.4606.71-1
 - update to 94.0.4606.71
 
