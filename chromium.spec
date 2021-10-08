@@ -225,8 +225,8 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4606.71
-Release:	2%{?dist}
+Version:	%{majorversion}.0.4606.81
+Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -324,7 +324,7 @@ Patch84:	chromium-94.0.4606.71-remoting-missing-cmath-header.patch
 
 # Clean up clang-format for python3
 # thanks to Jon Nettleton
-Patch86:	chromium-93.0.4577.63-clang-format.patch
+Patch86:	chromium-94.0.4606.81-clang-format.patch
 # In file included from ../../components/cast_channel/enum_table.cc:5:
 # ../../components/cast_channel/enum_table.h:359:18: error: 'vector' in namespace 'std' does not name a template type
 #   359 |       const std::vector<Entry> data_;
@@ -2115,6 +2115,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Fri Oct  8 2021 Tom Callaway <spot@fedoraproject.org> - 94.0.4606.81-1
+- update to 94.0.4606.81
+
 * Wed Oct  6 2021 Tom Callaway <spot@fedoraproject.org> - 94.0.4606.71-2
 - add official_build flag
 - apply upstream patch to handle nullptr correctly in PartitionGetSizeEstimate()
