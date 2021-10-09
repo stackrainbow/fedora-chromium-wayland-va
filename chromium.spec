@@ -1159,6 +1159,10 @@ CHROMIUM_CORE_GN_DEFINES+=' system_libdir="lib64"'
 %if %{official_build}
 CHROMIUM_CORE_GN_DEFINES+=' is_official_build=true use_thin_lto=false is_cfi=false chrome_pgo_phase=0 use_debug_fission=true'
 sed -i 's|OFFICIAL_BUILD|GOOGLE_CHROME_BUILD|g' tools/generate_shim_headers/generate_shim_headers.py
+# Too much debuginfo for i686
+%ifarch i686
+sed -i 's|-g2|-g0|g' build/config/compiler/BUILD.gn
+%endif
 %endif
 %if %{useapikey}
 CHROMIUM_CORE_GN_DEFINES+=' google_api_key="%{api_key}"'
