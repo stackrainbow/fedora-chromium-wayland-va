@@ -1,7 +1,7 @@
 %define _lto_cflags %{nil}
 
 %global numjobs 10
-%ifarch aarch64
+%ifarch aarch64 i686
 %global numjobs 8
 %endif
 
