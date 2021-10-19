@@ -736,10 +736,18 @@ Provides:	chromium-libs = %{version}-%{release}
 Obsoletes:	chromium-libs <= %{version}-%{release}
 %endif
 
+#rhel 7: ia32 x86_64
+#rhel 8+: ia32, x86_64, aarch64
+#fedora 34 or older: ia32, x86_64, aarch64
+#fedora 35+: x86_64 aarch64 only
 %if 0%{?rhel} == 7
 ExclusiveArch:  x86_64 i686
 %else
+%if 0%{?fedora} > 34
+ExclusiveArch:	x86_64 aarch64
+%else
 ExclusiveArch:	x86_64 i686 aarch64
+%endif
 %endif
 
 # Bundled bits (I'm sure I've missed some)
