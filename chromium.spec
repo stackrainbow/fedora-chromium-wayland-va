@@ -54,6 +54,12 @@
 # Seems like we might need this sometimes
 # Practically, no. But it's here in case we do.
 %global use_gold 0
+# Lets see if gold gets us past this old corner case.
+%if 0%{?fedora} == 33
+%ifarch i686
+%global use_gold 1
+%endif
+%endif
 
 # 2020-08-20: F33+ aarch64 has a binutils bug trying to link clear_key_cdm
 # https://bugzilla.redhat.com/show_bug.cgi?id=1869884
