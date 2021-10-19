@@ -23,7 +23,6 @@
 	export NINJA_STATUS="[%2:%f/%t] " ; \
 	../depot_tools/ninja -j %{numjobs} -C '%1' -vvv '%2'
 
-
 # This was faster when it worked, but it didn't always.
 # As of chromium 80, it is no longer supported. RIP.
 %global use_jumbo 0
@@ -54,12 +53,6 @@
 # Seems like we might need this sometimes
 # Practically, no. But it's here in case we do.
 %global use_gold 0
-# Lets see if gold gets us past this old corner case.
-%if 0%{?fedora} == 33
-%ifarch i686
-%global use_gold 1
-%endif
-%endif
 
 # 2020-08-20: F33+ aarch64 has a binutils bug trying to link clear_key_cdm
 # https://bugzilla.redhat.com/show_bug.cgi?id=1869884
@@ -1199,6 +1192,13 @@ CHROMIUM_CORE_GN_DEFINES+=' use_jumbo_build=true jumbo_file_merge_limit=8'
 %endif
 %if 0%{?rhel} == 8
 CHROMIUM_CORE_GN_DEFINES+=' use_gnome_keyring=false use_glib=true'
+%endif
+# This is a super disgusting hack to try to get i686 to build on Fedora 33
+# This flag switches it from -O3 to -O1.
+%if 0%{?fedora} == 33
+%ifarch i686
+CHROMIUM_CORE_GN_DEFINES+=' optimize_for_fuzzing=true'
+%endif
 %endif
 export CHROMIUM_CORE_GN_DEFINES
 
