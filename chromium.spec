@@ -272,6 +272,8 @@ Patch11:	chromium-92.0.4515.107-py2-bootstrap.patch
 # Add "Fedora" to the user agent string
 Patch12:	chromium-86.0.4240.75-fedora-user-agent.patch
 
+# Hack for low-mem failures on Fedora 33 i686
+Patch50:	chromium-94.0.4606.81-i686-low-memory-linking-hacks.patch
 # Needs to be submitted..
 Patch51:	chromium-76.0.3809.100-gcc-remoting-constexpr.patch
 # https://gitweb.gentoo.org/repo/gentoo.git/tree/www-client/chromium/files/chromium-unbundle-zlib.patch
@@ -994,6 +996,12 @@ udev.
 %patch10 -p1 -b .widevine-other-locations
 %if 0%{?build_with_python3}
 %patch11 -p1 -b .py3
+%endif
+
+%if 0%{?fedora} == 33
+%ifarch i686
+%patch50 -p1 -b .i686-hack
+%endif
 %endif
 
 # Short term fixes (usually gcc and backports)
