@@ -272,8 +272,6 @@ Patch11:	chromium-92.0.4515.107-py2-bootstrap.patch
 # Add "Fedora" to the user agent string
 Patch12:	chromium-86.0.4240.75-fedora-user-agent.patch
 
-# Hack for low-mem failures on Fedora 33 i686
-Patch50:	chromium-94.0.4606.81-i686-low-memory-linking-hacks.patch
 # Needs to be submitted..
 Patch51:	chromium-76.0.3809.100-gcc-remoting-constexpr.patch
 # https://gitweb.gentoo.org/repo/gentoo.git/tree/www-client/chromium/files/chromium-unbundle-zlib.patch
@@ -740,12 +738,12 @@ Obsoletes:	chromium-libs <= %{version}-%{release}
 
 #rhel 7: ia32 x86_64
 #rhel 8+: ia32, x86_64, aarch64
-#fedora 34 or older: ia32, x86_64, aarch64
-#fedora 35+: x86_64 aarch64 only
+#fedora 32 or older: ia32, x86_64, aarch64
+#fedora 33+: x86_64 aarch64 only
 %if 0%{?rhel} == 7
 ExclusiveArch:  x86_64 i686
 %else
-%if 0%{?fedora} > 34
+%if 0%{?fedora} > 32
 ExclusiveArch:	x86_64 aarch64
 %else
 ExclusiveArch:	x86_64 i686 aarch64
@@ -998,12 +996,6 @@ udev.
 %patch11 -p1 -b .py3
 %endif
 
-%if 0%{?fedora} == 33
-%ifarch i686
-%patch50 -p1 -b .i686-hack
-%endif
-%endif
-
 # Short term fixes (usually gcc and backports)
 %patch51 -p1 -b .gcc-remoting-constexpr
 %if 0%{?fedora} || 0%{?rhel} >= 8
@@ -1208,13 +1200,6 @@ CHROMIUM_CORE_GN_DEFINES+=' use_jumbo_build=true jumbo_file_merge_limit=8'
 %endif
 %if 0%{?rhel} == 8
 CHROMIUM_CORE_GN_DEFINES+=' use_gnome_keyring=false use_glib=true'
-%endif
-# This is a super disgusting hack to try to get i686 to build on Fedora 33
-# This flag switches it from -O3 to -O1.
-%if 0%{?fedora} == 33
-%ifarch i686
-CHROMIUM_CORE_GN_DEFINES+=' optimize_for_fuzzing=true'
-%endif
 %endif
 export CHROMIUM_CORE_GN_DEFINES
 
