@@ -217,14 +217,14 @@ BuildRequires:  libicu-devel >= 5.4
 %global chromoting_client_id %nil
 %endif
 
-%global majorversion 94
+%global majorversion 95
 
 %if %{freeworld}
 Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4606.81
+Version:	%{majorversion}.0.4638.69
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -253,7 +253,7 @@ Patch4:		chromium-60.0.3112.78-jpeg-nomangle.patch
 # Do not mangle zlib
 Patch5:		chromium-77.0.3865.75-no-zlib-mangle.patch
 # Do not use unrar code, it is non-free
-Patch6:		chromium-93.0.4577.63-norar.patch
+Patch6:		chromium-95.0.4638.69-norar.patch
 # Use Gentoo's Widevine hack
 # https://gitweb.gentoo.org/repo/gentoo.git/tree/www-client/chromium/files/chromium-widevine-r3.patch
 Patch7:		chromium-71.0.3578.98-widevine-r3.patch
@@ -272,25 +272,38 @@ Patch11:	chromium-92.0.4515.107-py2-bootstrap.patch
 # Add "Fedora" to the user agent string
 Patch12:	chromium-86.0.4240.75-fedora-user-agent.patch
 
+# https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-95-maldoca-zlib.patch
+Patch20:	chromium-95-maldoca-zlib.patch
+
+# https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-95-eigen-avx-1.patch
+# https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-95-eigen-avx-2.patch
+# https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-95-eigen-avx-3.patch
+Patch21:	chromium-95-eigen-avx-1.patch
+Patch22:	chromium-95-eigen-avx-2.patch
+Patch23:	chromium-95-eigen-avx-3.patch
+
+# https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-95-xfce-maximize.patch
+Patch24:	chromium-95-xfce-maximize.patch
+
 # Needs to be submitted..
 Patch51:	chromium-76.0.3809.100-gcc-remoting-constexpr.patch
 # https://gitweb.gentoo.org/repo/gentoo.git/tree/www-client/chromium/files/chromium-unbundle-zlib.patch
 Patch52:	chromium-81.0.4044.92-unbundle-zlib.patch
-# Needs to be submitted..
-Patch53:	chromium-77.0.3865.75-gcc-include-memory.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-78-protobuf-RepeatedPtrField-export.patch
 Patch55:	chromium-78-protobuf-RepeatedPtrField-export.patch
 # ../../third_party/perfetto/include/perfetto/base/task_runner.h:48:55: error: 'uint32_t' has not been declared
 Patch56:	chromium-80.0.3987.87-missing-cstdint-header.patch
 # Missing <cstring> (thanks c++17)
-Patch57:	chromium-93.0.4577.63-missing-cstring.patch
+Patch57:	chromium-95.0.4638.69-missing-cstring.patch
 # prepare for using system ffmpeg (clean)
 # http://svnweb.mageia.org/packages/cauldron/chromium-browser-stable/current/SOURCES/chromium-53-ffmpeg-no-deprecation-errors.patch?view=markup
 Patch58:	chromium-53-ffmpeg-no-deprecation-errors.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-91-libyuv-aarch64.patch
-Patch60:	chromium-91-libyuv-aarch64.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-90-ruy-include.patch
-Patch62:	chromium-90-ruy-include.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-95-libyuv-aarch64.patch
+Patch60:	chromium-95-libyuv-aarch64.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-95-quiche-include.patch
+Patch61:	chromium-95-quiche-include.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-95-BitstreamReader-namespace.patch
+Patch62:	chromium-95-BitstreamReader-namespace.patch
 # Extra CXXFLAGS for aarch64
 Patch63:	chromium-91.0.4472.77-aarch64-cxxflags-addition.patch
 # Fix issue where closure_compiler thinks java is only allowed in android builds
@@ -309,13 +322,10 @@ Patch68:	chromium-84.0.4147.125-aarch64-clearkeycdm-binutils-workaround.patch
 Patch76:	chromium-92.0.4515.107-rawhide-gcc-std-max-fix.patch
 # Do not download proprietary widevine module in the background (thanks Debian)
 Patch79:	chromium-93.0.4577.63-widevine-no-download.patch
+
 # Fix crashes with components/cast_*
 # Thanks to Gentoo
 Patch80:	chromium-92.0.4515.107-EnumTable-crash.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-94-ConversionStorageSql-lambda.patch
-Patch81:	chromium-94-ConversionStorageSql-lambda.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-94-CustomSpaces-include.patch
-Patch82:	chromium-94-CustomSpaces-include.patch
 # Fixes for python3
 Patch83:	chromium-92.0.4515.107-py3-fixes.patch
 # Add missing cmath header
@@ -997,17 +1007,23 @@ udev.
 %endif
 
 # Short term fixes (usually gcc and backports)
+%patch20 -p1 -b .maldoca-zlib
+%patch21 -p1 -b .eigen-avx-1
+%patch22 -p1 -b .eigen-avx-2
+%patch23 -p1 -b .eigen-avx-3
+%patch24 -p1 -b .xfce-maximize
+
 %patch51 -p1 -b .gcc-remoting-constexpr
 %if 0%{?fedora} || 0%{?rhel} >= 8
 %patch52 -p1 -b .unbundle-zlib
 %endif
-%patch53 -p1 -b .gcc-include-memory
 %patch55 -p1 -b .protobuf-export
 %patch56 -p1 -b .missing-cstdint
 %patch57 -p1 -b .missing-cstring
 %patch58 -p1 -b .ffmpeg-deprecations
 %patch60 -p1 -b .libyuv-aarch64
-%patch62 -p1 -b .ruy-include
+%patch61 -p1 -b .quiche-include
+%patch62 -p1 -b .BitstreamReader-namespace
 %patch63 -p1 -b .aarch64-cxxflags-addition
 %patch64 -p1 -b .java-only-allowed
 %patch65 -p1 -b .gn-gcc-cleanup
@@ -1019,8 +1035,6 @@ udev.
 %endif
 %patch79 -p1 -b .widevine-no-download
 %patch80 -p1 -b .EnumTable-crash
-%patch81 -p1 -b .ConversionStorageSql-lambda-include
-%patch82 -p1 -b .CustomSpaces-include
 %patch83 -p1 -b .py3fixes
 %patch84 -p1 -b .remoting-missing-cmath-header
 %patch86 -p1 -b .clang-format-py3
@@ -1338,6 +1352,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/devtools-frontend/src/front_end/third_party/puppeteer' \
 	'third_party/devtools-frontend/src/front_end/third_party/wasmparser' \
 	'third_party/devtools-frontend/src/test/unittests/front_end/third_party/i18n' \
+	'third_party/devtools-frontend/src/third_party' \
 	'third_party/dom_distiller_js' \
 	'third_party/eigen3' \
 	'third_party/emoji-segmenter' \
@@ -1406,6 +1421,9 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/lss' \
 	'third_party/lzma_sdk' \
 	'third_party/mako' \
+	'third_party/maldoca' \
+	'third_party/maldoca/src/third_party/tensorflow_protos' \
+	'third_party/maldoca/src/third_party/zlibwrapper' \
 	'third_party/markupsafe' \
 	'third_party/mesa' \
 	'third_party/metrics_proto' \
@@ -2126,6 +2144,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Fri Nov 12 2021 Tom Callaway <spot@fedoraproject.org> - 95.0.4638.69-1
+- update to 95.0.4638.69
+
 * Fri Oct  8 2021 Tom Callaway <spot@fedoraproject.org> - 94.0.4606.81-1
 - update to 94.0.4606.81
 
