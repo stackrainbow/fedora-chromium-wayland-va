@@ -213,14 +213,14 @@ BuildRequires:  libicu-devel >= 5.4
 %global chromoting_client_id %nil
 %endif
 
-%global majorversion 95
+%global majorversion 96
 
 %if %{freeworld}
 Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4638.69
+Version:	%{majorversion}.0.4664.45
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -253,8 +253,6 @@ Patch6:		chromium-95.0.4638.69-norar.patch
 # Use Gentoo's Widevine hack
 # https://gitweb.gentoo.org/repo/gentoo.git/tree/www-client/chromium/files/chromium-widevine-r3.patch
 Patch7:		chromium-71.0.3578.98-widevine-r3.patch
-# Disable fontconfig cache magic that breaks remoting
-Patch8:		chromium-91.0.4472.77-disable-fontconfig-cache-magic.patch
 # drop rsp clobber, which breaks gcc9 (thanks to Jeff Law)
 Patch9:		chromium-94.0.4606.54-gcc9-drop-rsp-clobber.patch
 # Try to load widevine from other places
@@ -268,52 +266,50 @@ Patch11:	chromium-92.0.4515.107-py2-bootstrap.patch
 # Add "Fedora" to the user agent string
 Patch12:	chromium-86.0.4240.75-fedora-user-agent.patch
 
-# https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-95-maldoca-zlib.patch
-Patch20:	chromium-95-maldoca-zlib.patch
-
-# https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-95-eigen-avx-1.patch
-# https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-95-eigen-avx-2.patch
-# https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-95-eigen-avx-3.patch
-Patch21:	chromium-95-eigen-avx-1.patch
-Patch22:	chromium-95-eigen-avx-2.patch
-Patch23:	chromium-95-eigen-avx-3.patch
-
-# https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-95-xfce-maximize.patch
-Patch24:	chromium-95-xfce-maximize.patch
+# https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-96-xfce-maximize.patch
+Patch24:	chromium-96-xfce-maximize.patch
 
 # Needs to be submitted..
-Patch51:	chromium-76.0.3809.100-gcc-remoting-constexpr.patch
+Patch51:	chromium-96.0.4664.45-gcc-remoting-constexpr.patch
 # https://gitweb.gentoo.org/repo/gentoo.git/tree/www-client/chromium/files/chromium-unbundle-zlib.patch
 Patch52:	chromium-81.0.4044.92-unbundle-zlib.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-78-protobuf-RepeatedPtrField-export.patch
 Patch55:	chromium-78-protobuf-RepeatedPtrField-export.patch
 # ../../third_party/perfetto/include/perfetto/base/task_runner.h:48:55: error: 'uint32_t' has not been declared
-Patch56:	chromium-80.0.3987.87-missing-cstdint-header.patch
+Patch56:	chromium-96.0.4664.45-missing-cstdint-header.patch
 # Missing <cstring> (thanks c++17)
-Patch57:	chromium-95.0.4638.69-missing-cstring.patch
+Patch57:	chromium-96.0.4664.45-missing-cstring.patch
 # prepare for using system ffmpeg (clean)
 # http://svnweb.mageia.org/packages/cauldron/chromium-browser-stable/current/SOURCES/chromium-53-ffmpeg-no-deprecation-errors.patch?view=markup
 Patch58:	chromium-53-ffmpeg-no-deprecation-errors.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-96-CouponDB-include.patch
+Patch59:	chromium-96-CouponDB-include.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-95-libyuv-aarch64.patch
 Patch60:	chromium-95-libyuv-aarch64.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-95-quiche-include.patch
-Patch61:	chromium-95-quiche-include.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-95-BitstreamReader-namespace.patch
-Patch62:	chromium-95-BitstreamReader-namespace.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-96-CommandLine-include.patch
+Patch61:	chromium-96-CommandLine-include.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-96-RestrictedCookieManager-tuple.patch
+Patch62:	chromium-96-RestrictedCookieManager-tuple.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-96-DrmRenderNodePathFinder-include.patch
+Patch63:	chromium-96-DrmRenderNodePathFinder-include.patch
 # Extra CXXFLAGS for aarch64
-Patch63:	chromium-91.0.4472.77-aarch64-cxxflags-addition.patch
+Patch64:	chromium-91.0.4472.77-aarch64-cxxflags-addition.patch
 # Fix issue where closure_compiler thinks java is only allowed in android builds
 # https://bugs.chromium.org/p/chromium/issues/detail?id=1192875
-Patch64:	chromium-91.0.4472.77-java-only-allowed-in-android-builds.patch
+Patch65:	chromium-91.0.4472.77-java-only-allowed-in-android-builds.patch
 
 # Silence GCC warnings during gn compile
-Patch65:	chromium-92.0.4515.107-gn-gcc-cleanup.patch
+Patch66:	chromium-92.0.4515.107-gn-gcc-cleanup.patch
 # Fix missing cstring in remoting code
-Patch66:	chromium-84.0.4147.125-remoting-cstring.patch
+Patch67:	chromium-84.0.4147.125-remoting-cstring.patch
 # Apply fix_textrels hack for i686 (even without lld)
-Patch67:	chromium-84.0.4147.125-i686-fix_textrels.patch
+Patch68:	chromium-84.0.4147.125-i686-fix_textrels.patch
 # Work around binutils bug in aarch64 (F33+)
-Patch68:	chromium-84.0.4147.125-aarch64-clearkeycdm-binutils-workaround.patch
+Patch69:	chromium-84.0.4147.125-aarch64-clearkeycdm-binutils-workaround.patch
+# No const elements in std::vector
+# https://github.com/chromium/chromium/commit/fd8ee2daf64a4348abca5dc9171523a1f9540c57#diff-45309c0989d0ee3ef14c373b6032b235c928574f72ac81e0b2ad8abf95c34547
+Patch70:	chromium-96.0.4664.45-no-const-elements-in-std-vector.patch
+
 # Rawhide (f35) glibc defines SIGSTKSZ as a long instead of a constant
 Patch76:	chromium-92.0.4515.107-rawhide-gcc-std-max-fix.patch
 # Do not download proprietary widevine module in the background (thanks Debian)
@@ -321,23 +317,13 @@ Patch79:	chromium-93.0.4577.63-widevine-no-download.patch
 
 # Fix crashes with components/cast_*
 # Thanks to Gentoo
-Patch80:	chromium-92.0.4515.107-EnumTable-crash.patch
-# Fixes for python3
-Patch83:	chromium-92.0.4515.107-py3-fixes.patch
+Patch80:	chromium-96-EnumTable-crash.patch
 # Add missing cmath header
 Patch84:	chromium-94.0.4606.71-remoting-missing-cmath-header.patch
 
 # Clean up clang-format for python3
 # thanks to Jon Nettleton
 Patch86:	chromium-94.0.4606.81-clang-format.patch
-# In file included from ../../components/cast_channel/enum_table.cc:5:
-# ../../components/cast_channel/enum_table.h:359:18: error: 'vector' in namespace 'std' does not name a template type
-#   359 |       const std::vector<Entry> data_;
-#       |                  ^~~~~~
-# ../../components/cast_channel/enum_table.h:18:1: note: 'std::vector' is defined in header '<vector>'; did you forget to '#include <vector>'?
-Patch93:	chromium-93.0.4577.63-vector-fix.patch
-# Fix NoDestructor issue with gcc
-Patch94:	chromium-94.0.4606.54-remoting-nodestructor-fix.patch
 # include full UrlResponseHead header
 Patch95:	chromium-93.0.4577.63-mojo-header-fix.patch
 # Fix multiple defines issue in webrtc/BUILD.gn
@@ -346,9 +332,6 @@ Patch96:	chromium-94.0.4606.54-webrtc-BUILD.gn-fix-multiple-defines.patch
 Patch97:	chromium-94.0.4606.61-remoting-extra-qualification.patch
 # From gentoo
 Patch98:	chromium-94.0.4606.71-InkDropHost-crash.patch
-# From upstream
-# https://chromium.googlesource.com/chromium/src/+/403393b908cefaed09592a4f25fe2cbd46317a68%5E%21/#F0
-Patch99:	chromium-94.0.4606.71-PartitionFree-nullptr-fix.patch
 
 
 
@@ -995,7 +978,6 @@ udev.
 %patch5 -p1 -b .nozlibmangle
 %patch6 -p1 -b .nounrar
 %patch7 -p1 -b .widevine-hack
-%patch8 -p1 -b .nofontconfigcache
 %patch9 -p1 -b .gcc9
 %patch10 -p1 -b .widevine-other-locations
 %if 0%{?build_with_python3}
@@ -1003,10 +985,6 @@ udev.
 %endif
 
 # Short term fixes (usually gcc and backports)
-%patch20 -p1 -b .maldoca-zlib
-%patch21 -p1 -b .eigen-avx-1
-%patch22 -p1 -b .eigen-avx-2
-%patch23 -p1 -b .eigen-avx-3
 %patch24 -p1 -b .xfce-maximize
 
 %patch51 -p1 -b .gcc-remoting-constexpr
@@ -1017,30 +995,29 @@ udev.
 %patch56 -p1 -b .missing-cstdint
 %patch57 -p1 -b .missing-cstring
 %patch58 -p1 -b .ffmpeg-deprecations
+%patch59 -p1 -b .CouponDB-include
 %patch60 -p1 -b .libyuv-aarch64
-%patch61 -p1 -b .quiche-include
-%patch62 -p1 -b .BitstreamReader-namespace
-%patch63 -p1 -b .aarch64-cxxflags-addition
-%patch64 -p1 -b .java-only-allowed
-%patch65 -p1 -b .gn-gcc-cleanup
-%patch66 -p1 -b .remoting-cstring
-%patch67 -p1 -b .i686-textrels
-%patch68 -p1 -b .aarch64-clearkeycdm-binutils-workaround
+%patch61 -p1 -b .CommandLine-include
+%patch62 -p1 -b .RestrictedCookieManager-tuple
+%patch63 -p1 -b .DrmRenderNodePathFinder-include
+%patch64 -p1 -b .aarch64-cxxflags-addition
+%patch65 -p1 -b .java-only-allowed
+%patch66 -p1 -b .gn-gcc-cleanup
+%patch67 -p1 -b .remoting-cstring
+%patch68 -p1 -b .i686-textrels
+%patch69 -p1 -b .aarch64-clearkeycdm-binutils-workaround
+%patch70 -p1 -b .no-const-elements-in-std-vector
 %if 0%{?fedora} >= 35
 %patch76 -p1 -b .sigstkszfix
 %endif
 %patch79 -p1 -b .widevine-no-download
 %patch80 -p1 -b .EnumTable-crash
-%patch83 -p1 -b .py3fixes
 %patch84 -p1 -b .remoting-missing-cmath-header
 %patch86 -p1 -b .clang-format-py3
-%patch93 -p1 -b .vector-fix
-%patch94 -p1 -b .remoting-nodestructor-fix
 %patch95 -p1 -b .mojo-header-fix
 %patch96 -p1 -b .webrtc-BUILD.gn-fix-multiple-defines
 %patch97 -p1 -b .remoting-extra-qualification
 %patch98 -p1 -b .InkDropHost-crash
-%patch99 -p1 -b .PartitionFree-nullptr-fix
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -1349,6 +1326,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/devtools-frontend/src/front_end/third_party/wasmparser' \
 	'third_party/devtools-frontend/src/test/unittests/front_end/third_party/i18n' \
 	'third_party/devtools-frontend/src/third_party' \
+	'third_party/distributed_point_functions' \
 	'third_party/dom_distiller_js' \
 	'third_party/eigen3' \
 	'third_party/emoji-segmenter' \
@@ -1494,7 +1472,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/tflite' \
 	'third_party/tflite/src/third_party/eigen3' \
 	'third_party/tflite/src/third_party/fft2d' \
-	'third_party/tflite-support' \
 	'third_party/ukey2' \
         'third_party/usb_ids' \
 	'third_party/usrsctp' \
@@ -2140,6 +2117,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Fri Nov 19 2021 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.45-1
+- update to 96.0.4664.45
+
 * Fri Nov 12 2021 Tom Callaway <spot@fedoraproject.org> - 95.0.4638.69-1
 - update to 95.0.4638.69
 
