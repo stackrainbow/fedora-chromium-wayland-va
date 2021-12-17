@@ -220,7 +220,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4664.45
+Version:	%{majorversion}.0.4664.110
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -265,9 +265,6 @@ Patch11:	chromium-92.0.4515.107-py2-bootstrap.patch
 %endif
 # Add "Fedora" to the user agent string
 Patch12:	chromium-86.0.4240.75-fedora-user-agent.patch
-
-# https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-96-xfce-maximize.patch
-Patch24:	chromium-96-xfce-maximize.patch
 
 # Needs to be submitted..
 Patch51:	chromium-96.0.4664.45-gcc-remoting-constexpr.patch
@@ -985,8 +982,6 @@ udev.
 %endif
 
 # Short term fixes (usually gcc and backports)
-%patch24 -p1 -b .xfce-maximize
-
 %patch51 -p1 -b .gcc-remoting-constexpr
 %if 0%{?fedora} || 0%{?rhel} >= 8
 %patch52 -p1 -b .unbundle-zlib
@@ -2117,6 +2112,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Thu Dec 16 2021 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-1
+- update to 96.0.4664.110
+
 * Fri Nov 19 2021 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.45-1
 - update to 96.0.4664.45
 
