@@ -221,7 +221,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 Name:		chromium%{chromium_channel}
 %endif
 Version:	%{majorversion}.0.4664.110
-Release:	1%{?dist}
+Release:	2%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -329,6 +329,8 @@ Patch96:	chromium-94.0.4606.54-webrtc-BUILD.gn-fix-multiple-defines.patch
 Patch97:	chromium-94.0.4606.61-remoting-extra-qualification.patch
 # From gentoo
 Patch98:	chromium-94.0.4606.71-InkDropHost-crash.patch
+# Enable WebRTCPPipeWireCapturer by default
+Patch99:	chromium-96.0.4664.110-enable-WebRTCPipeWireCapturer-byDefault.patch
 
 
 
@@ -1013,6 +1015,7 @@ udev.
 %patch96 -p1 -b .webrtc-BUILD.gn-fix-multiple-defines
 %patch97 -p1 -b .remoting-extra-qualification
 %patch98 -p1 -b .InkDropHost-crash
+%patch99 -p1 -b .enable-WebRTCPipeWireCapturer-byDefault
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -2112,6 +2115,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Mon Dec 20 2021 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-2
+- enable WebRTCPipeWireCapturer by default
+
 * Thu Dec 16 2021 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-1
 - update to 96.0.4664.110
 
