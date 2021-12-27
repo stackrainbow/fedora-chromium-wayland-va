@@ -52,7 +52,7 @@ CHROMIUM_DISTRO_FLAGS=" --enable-plugins \
 
 # This provides a much better experience on Wayland.
 if [ "$XDG_SESSION_TYPE" == "wayland" ] || [[ $WAYLAND_DISPLAY ]] ; then
-  CHROMIUM_DISTRO_FLAGS="--enable-features=UseOzonePlatform --ozone-platform=wayland $CHROMIUM_DISTRO_FLAGS"
+  CHROMIUM_DISTRO_FLAGS="--ozone-platform=wayland $CHROMIUM_DISTRO_FLAGS"
 fi
 
 if [ -f "$HERE/PepperFlash/libpepflashplayer.so" ] && [ -f "$HERE/PepperFlash/manifest.json" ] ; then
