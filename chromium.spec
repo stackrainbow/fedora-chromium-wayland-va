@@ -221,7 +221,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 Name:		chromium%{chromium_channel}
 %endif
 Version:	%{majorversion}.0.4664.110
-Release:	2%{?dist}
+Release:	3%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -2115,6 +2115,10 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Mon Dec 27 2021 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-3
+- have chromium-browser.sh check for wayland env vars and if found, set ozone flags appropriately
+  Thanks to Neal Gompa for the nudge
+
 * Mon Dec 20 2021 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-2
 - enable WebRTCPipeWireCapturer by default
 
