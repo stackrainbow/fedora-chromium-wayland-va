@@ -221,7 +221,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 Name:		chromium%{chromium_channel}
 %endif
 Version:	%{majorversion}.0.4664.110
-Release:	3%{?dist}
+Release:	4%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -1722,6 +1722,9 @@ rm -rf %{buildroot}
 		cp -a *.pak locales resources icudtl.dat %{buildroot}%{chromium_path}
 		%ifarch x86_64 i686 aarch64
 			cp -a swiftshader %{buildroot}%{chromium_path}
+			cp -a libvk_swiftshader.so* %{buildroot}%{chromium_path}
+			cp -a libvulkan.so* %{buildroot}%{chromium_path}
+			cp -a vk_swiftshader_icd.json %{buildroot}%{chromium_path}
 		%endif
 		cp -a chrome %{buildroot}%{chromium_path}/%{chromium_browser_channel}
 		cp -a chrome_sandbox %{buildroot}%{chromium_path}/chrome-sandbox
@@ -1965,9 +1968,6 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 %{chromium_path}/libEGL.so*
 %{chromium_path}/libGLESv2.so*
 %{chromium_path}/MEIPreload/
-%ifarch x86_64 i686 aarch64
-%{chromium_path}/swiftshader/
-%endif
 %dir %{chromium_path}/PepperFlash/
 %if 0
 %{chromium_path}/protoc
@@ -1996,6 +1996,12 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 %{chromium_path}/pyproto/
 %endif
 %{chromium_path}/resources/
+%ifarch x86_64 i686 aarch64
+%{chromium_path}/swiftshader/
+%{chromium_path}/libvk_swiftshader.so*
+%{chromium_path}/libvulkan.so*
+%{chromium_path}/vk_swiftshader_icd.json
+%endif
 %dir %{chromium_path}/locales/
 %lang(am) %{chromium_path}/locales/am.pak*
 %lang(ar) %{chromium_path}/locales/ar.pak*
@@ -2115,6 +2121,10 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Thu Dec 30 2021 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-4
+- package up more swiftshader/angle stuff
+- move swiftshader files to -common so headless can use them
+
 * Mon Dec 27 2021 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-3
 - have chromium-browser.sh check for wayland env vars and if found, set ozone flags appropriately
   Thanks to Neal Gompa for the nudge
