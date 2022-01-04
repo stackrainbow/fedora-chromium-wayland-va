@@ -2121,10 +2121,10 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
-* Tue Jan  4 2021 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-6
+* Tue Jan  4 2022 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-6
 - always filter provides, was previously inside conditional for shared builds
 
-* Mon Jan  3 2021 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-5
+* Mon Jan  3 2022 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-5
 - fix provides filtering to be more inclusive (and work properly)
 
 * Thu Dec 30 2021 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-4
