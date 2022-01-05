@@ -106,7 +106,7 @@
 # make sure there is not a trailing | at the end of the list
 
 # We always filter provides. We only filter Requires when building shared.
-%global __provides_exclude_from ^(%{chromium_path}/.*\\.so*|%{chromium_path}/lib/.*\\.so|%{chromium_path}/lib/.*\\.so.*)$
+%global __provides_exclude_from ^(%{chromium_path}/.*\\.so|%{chromium_path}/.*\\.so.*|%{chromium_path}/lib/.*\\.so|%{chromium_path}/lib/.*\\.so.*)$
 
 %if 0%{?shared}
 
@@ -221,7 +221,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 Name:		chromium%{chromium_channel}
 %endif
 Version:	%{majorversion}.0.4664.110
-Release:	6%{?dist}
+Release:	7%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -2121,6 +2121,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Wed Jan  5 2022 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-7
+- i hate regex. trying again
+
 * Tue Jan  4 2022 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-6
 - always filter provides, was previously inside conditional for shared builds
 
