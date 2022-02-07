@@ -155,7 +155,7 @@ BuildRequires:  libicu-devel >= 5.4
 %global gtk3 1
 
 %if 0%{?rhel} == 7 || 0%{?rhel} == 8
-%global dts_version 9
+%global dts_version 11
 
 %global bundleopus 1
 %global bundlelibusbx 1
@@ -213,15 +213,15 @@ BuildRequires:  libicu-devel >= 5.4
 %global chromoting_client_id %nil
 %endif
 
-%global majorversion 96
+%global majorversion 98
 
 %if %{freeworld}
 Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4664.110
-Release:	7%{?dist}
+Version:	%{majorversion}.0.4758.80
+Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -264,7 +264,7 @@ Patch11:        chromium-93.0.4577.63-py3-bootstrap.patch
 Patch11:	chromium-92.0.4515.107-py2-bootstrap.patch
 %endif
 # Add "Fedora" to the user agent string
-Patch12:	chromium-86.0.4240.75-fedora-user-agent.patch
+Patch12:	chromium-98.0.4758.80-fedora-user-agent.patch
 
 # Needs to be submitted..
 Patch51:	chromium-96.0.4664.45-gcc-remoting-constexpr.patch
@@ -279,33 +279,22 @@ Patch57:	chromium-96.0.4664.45-missing-cstring.patch
 # prepare for using system ffmpeg (clean)
 # http://svnweb.mageia.org/packages/cauldron/chromium-browser-stable/current/SOURCES/chromium-53-ffmpeg-no-deprecation-errors.patch?view=markup
 Patch58:	chromium-53-ffmpeg-no-deprecation-errors.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-96-CouponDB-include.patch
-Patch59:	chromium-96-CouponDB-include.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-95-libyuv-aarch64.patch
-Patch60:	chromium-95-libyuv-aarch64.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-96-CommandLine-include.patch
-Patch61:	chromium-96-CommandLine-include.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-96-RestrictedCookieManager-tuple.patch
-Patch62:	chromium-96-RestrictedCookieManager-tuple.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-96-DrmRenderNodePathFinder-include.patch
-Patch63:	chromium-96-DrmRenderNodePathFinder-include.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-95-libyuv-arm.patch
+Patch60:	chromium-95-libyuv-arm.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-98-MiraclePtr-gcc-ice.patch
+Patch61:	chromium-98-MiraclePtr-gcc-ice.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-98-WaylandFrameManager-check.patch
+Patch62:	chromium-98-WaylandFrameManager-check.patch
 # Extra CXXFLAGS for aarch64
 Patch64:	chromium-91.0.4472.77-aarch64-cxxflags-addition.patch
 # Fix issue where closure_compiler thinks java is only allowed in android builds
 # https://bugs.chromium.org/p/chromium/issues/detail?id=1192875
 Patch65:	chromium-91.0.4472.77-java-only-allowed-in-android-builds.patch
 
-# Silence GCC warnings during gn compile
-Patch66:	chromium-92.0.4515.107-gn-gcc-cleanup.patch
 # Fix missing cstring in remoting code
-Patch67:	chromium-84.0.4147.125-remoting-cstring.patch
+Patch67:	chromium-98.0.4758.80-remoting-cstring.patch
 # Apply fix_textrels hack for i686 (even without lld)
 Patch68:	chromium-84.0.4147.125-i686-fix_textrels.patch
-# Work around binutils bug in aarch64 (F33+)
-Patch69:	chromium-84.0.4147.125-aarch64-clearkeycdm-binutils-workaround.patch
-# No const elements in std::vector
-# https://github.com/chromium/chromium/commit/fd8ee2daf64a4348abca5dc9171523a1f9540c57#diff-45309c0989d0ee3ef14c373b6032b235c928574f72ac81e0b2ad8abf95c34547
-Patch70:	chromium-96.0.4664.45-no-const-elements-in-std-vector.patch
 
 # Rawhide (f35) glibc defines SIGSTKSZ as a long instead of a constant
 Patch76:	chromium-92.0.4515.107-rawhide-gcc-std-max-fix.patch
@@ -314,7 +303,7 @@ Patch79:	chromium-93.0.4577.63-widevine-no-download.patch
 
 # Fix crashes with components/cast_*
 # Thanks to Gentoo
-Patch80:	chromium-96-EnumTable-crash.patch
+Patch80:	chromium-98.0.4758.80-EnumTable-crash.patch
 # Add missing cmath header
 Patch84:	chromium-94.0.4606.71-remoting-missing-cmath-header.patch
 
@@ -323,10 +312,8 @@ Patch84:	chromium-94.0.4606.71-remoting-missing-cmath-header.patch
 Patch86:	chromium-94.0.4606.81-clang-format.patch
 # include full UrlResponseHead header
 Patch95:	chromium-93.0.4577.63-mojo-header-fix.patch
-# Fix multiple defines issue in webrtc/BUILD.gn
-Patch96:	chromium-94.0.4606.54-webrtc-BUILD.gn-fix-multiple-defines.patch
 # Fix extra qualification error
-Patch97:	chromium-94.0.4606.61-remoting-extra-qualification.patch
+Patch97:	chromium-98.0.4758.80-remoting-extra-qualification.patch
 # From gentoo
 Patch98:	chromium-94.0.4606.71-InkDropHost-crash.patch
 # Enable WebRTCPPipeWireCapturer by default
@@ -339,10 +326,10 @@ Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
 # el7 only patch
 Patch102:	chromium-80.0.3987.132-el7-noexcept.patch
 # Work around old and missing headers on EPEL7
-Patch103:	chromium-90.0.4430.93-epel7-old-headers-workarounds.patch
+Patch103:	chromium-98.0.4758.80-epel7-old-headers-workarounds.patch
 # Use old cups (chromium's code workaround breaks on gcc)
 # Revert: https://github.com/chromium/chromium/commit/c3213f8779ddc427e89d982514185ed5e4c94e91
-Patch104:	chromium-84.0.4147.89-epel7-old-cups.patch
+Patch104:	chromium-98.0.4758.80-epel7-old-cups.patch
 # Still not wrong, but it seems like only EL needs it
 Patch106:	chromium-77-clang.patch
 # ARM failures on el8 related to int clashes
@@ -355,15 +342,16 @@ Patch108:	chromium-85.0.4183.83-el7-old-libdrm.patch
 # error: no matching function for call to 'std::basic_string<char>::erase(std::basic_string<char>::const_iterator, __gnu_cxx::__normal_iterator<const char*, std::basic_string<char> >&)'
 #   33 |   property_name.erase(property_name.cbegin(), cur);
 # Not sure how this EVER worked anywhere, but it only seems to fail on EPEL-7.
-Patch109:	chromium-90.0.4430.93-epel7-erase-fix.patch
+Patch109:	chromium-98.0.4758.80-epel7-erase-fix.patch
 # Again, not sure how epel8 is the only one to hit this...
 # AARCH64 neon symbols need to be prefixed too to prevent multiple definition issue at linktime
 Patch110:	chromium-90.0.4430.93-epel8-aarch64-libpng16-symbol-prefixes.patch
-
+# Add additional operator== to make el7 happy.
+Patch111:	chromium-98.0.4758.80-el7-extra-operator==.patch
 
 # VAAPI
 # Upstream turned VAAPI on in Linux in 86
-Patch202:	chromium-89.0.4389.72-enable-hardware-accelerated-mjpeg.patch
+Patch202:	chromium-98.0.4758.80-enable-hardware-accelerated-mjpeg.patch
 Patch203:	chromium-86.0.4240.75-vaapi-i686-fpermissive.patch
 Patch205:	chromium-86.0.4240.75-fix-vaapi-on-intel.patch
 
@@ -992,18 +980,13 @@ udev.
 %patch56 -p1 -b .missing-cstdint
 %patch57 -p1 -b .missing-cstring
 %patch58 -p1 -b .ffmpeg-deprecations
-%patch59 -p1 -b .CouponDB-include
-%patch60 -p1 -b .libyuv-aarch64
-%patch61 -p1 -b .CommandLine-include
-%patch62 -p1 -b .RestrictedCookieManager-tuple
-%patch63 -p1 -b .DrmRenderNodePathFinder-include
+%patch60 -p1 -b .libyuv-arm
+%patch61 -p1 -b .MiraclePtr-gcc-ice
+%patch62 -p1 -b .WaylandFrameManager-check
 %patch64 -p1 -b .aarch64-cxxflags-addition
 %patch65 -p1 -b .java-only-allowed
-%patch66 -p1 -b .gn-gcc-cleanup
 %patch67 -p1 -b .remoting-cstring
 %patch68 -p1 -b .i686-textrels
-%patch69 -p1 -b .aarch64-clearkeycdm-binutils-workaround
-%patch70 -p1 -b .no-const-elements-in-std-vector
 %if 0%{?fedora} >= 35
 %patch76 -p1 -b .sigstkszfix
 %endif
@@ -1012,7 +995,6 @@ udev.
 %patch84 -p1 -b .remoting-missing-cmath-header
 %patch86 -p1 -b .clang-format-py3
 %patch95 -p1 -b .mojo-header-fix
-%patch96 -p1 -b .webrtc-BUILD.gn-fix-multiple-defines
 %patch97 -p1 -b .remoting-extra-qualification
 %patch98 -p1 -b .InkDropHost-crash
 %patch99 -p1 -b .enable-WebRTCPipeWireCapturer-byDefault
@@ -1030,6 +1012,7 @@ udev.
 %patch104 -p1 -b .el7cups
 %patch108 -p1 -b .el7-old-libdrm
 %patch109 -p1 -b .el7-erase-fix
+%patch111 -p1 -b .el7-extra-operator-equalequal
 %endif
 
 %if 0%{?rhel} == 8
@@ -1144,7 +1127,7 @@ popd
 
 # Core defines are flags that are true for both the browser and headless.
 CHROMIUM_CORE_GN_DEFINES=""
-CHROMIUM_CORE_GN_DEFINES+=' is_debug=false'
+CHROMIUM_CORE_GN_DEFINES+=' is_debug=false dcheck_always_on=false dcheck_is_configurable=false'
 %ifarch x86_64 aarch64
 CHROMIUM_CORE_GN_DEFINES+=' system_libdir="lib64"'
 %endif
@@ -1216,7 +1199,7 @@ CHROMIUM_HEADLESS_GN_DEFINES+=' use_ozone=true ozone_auto_platforms=false ozone_
 CHROMIUM_HEADLESS_GN_DEFINES+=' headless_use_embedded_resources=false icu_use_data_file=false v8_use_external_startup_data=false'
 CHROMIUM_HEADLESS_GN_DEFINES+=' enable_nacl=false enable_print_preview=false enable_remoting=false use_alsa=false'
 CHROMIUM_HEADLESS_GN_DEFINES+=' use_cups=false use_dbus=false use_gio=false use_kerberos=false use_libpci=false'
-CHROMIUM_HEADLESS_GN_DEFINES+=' use_pulseaudio=false use_udev=false use_gtk=false use_glib=false use_x11=false'
+CHROMIUM_HEADLESS_GN_DEFINES+=' use_pulseaudio=false use_udev=false use_gtk=false use_glib=false'
 export CHROMIUM_HEADLESS_GN_DEFINES
 
 %if 0%{?rhel} && 0%{?rhel} <= 8
@@ -1282,7 +1265,9 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/catapult/common/py_vulcanize/third_party/rcssmin' \
 	'third_party/catapult/common/py_vulcanize/third_party/rjsmin' \
 	'third_party/catapult/third_party/beautifulsoup4' \
+	'third_party/catapult/third_party/beautifulsoup4-4.9.3' \
 	'third_party/catapult/third_party/google-endpoints' \
+	'third_party/catapult/third_party/html5lib-1.1' \
 	'third_party/catapult/third_party/html5lib-python' \
 	'third_party/catapult/third_party/polymer' \
 	'third_party/catapult/third_party/six' \
@@ -1448,6 +1433,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/shell-encryption' \
 	'third_party/simplejson' \
 	'third_party/sinonjs' \
+	'third_party/six' \
 	'third_party/skia' \
 	'third_party/skia/include/third_party/skcms' \
 	'third_party/skia/include/third_party/vulkan' \
@@ -1683,6 +1669,9 @@ echo
 %endif
 %endif
 
+# bug #827861, vk_swiftshader_icd.json not getting properly installed in out/Release
+sed -e 's|${ICD_LIBRARY_PATH}|./libvk_swiftshader.so|g' third_party/swiftshader/src/Vulkan/vk_swiftshader_icd.json.tmpl > out/Release/vk_swiftshader_icd.json
+
 %install
 rm -rf %{buildroot}
 
@@ -1727,6 +1716,8 @@ rm -rf %{buildroot}
 			cp -a vk_swiftshader_icd.json %{buildroot}%{chromium_path}
 		%endif
 		cp -a chrome %{buildroot}%{chromium_path}/%{chromium_browser_channel}
+		# Explicitly strip chromium-browser (since we don't use debuginfo here anyway)
+		strip %{buildroot}%{chromium_path}/%{chromium_browser_channel}
 		cp -a chrome_sandbox %{buildroot}%{chromium_path}/chrome-sandbox
 		cp -a chrome_crashpad_handler %{buildroot}%{chromium_path}/chrome_crashpad_handler
 		cp -a ../../chrome/app/resources/manpage.1.in %{buildroot}%{_mandir}/man1/%{chromium_browser_channel}.1
@@ -2121,6 +2112,12 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Wed Feb  2 2022 Tom Callaway <spot@fedoraproject.org> - 98.0.4758.80-1
+- update to 98.0.4758.80
+
+* Wed Jan 19 2022 Fedora Release Engineering <releng@fedoraproject.org> - 96.0.4664.110-8
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
+
 * Wed Jan  5 2022 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-7
 - i hate regex. trying again
 

@@ -1,0 +1,84 @@
+diff -up chromium-98.0.4758.80/remoting/host/mojom/remoting_mojom_traits.h.extra-qualification chromium-98.0.4758.80/remoting/host/mojom/remoting_mojom_traits.h
+--- chromium-98.0.4758.80/remoting/host/mojom/remoting_mojom_traits.h.extra-qualification	2022-02-04 00:55:00.643766557 +0000
++++ chromium-98.0.4758.80/remoting/host/mojom/remoting_mojom_traits.h	2022-02-04 00:56:18.272148934 +0000
+@@ -21,7 +21,7 @@
+ namespace mojo {
+ 
+ template <>
+-class mojo::StructTraits<remoting::mojom::BoolDataView, bool> {
++class StructTraits<remoting::mojom::BoolDataView, bool> {
+  public:
+   static bool value(bool value) { return value; }
+ 
+@@ -32,7 +32,7 @@ class mojo::StructTraits<remoting::mojom
+ };
+ 
+ template <>
+-class mojo::StructTraits<remoting::mojom::FloatDataView, float> {
++class StructTraits<remoting::mojom::FloatDataView, float> {
+  public:
+   static float value(float value) { return value; }
+ 
+@@ -43,7 +43,7 @@ class mojo::StructTraits<remoting::mojom
+ };
+ 
+ template <>
+-class mojo::StructTraits<remoting::mojom::Int32DataView, int32_t> {
++class StructTraits<remoting::mojom::Int32DataView, int32_t> {
+  public:
+   static int32_t value(int32_t value) { return value; }
+ 
+@@ -109,7 +109,7 @@ struct EnumTraits<remoting::mojom::Mouse
+ };
+ 
+ template <>
+-class mojo::StructTraits<remoting::mojom::ClipboardEventDataView,
++class StructTraits<remoting::mojom::ClipboardEventDataView,
+                          ::remoting::protocol::ClipboardEvent> {
+  public:
+   static const std::string& mime_type(
+@@ -127,7 +127,7 @@ class mojo::StructTraits<remoting::mojom
+ };
+ 
+ template <>
+-class mojo::StructTraits<remoting::mojom::KeyEventDataView,
++class StructTraits<remoting::mojom::KeyEventDataView,
+                          ::remoting::protocol::KeyEvent> {
+  public:
+   static bool pressed(const ::remoting::protocol::KeyEvent& event) {
+@@ -163,7 +163,7 @@ class mojo::StructTraits<remoting::mojom
+ };
+ 
+ template <>
+-class mojo::StructTraits<remoting::mojom::MouseEventDataView,
++class StructTraits<remoting::mojom::MouseEventDataView,
+                          ::remoting::protocol::MouseEvent> {
+  public:
+   static absl::optional<int32_t> x(
+@@ -252,7 +252,7 @@ class mojo::StructTraits<remoting::mojom
+ };
+ 
+ template <>
+-class mojo::StructTraits<remoting::mojom::TextEventDataView,
++class StructTraits<remoting::mojom::TextEventDataView,
+                          ::remoting::protocol::TextEvent> {
+  public:
+   static const std::string& text(const ::remoting::protocol::TextEvent& event) {
+@@ -264,7 +264,7 @@ class mojo::StructTraits<remoting::mojom
+ };
+ 
+ template <>
+-class mojo::StructTraits<remoting::mojom::TouchEventPointDataView,
++class StructTraits<remoting::mojom::TouchEventPointDataView,
+                          ::remoting::protocol::TouchEventPoint> {
+  public:
+   static uint32_t id(const ::remoting::protocol::TouchEventPoint& event) {
+@@ -341,7 +341,7 @@ struct EnumTraits<remoting::mojom::Touch
+ };
+ 
+ template <>
+-class mojo::StructTraits<remoting::mojom::TouchEventDataView,
++class StructTraits<remoting::mojom::TouchEventDataView,
+                          ::remoting::protocol::TouchEvent> {
+  public:
+   static ::remoting::protocol::TouchEvent::TouchEventType event_type(
