@@ -1,0 +1,127 @@
+diff -up chromium-98.0.4758.80/mojo/core/channel_linux.cc.epel7-header-workarounds chromium-98.0.4758.80/mojo/core/channel_linux.cc
+--- chromium-98.0.4758.80/mojo/core/channel_linux.cc.epel7-header-workarounds	2022-02-03 18:37:49.535504412 +0000
++++ chromium-98.0.4758.80/mojo/core/channel_linux.cc	2022-02-03 18:55:08.833815527 +0000
+@@ -44,6 +44,25 @@
+ #include "base/android/build_info.h"
+ #endif
+ 
++#ifndef F_LINUX_SPECIFIC_BASE
++#define F_LINUX_SPECIFIC_BASE 1024
++#endif
++#ifndef F_SEAL_SEAL
++#define F_SEAL_SEAL 0x0001
++#endif
++#ifndef F_SEAL_SHRINK
++#define F_SEAL_SHRINK 0x0002
++#endif
++#ifndef F_SEAL_GROW
++#define F_SEAL_GROW 0x0004
++#endif
++#ifndef F_ADD_SEALS
++#define F_ADD_SEALS (F_LINUX_SPECIFIC_BASE + 9)
++#endif
++#ifndef F_GET_SEALS
++#define F_GET_SEALS (F_LINUX_SPECIFIC_BASE + 10)
++#endif
++
+ #ifndef EFD_ZERO_ON_WAKE
+ #define EFD_ZERO_ON_WAKE O_NOFOLLOW
+ #endif
+diff -up chromium-98.0.4758.80/sandbox/linux/seccomp-bpf-helpers/syscall_parameters_restrictions.cc.epel7-header-workarounds chromium-98.0.4758.80/sandbox/linux/seccomp-bpf-helpers/syscall_parameters_restrictions.cc
+--- chromium-98.0.4758.80/sandbox/linux/seccomp-bpf-helpers/syscall_parameters_restrictions.cc.epel7-header-workarounds	2022-02-01 00:41:54.000000000 +0000
++++ chromium-98.0.4758.80/sandbox/linux/seccomp-bpf-helpers/syscall_parameters_restrictions.cc	2022-02-03 18:37:49.536504389 +0000
+@@ -53,6 +53,25 @@
+ 
+ #endif  // defined(OS_ANDROID)
+ 
++#ifndef F_LINUX_SPECIFIC_BASE
++#define F_LINUX_SPECIFIC_BASE 1024
++#endif
++#ifndef F_SEAL_SEAL
++#define F_SEAL_SEAL 0x0001
++#endif
++#ifndef F_SEAL_SHRINK
++#define F_SEAL_SHRINK 0x0002
++#endif
++#ifndef F_SEAL_GROW
++#define F_SEAL_GROW 0x0004
++#endif
++#ifndef F_ADD_SEALS
++#define F_ADD_SEALS (F_LINUX_SPECIFIC_BASE + 9)
++#endif
++#ifndef F_GET_SEALS
++#define F_GET_SEALS (F_LINUX_SPECIFIC_BASE + 10)
++#endif
++
+ #if defined(__arm__) && !defined(MAP_STACK)
+ #define MAP_STACK 0x20000  // Daisy build environment has old headers.
+ #endif
+diff -up chromium-98.0.4758.80/sandbox/policy/linux/bpf_cros_amd_gpu_policy_linux.cc.epel7-header-workarounds chromium-98.0.4758.80/sandbox/policy/linux/bpf_cros_amd_gpu_policy_linux.cc
+--- chromium-98.0.4758.80/sandbox/policy/linux/bpf_cros_amd_gpu_policy_linux.cc.epel7-header-workarounds	2022-02-01 00:41:54.000000000 +0000
++++ chromium-98.0.4758.80/sandbox/policy/linux/bpf_cros_amd_gpu_policy_linux.cc	2022-02-03 18:37:49.535504412 +0000
+@@ -6,7 +6,24 @@
+ 
+ #include <errno.h>
+ #include <fcntl.h>
+-#include <linux/kcmp.h>
++#ifndef KCMP_FILE
++#define KCMP_FILE 0
++#endif
++#ifndef F_LINUX_SPECIFIC_BASE
++#define F_LINUX_SPECIFIC_BASE 1024
++#endif
++#ifndef F_SEAL_SEAL
++#define F_SEAL_SEAL 0x0001
++#endif
++#ifndef F_SEAL_SHRINK
++#define F_SEAL_SHRINK 0x0002
++#endif
++#ifndef F_SEAL_GROW
++#define F_SEAL_GROW 0x0004
++#endif
++#ifndef F_ADD_SEALS
++#define F_ADD_SEALS (F_LINUX_SPECIFIC_BASE + 9)
++#endif
+ #include <sys/socket.h>
+ 
+ // Some arch's (arm64 for instance) unistd.h don't pull in symbols used here
+diff -up chromium-98.0.4758.80/sandbox/policy/linux/bpf_gpu_policy_linux.cc.epel7-header-workarounds chromium-98.0.4758.80/sandbox/policy/linux/bpf_gpu_policy_linux.cc
+--- chromium-98.0.4758.80/sandbox/policy/linux/bpf_gpu_policy_linux.cc.epel7-header-workarounds	2022-02-03 18:37:49.535504412 +0000
++++ chromium-98.0.4758.80/sandbox/policy/linux/bpf_gpu_policy_linux.cc	2022-02-03 18:56:24.382093563 +0000
+@@ -22,6 +22,22 @@
+ #include "sandbox/policy/linux/sandbox_linux.h"
+ #include "sandbox/policy/linux/sandbox_seccomp_bpf_linux.h"
+ 
++#ifndef F_LINUX_SPECIFIC_BASE
++#define F_LINUX_SPECIFIC_BASE 1024
++#endif
++#ifndef F_SEAL_SEAL
++#define F_SEAL_SEAL 0x0001
++#endif
++#ifndef F_SEAL_SHRINK
++#define F_SEAL_SHRINK 0x0002
++#endif
++#ifndef F_SEAL_GROW
++#define F_SEAL_GROW 0x0004
++#endif
++#ifndef F_ADD_SEALS
++#define F_ADD_SEALS (F_LINUX_SPECIFIC_BASE + 9)
++#endif
++
+ using sandbox::bpf_dsl::AllOf;
+ using sandbox::bpf_dsl::Allow;
+ using sandbox::bpf_dsl::Arg;
+diff -up chromium-98.0.4758.80/ui/events/ozone/evdev/event_converter_evdev_impl.cc.epel7-header-workarounds chromium-98.0.4758.80/ui/events/ozone/evdev/event_converter_evdev_impl.cc
+--- chromium-98.0.4758.80/ui/events/ozone/evdev/event_converter_evdev_impl.cc.epel7-header-workarounds	2022-02-03 18:37:49.536504389 +0000
++++ chromium-98.0.4758.80/ui/events/ozone/evdev/event_converter_evdev_impl.cc	2022-02-03 18:57:16.842897816 +0000
+@@ -23,6 +23,10 @@
+ #include "ui/events/ozone/evdev/numberpad_metrics.h"
+ #endif
+ 
++#ifndef SW_PEN_INSERTED
++#define SW_PEN_INSERTED                0x0f  /* set = pen inserted */
++#endif
++
+ namespace ui {
+ 
+ namespace {

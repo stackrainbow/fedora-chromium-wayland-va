@@ -1,0 +1,15 @@
+diff -up chromium-98.0.4758.80/base/allocator/partition_allocator/starscan/metadata_allocator.h.wtf chromium-98.0.4758.80/base/allocator/partition_allocator/starscan/metadata_allocator.h
+--- chromium-98.0.4758.80/base/allocator/partition_allocator/starscan/metadata_allocator.h.wtf	2022-02-05 16:05:15.125570250 +0000
++++ chromium-98.0.4758.80/base/allocator/partition_allocator/starscan/metadata_allocator.h	2022-02-05 16:11:45.519670294 +0000
+@@ -39,6 +39,11 @@ class MetadataAllocator {
+   }
+ 
+   template <typename U>
++  bool operator==(const MetadataAllocator<U>&) const {
++    return true;
++  }
++
++  template <typename U>
+   bool operator!=(const MetadataAllocator<U>& o) {
+     return !operator==(o);
+   }
