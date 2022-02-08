@@ -37,7 +37,11 @@
 %global build_with_python3 1
 
 %if 0%{?build_with_python3}
+%if 0%{?rhel} == 7
+%global chromium_pybin /usr/bin/python3
+%else
 %global chromium_pybin %{__python3}
+%endif
 %else
 %global chromium_pybin %{__python2}
 %endif
