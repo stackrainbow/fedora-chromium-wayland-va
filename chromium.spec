@@ -1816,6 +1816,8 @@ rm -rf %{buildroot}
 	%if %{build_headless}
 		pushd %{headlessbuilddir}
 			cp -a headless_lib.pak headless_shell %{buildroot}%{chromium_path}
+			# Explicitly strip headless_shell binary
+			strip %{buildroot}%{chromium_path}/headless_shell
 		popd
 	%endif
 
