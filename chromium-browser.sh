@@ -50,6 +50,11 @@ CHROMIUM_DISTRO_FLAGS=" --enable-plugins \
                         --enable-sync \
                         --auto-ssl-client-auth @@EXTRA_FLAGS@@"
 
+# This provides a much better experience on Wayland.
+if [ "$XDG_SESSION_TYPE" == "wayland" ] || [[ $WAYLAND_DISPLAY ]] ; then
+  CHROMIUM_DISTRO_FLAGS="--ozone-platform=wayland $CHROMIUM_DISTRO_FLAGS"
+fi
+
 if [ -f "$HERE/PepperFlash/libpepflashplayer.so" ] && [ -f "$HERE/PepperFlash/manifest.json" ] ; then
   CHROMIUM_FLASH_VERSION=$(grep '"version":' "$HERE/PepperFlash/manifest.json" | awk -F\" '{ print $4 }')
   CHROMIUM_FLASH_FLAGS=" --ppapi-flash-path=$HERE/PepperFlash/libpepflashplayer.so \

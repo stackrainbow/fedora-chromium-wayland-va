@@ -1,0 +1,12 @@
+diff -up chromium-98.0.4758.80/content/common/user_agent.cc.fedora-user-agent chromium-98.0.4758.80/content/common/user_agent.cc
+--- chromium-98.0.4758.80/content/common/user_agent.cc.fedora-user-agent	2022-02-02 19:16:37.841755606 +0000
++++ chromium-98.0.4758.80/content/common/user_agent.cc	2022-02-02 19:19:52.395650550 +0000
+@@ -34,7 +34,7 @@ std::string GetUserAgentPlatform() {
+ #elif defined(OS_MAC)
+   return "Macintosh; ";
+ #elif defined(USE_OZONE)
+-  return "X11; ";  // strange, but that's what Firefox uses
++  return "X11; Fedora; ";  // strange, but that's what Firefox uses
+ #elif defined(OS_ANDROID)
+   return "Linux; ";
+ #elif defined(OS_FUCHSIA)

@@ -1,17 +1,20 @@
 %define _lto_cflags %{nil}
 
 %global numjobs 10
-%ifarch aarch64
+%ifarch aarch64 i686
 %global numjobs 8
 %endif
 
 # This flag is so I can build things very fast on a giant system.
-# Do not enable in Koji builds.
+# Enabling this in koji causes aarch64 builds to timeout indefinitely.
 %global use_all_cpus 0
 
 %if %{use_all_cpus}
 %global numjobs %{_smp_build_ncpus}
 %endif
+
+# official builds have less debugging and go faster... but we have to shut some things off.
+%global official_build 1
 
 # Fancy build status, so we at least know, where we are..
 # %1 where
@@ -19,7 +22,6 @@
 %global build_target() \
 	export NINJA_STATUS="[%2:%f/%t] " ; \
 	../depot_tools/ninja -j %{numjobs} -C '%1' -vvv '%2'
-
 
 # This was faster when it worked, but it didn't always.
 # As of chromium 80, it is no longer supported. RIP.
@@ -30,6 +32,15 @@
 
 # This doesn't work and it doesn't even build as of Chromium 83
 %global build_remoting 1
+
+# This is finally possible with Chromium 93
+%global build_with_python3 1
+
+%if 0%{?build_with_python3}
+%global chromium_pybin %{__python3}
+%else
+%global chromium_pybin %{__python2}
+%endif
 
 # We'd like to always have this on...
 # ... but the libva in EL7 (and EL8) is too old.
@@ -94,11 +105,11 @@
 # for RHEL7, append libfontconfig to the end
 # make sure there is not a trailing | at the end of the list
 
-# We don't really need to do this unless we're building shared.
+# We always filter provides. We only filter Requires when building shared.
+%global __provides_exclude_from ^(%{chromium_path}/.*\\.so|%{chromium_path}/.*\\.so.*|%{chromium_path}/lib/.*\\.so|%{chromium_path}/lib/.*\\.so.*)$
 
 %if 0%{?shared}
 
-%global __provides_exclude_from %{chromium_path}/.*\\.so|%{chromium_path}/lib/.*\\.so|%{chromium_path}/lib/.*\\.so.*
 %if 0%{?rhel} == 7
 %global privlibs libaccessibility|libandroid_mojo_bindings_shared|libanimation|libapdu|libaura|libaura_extra|libauthenticator_test_mojo_bindings_shared|libbase|libbase_i18n|libbindings|libbindings_base|libblink_common|libblink_controller|libblink_core|libblink_embedded_frame_sink_mojo_bindings_shared|libblink_features|libblink_modules|libblink_mojom_broadcastchannel_bindings_shared|libblink_platform|libbluetooth|libboringssl|libbrowser_ui_views|libcaptive_portal|libcapture_base|libcapture_lib|libcbor|libcc|libcc_animation|libcc_base|libcc_debug|libcc_ipc|libcc_mojo_embedder|libcc_paint|libcertificate_matching|libcert_verifier|libchrome_features|libchromium_sqlite3|libclearkeycdm|libclient|libcloud_policy_proto_generated_compile|libcodec|libcolor_space|libcolor_utils|libcommon|libcompositor|libcontent|libcontent_common_mojo_bindings_shared|libcontent_public_common_mojo_bindings_shared|libcontent_service_cpp|libcontent_service_mojom|libcontent_service_mojom_shared|libcontent_settings_features|libcrash_key_lib|libcrcrypto|libcrdtp|libdbus|libdevice_base|libdevice_event_log|libdevice_features|libdevice_gamepad|libdevices|libdevice_vr|libdevice_vr_mojo_bindings|libdevice_vr_mojo_bindings_blink|libdevice_vr_mojo_bindings_shared|libdevice_vr_test_mojo_bindings|libdevice_vr_test_mojo_bindings_blink|libdevice_vr_test_mojo_bindings_shared|libdiscardable_memory_client|libdiscardable_memory_common|libdiscardable_memory_service|libdisplay|libdisplay_types|libdisplay_util|libdomain_reliability|libdom_storage_mojom|libdom_storage_mojom_shared|libEGL|libEGL|libembedder|libembedder_switches|libevents|libevents_base|libevents_devices_x11|libevents_ozone_layout|libevents_x|libextras|libffmpeg|libfido|libfingerprint|libfreetype_harfbuzz|libgamepad_mojom|libgamepad_mojom_blink|libgamepad_mojom_shared|libgamepad_shared_typemap_traits|libgcm|libgeometry|libgeometry_skia|libgesture_detection|libgfx|libgfx_ipc|libgfx_ipc_buffer_types|libgfx_ipc_color|libgfx_ipc_geometry|libgfx_ipc_skia|libgfx_switches|libgfx_x11|libgin|libgles2|libgles2_implementation|libgles2_utils|libGLESv2|libGLESv2|libgl_init|libgl_in_process_context|libgl_wrapper|libgpu|libgpu_ipc_service|libgtkui|libheadless_non_renderer|libhost|libicui18n|libicuuc|libinterfaces_shared|libipc|libipc_mojom|libipc_mojom_shared|libkeycodes_x11|libkeyed_service_content|libkeyed_service_core|liblearning_common|liblearning_impl|libleveldatabase|libleveldb_proto|libmanager|libmedia|libmedia_blink|libmedia_gpu|libmedia_learning_mojo_impl|libmedia_message_center|libmedia_mojo_services|libmedia_session_base_cpp|libmedia_session_cpp|libmedia_webrtc|libmemory_instrumentation|libmenu|libmessage_center|libmessage_support|libmetrics_cpp|libmidi|libmirroring_service|libmojo_base_lib|libmojo_base_mojom|libmojo_base_mojom_blink|libmojo_base_mojom_shared|libmojo_base_shared_typemap_traits|libmojo_core_embedder|libmojo_core_embedder_internal|libmojo_core_ports|libmojo_cpp_platform|libmojom_core_shared|libmojom_mhtml_load_result_shared|libmojom_modules_shared|libmojo_mojom_bindings|libmojo_mojom_bindings_shared|libmojom_platform_shared|libmojo_public_system|libmojo_public_system_cpp|libnative_theme|libnet|libnetwork_cpp|libnetwork_cpp_base|libnetwork_service|libnetwork_session_configurator|libonc|libos_crypt|libparsers|libpdfium|libperfetto|libperformace_manager_public_mojom|libperformace_manager_public_mojom_blink|libperformace_manager_public_mojom_shared|libplatform|libplatform_window|libplatform_window_common|libplatform_window_handler_libs|libpolicy_component|libpolicy_proto|libppapi_host|libppapi_proxy|libppapi_shared|libprefs|libprinting|libproperties|libprotobuf_lite|libproxy_config|libpublic|librange|libraster|libresource_coordinator_public_mojom|libresource_coordinator_public_mojom_blink|libresource_coordinator_public_mojom_shared|libsandbox|libsandbox_services|libscheduling_metrics|libseccomp_bpf|libsecurity_state_features|libservice|libservice_manager_cpp|libservice_manager_cpp_types|libservice_manager_mojom|libservice_manager_mojom_blink|libservice_manager_mojom_constants|libservice_manager_mojom_constants_blink|libservice_manager_mojom_constants_shared|libservice_manager_mojom_shared|libservice_manager_mojom_traits|libservice_provider|libsessions|libshared_memory_support|libshared_with_blink|libshell_dialogs|libskia|libskia_shared_typemap_traits|libsnapshot|libsql|libstartup_tracing|libstorage_browser|libstorage_common|libstorage_service_public|libstub_window|libsuid_sandbox_client|libsurface|libsystem_media_controls|libtab_count_metrics|libthread_linux|libtracing|libtracing_cpp|libtracing_mojom|libtracing_mojom_shared|libui_accessibility_ax_mojom|libui_accessibility_ax_mojom_blink|libui_accessibility_ax_mojom_shared|libui_base|libui_base_clipboard|libui_base_clipboard_types|libui_base_features|libui_base_idle|libui_base_ime|libui_base_ime_init|libui_base_ime_linux|libui_base_ime_types|libui_base_x|libui_data_pack|libui_devtools|libui_message_center_cpp|libui_touch_selection|liburl|liburl_ipc|liburl_matcher|libusb_shared|libuser_manager|libuser_prefs|libv8|libv8_libbase|libv8_libplatform|libviews|libviz_common|libviz_resource_format_utils|libviz_vulkan_context_provider|libVkICD_mock_icd|libvk_swiftshader|libvr_base|libvr_common|libvulkan_info|libvulkan_init|libvulkan_wrapper|libvulkan_x11|libvulkan_ycbcr_info|libweb_bluetooth_mojo_bindings_shared|libwebdata_common|libweb_dialogs|libweb_feature_mojo_bindings_mojom|libweb_feature_mojo_bindings_mojom_blink|libweb_feature_mojo_bindings_mojom_shared|libwebgpu|libweb_modal|libwebrtc_component|libwebview|libwm|libwm_public|libwtf|libwtf_support|libx11_events_platform|libx11_window|libzygote|libfontconfig
 %else
@@ -130,7 +141,7 @@ BuildRequires:  libicu-devel >= 5.4
 
 # Fedora's Python 2 stack is being removed, we use the bundled Python libraries
 # This can be revisited once we upgrade to Python 3
-%global bundlepylibs 1
+%global bundlepylibs 0
 
 # RHEL 7.9 dropped minizip.
 # It exists everywhere else though.
@@ -144,7 +155,7 @@ BuildRequires:  libicu-devel >= 5.4
 %global gtk3 1
 
 %if 0%{?rhel} == 7 || 0%{?rhel} == 8
-%global dts_version 10
+%global dts_version 11
 
 %global bundleopus 1
 %global bundlelibusbx 1
@@ -156,23 +167,17 @@ BuildRequires:  libicu-devel >= 5.4
 %global bundlelibdrm 1
 %global bundlefontconfig 1
 %else
-%global bundleharfbuzz 0
+# Chromium really wants to use its bundled harfbuzz. Sigh.
+%global bundleharfbuzz 1
 %global bundleopus 1
 %global bundlelibusbx 0
 %global bundlelibwebp 0
 %global bundlelibpng 0
 %global bundlelibjpeg 0
-%global bundlefreetype 0
+# Needs FT_ClipBox which was implemented after 2.11.0. Should be able to set this back to 0 later.
+%global bundlefreetype 1
 %global bundlelibdrm 0
 %global bundlefontconfig 0
-%endif
-
-# Needs at least harfbuzz 2.4.0 now.
-# 2019-09-13
-%if 0%{?fedora} < 31
-%global bundleharfbuzz 1
-%else
-%global bundleharfbuzz 0
 %endif
 
 ### From 2013 until early 2021, Google permitted distribution builds of
@@ -208,14 +213,14 @@ BuildRequires:  libicu-devel >= 5.4
 %global chromoting_client_id %nil
 %endif
 
-%global majorversion 91
+%global majorversion 98
 
 %if %{freeworld}
 Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4472.114
+Version:	%{majorversion}.0.4758.80
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -244,71 +249,76 @@ Patch4:		chromium-60.0.3112.78-jpeg-nomangle.patch
 # Do not mangle zlib
 Patch5:		chromium-77.0.3865.75-no-zlib-mangle.patch
 # Do not use unrar code, it is non-free
-Patch6:		chromium-89.0.4389.72-norar.patch
+Patch6:		chromium-95.0.4638.69-norar.patch
 # Use Gentoo's Widevine hack
 # https://gitweb.gentoo.org/repo/gentoo.git/tree/www-client/chromium/files/chromium-widevine-r3.patch
 Patch7:		chromium-71.0.3578.98-widevine-r3.patch
-# Disable fontconfig cache magic that breaks remoting
-Patch8:		chromium-91.0.4472.77-disable-fontconfig-cache-magic.patch
 # drop rsp clobber, which breaks gcc9 (thanks to Jeff Law)
-Patch9:	chromium-78.0.3904.70-gcc9-drop-rsp-clobber.patch
+Patch9:		chromium-94.0.4606.54-gcc9-drop-rsp-clobber.patch
 # Try to load widevine from other places
-Patch10:	chromium-89.0.4389.72-widevine-other-locations.patch
-# Try to fix version.py for Rawhide
-Patch11:	chromium-71.0.3578.98-py2-bootstrap.patch
+Patch10:	chromium-92.0.4515.107-widevine-other-locations.patch
+# Tell bootstrap.py to always use the version of Python we specify
+%if 0%{?build_with_python3}
+Patch11:        chromium-93.0.4577.63-py3-bootstrap.patch
+%else
+Patch11:	chromium-92.0.4515.107-py2-bootstrap.patch
+%endif
 # Add "Fedora" to the user agent string
-Patch12:	chromium-86.0.4240.75-fedora-user-agent.patch
+Patch12:	chromium-98.0.4758.80-fedora-user-agent.patch
 
 # Needs to be submitted..
-Patch51:	chromium-76.0.3809.100-gcc-remoting-constexpr.patch
+Patch51:	chromium-96.0.4664.45-gcc-remoting-constexpr.patch
 # https://gitweb.gentoo.org/repo/gentoo.git/tree/www-client/chromium/files/chromium-unbundle-zlib.patch
 Patch52:	chromium-81.0.4044.92-unbundle-zlib.patch
-# Needs to be submitted..
-Patch53:	chromium-77.0.3865.75-gcc-include-memory.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-78-protobuf-RepeatedPtrField-export.patch
 Patch55:	chromium-78-protobuf-RepeatedPtrField-export.patch
 # ../../third_party/perfetto/include/perfetto/base/task_runner.h:48:55: error: 'uint32_t' has not been declared
-Patch56:	chromium-80.0.3987.87-missing-cstdint-header.patch
+Patch56:	chromium-96.0.4664.45-missing-cstdint-header.patch
 # Missing <cstring> (thanks c++17)
-Patch57:	chromium-89.0.4389.72-missing-cstring-header.patch
+Patch57:	chromium-96.0.4664.45-missing-cstring.patch
 # prepare for using system ffmpeg (clean)
 # http://svnweb.mageia.org/packages/cauldron/chromium-browser-stable/current/SOURCES/chromium-53-ffmpeg-no-deprecation-errors.patch?view=markup
 Patch58:	chromium-53-ffmpeg-no-deprecation-errors.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-91-pcscan-vector-types.patch
-Patch59:	chromium-91-pcscan-vector-types.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-91-libyuv-aarch64.patch
-Patch60:	chromium-91-libyuv-aarch64.patch
-# Update third_party/highway to 0.12.2
-# this is needed for sane arm/aarch64
-Patch61:	chromium-91.0.4472.77-update-highway-0.12.2.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-90-ruy-include.patch
-Patch62:	chromium-90-ruy-include.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-95-libyuv-arm.patch
+Patch60:	chromium-95-libyuv-arm.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-98-MiraclePtr-gcc-ice.patch
+Patch61:	chromium-98-MiraclePtr-gcc-ice.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-98-WaylandFrameManager-check.patch
+Patch62:	chromium-98-WaylandFrameManager-check.patch
 # Extra CXXFLAGS for aarch64
-Patch63:	chromium-91.0.4472.77-aarch64-cxxflags-addition.patch
+Patch64:	chromium-91.0.4472.77-aarch64-cxxflags-addition.patch
 # Fix issue where closure_compiler thinks java is only allowed in android builds
 # https://bugs.chromium.org/p/chromium/issues/detail?id=1192875
-Patch64:	chromium-91.0.4472.77-java-only-allowed-in-android-builds.patch
+Patch65:	chromium-91.0.4472.77-java-only-allowed-in-android-builds.patch
 
-# Silence GCC warnings during gn compile
-Patch65:	chromium-84.0.4147.105-gn-gcc-cleanup.patch
 # Fix missing cstring in remoting code
-Patch66:	chromium-84.0.4147.125-remoting-cstring.patch
+Patch67:	chromium-98.0.4758.80-remoting-cstring.patch
 # Apply fix_textrels hack for i686 (even without lld)
-Patch67:	chromium-84.0.4147.125-i686-fix_textrels.patch
-# Work around binutils bug in aarch64 (F33+)
-Patch68:	chromium-84.0.4147.125-aarch64-clearkeycdm-binutils-workaround.patch
-# Fix sandbox code to properly handle the new way that glibc handles fstat in Fedora 34+
-# Thanks to Kevin Kofler for the fix.
-Patch75:	chromium-90.0.4430.72-fstatfix.patch
+Patch68:	chromium-84.0.4147.125-i686-fix_textrels.patch
+
 # Rawhide (f35) glibc defines SIGSTKSZ as a long instead of a constant
-Patch76:	chromium-88.0.4324.182-rawhide-gcc-std-max-fix.patch
-# Fix symbol visibility with gcc on swiftshader's libEGL
-Patch77:	chromium-88.0.4324.182-gcc-fix-swiftshader-libEGL-visibility.patch
+Patch76:	chromium-92.0.4515.107-rawhide-gcc-std-max-fix.patch
 # Do not download proprietary widevine module in the background (thanks Debian)
-Patch79:	chromium-90.0.4430.72-widevine-no-download.patch
+Patch79:	chromium-93.0.4577.63-widevine-no-download.patch
+
 # Fix crashes with components/cast_*
 # Thanks to Gentoo
-Patch80:	https://gitweb.gentoo.org/repo/gentoo.git/plain/www-client/chromium/files/chromium-89-EnumTable-crash.patch
+Patch80:	chromium-98.0.4758.80-EnumTable-crash.patch
+# Add missing cmath header
+Patch84:	chromium-94.0.4606.71-remoting-missing-cmath-header.patch
+
+# Clean up clang-format for python3
+# thanks to Jon Nettleton
+Patch86:	chromium-94.0.4606.81-clang-format.patch
+# include full UrlResponseHead header
+Patch95:	chromium-93.0.4577.63-mojo-header-fix.patch
+# Fix extra qualification error
+Patch97:	chromium-98.0.4758.80-remoting-extra-qualification.patch
+# From gentoo
+Patch98:	chromium-94.0.4606.71-InkDropHost-crash.patch
+# Enable WebRTCPPipeWireCapturer by default
+Patch99:	chromium-96.0.4664.110-enable-WebRTCPipeWireCapturer-byDefault.patch
+
 
 
 # Use lstdc++ on EPEL7 only
@@ -316,10 +326,10 @@ Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
 # el7 only patch
 Patch102:	chromium-80.0.3987.132-el7-noexcept.patch
 # Work around old and missing headers on EPEL7
-Patch103:	chromium-90.0.4430.93-epel7-old-headers-workarounds.patch
+Patch103:	chromium-98.0.4758.80-epel7-old-headers-workarounds.patch
 # Use old cups (chromium's code workaround breaks on gcc)
 # Revert: https://github.com/chromium/chromium/commit/c3213f8779ddc427e89d982514185ed5e4c94e91
-Patch104:	chromium-84.0.4147.89-epel7-old-cups.patch
+Patch104:	chromium-98.0.4758.80-epel7-old-cups.patch
 # Still not wrong, but it seems like only EL needs it
 Patch106:	chromium-77-clang.patch
 # ARM failures on el8 related to int clashes
@@ -332,20 +342,21 @@ Patch108:	chromium-85.0.4183.83-el7-old-libdrm.patch
 # error: no matching function for call to 'std::basic_string<char>::erase(std::basic_string<char>::const_iterator, __gnu_cxx::__normal_iterator<const char*, std::basic_string<char> >&)'
 #   33 |   property_name.erase(property_name.cbegin(), cur);
 # Not sure how this EVER worked anywhere, but it only seems to fail on EPEL-7.
-Patch109:	chromium-91.0.4472.114-epel7-erase-fix.patch
+Patch109:	chromium-98.0.4758.80-epel7-erase-fix.patch
 # Again, not sure how epel8 is the only one to hit this...
 # AARCH64 neon symbols need to be prefixed too to prevent multiple definition issue at linktime
 Patch110:	chromium-90.0.4430.93-epel8-aarch64-libpng16-symbol-prefixes.patch
-
+# Add additional operator== to make el7 happy.
+Patch111:	chromium-98.0.4758.80-el7-extra-operator==.patch
 
 # VAAPI
 # Upstream turned VAAPI on in Linux in 86
-Patch202:	chromium-89.0.4389.72-enable-hardware-accelerated-mjpeg.patch
+Patch202:	chromium-98.0.4758.80-enable-hardware-accelerated-mjpeg.patch
 Patch203:	chromium-86.0.4240.75-vaapi-i686-fpermissive.patch
 Patch205:	chromium-86.0.4240.75-fix-vaapi-on-intel.patch
 
 # Apply these patches to work around EPEL8 issues
-Patch300:	chromium-89.0.4389.82-rhel8-force-disable-use_gnome_keyring.patch
+Patch300:	chromium-92.0.4515.107-rhel8-force-disable-use_gnome_keyring.patch
 
 # And fixes for new compilers
 Patch400:       %{name}-gcc11.patch
@@ -381,9 +392,10 @@ Source15:	http://download.savannah.nongnu.org/releases/freebangfont/MuktiNarrow-
 Source16:	https://github.com/web-platform-tests/wpt/raw/master/fonts/Ahem.ttf
 Source17:	GardinerModBug.ttf
 Source18:	GardinerModCat.ttf
-# RHEL 7 needs newer nodejs
-%if 0%{?rhel} == 7
-Source19:	https://nodejs.org/dist/v10.15.3/node-v10.15.3-linux-x64.tar.gz
+# RHEL 7|8 needs newer nodejs
+%if 0%{?rhel} && 0%{?rhel} <= 8
+Source19:	https://nodejs.org/dist/latest-v12.x/node-v12.22.6-linux-x64.tar.xz
+Source21:	https://nodejs.org/dist/latest-v12.x/node-v12.22.6-linux-arm64.tar.xz
 %endif
 # Bring xcb-proto with us (might need more than python on EPEL?)
 Source20:	https://www.x.org/releases/individual/proto/xcb-proto-1.14.tar.xz
@@ -437,8 +449,8 @@ BuildRequires:	minizip-compat-devel
 # BuildRequires:	minizip-devel
 %endif
 %endif
-# RHEL 7's nodejs is too old
-%if 0%{?rhel} == 7
+# RHEL 7|8's nodejs is too old
+%if 0%{?rhel} && 0%{?rhel} <= 8
 # Use bundled.
 %else
 BuildRequires:	nodejs
@@ -461,6 +473,8 @@ BuildRequires:	libstdc++-devel, openssl-devel
 # Fedora tries to use system libs whenever it can.
 BuildRequires:	bzip2-devel
 BuildRequires:	dbus-glib-devel
+# For eu-strip
+BuildRequires:	elfutils
 BuildRequires:	elfutils-libelf-devel
 BuildRequires:	flac-devel
 %if 0%{?bundlefreetype}
@@ -527,17 +541,23 @@ BuildRequires:	pkgconfig(gtk+-3.0)
 %else
 BuildRequires:	pkgconfig(gtk+-2.0)
 %endif
-BuildRequires:	/usr/bin/python2
+BuildRequires:	%{chromium_pybin}
+%if ! %{build_with_python3}
 BuildRequires:	python2-devel
+%else
+BuildRequires:  python3-devel
+%endif
+
+%if 0%{?build_with_python3}
 %if 0%{?bundlepylibs}
 # Using bundled bits, do nothing.
 %else
-%if 0%{?fedora}
-BuildRequires:	python2-beautifulsoup4
-BuildRequires:	python2-beautifulsoup
-BuildRequires:	python2-html5lib
-BuildRequires:	python2-markupsafe
-BuildRequires:	python2-ply
+%if 0%{?fedora} || 0%{?rhel} >= 8
+BuildRequires:	python3-beautifulsoup4
+# BuildRequires:	python2-beautifulsoup
+BuildRequires:	python3-html5lib
+BuildRequires:	python3-markupsafe
+BuildRequires:	python3-ply
 %else
 BuildRequires:	python-beautifulsoup4
 BuildRequires:	python-BeautifulSoup
@@ -545,8 +565,30 @@ BuildRequires:	python-html5lib
 BuildRequires:	python-markupsafe
 BuildRequires:	python-ply
 %endif
-BuildRequires:	python2-simplejson
+BuildRequires:	python3-simplejson
 %endif
+%else
+%if 0%{?bundlepylibs}
+# Using bundled bits, do nothing.
+%else
+%if 0%{?fedora}
+BuildRequires:  python2-beautifulsoup4
+BuildRequires:  python2-beautifulsoup
+BuildRequires:  python2-html5lib
+BuildRequires:  python2-markupsafe
+BuildRequires:  python2-ply
+%else
+BuildRequires:  python-beautifulsoup4
+BuildRequires:  python-BeautifulSoup
+BuildRequires:  python-html5lib
+BuildRequires:  python-markupsafe
+BuildRequires:  python-ply
+%endif
+BuildRequires:  python2-simplejson
+%endif
+%endif
+
+
 %if 0%{?bundlere2}
 # Using bundled bits, do nothing.
 %else
@@ -670,10 +712,18 @@ Provides:	chromium-libs = %{version}-%{release}
 Obsoletes:	chromium-libs <= %{version}-%{release}
 %endif
 
+#rhel 7: ia32 x86_64
+#rhel 8+: ia32, x86_64, aarch64
+#fedora 32 or older: ia32, x86_64, aarch64
+#fedora 33+: x86_64 aarch64 only
 %if 0%{?rhel} == 7
 ExclusiveArch:  x86_64 i686
 %else
+%if 0%{?fedora} > 32
+ExclusiveArch:	x86_64 aarch64
+%else
 ExclusiveArch:	x86_64 i686 aarch64
+%endif
 %endif
 
 # Bundled bits (I'm sure I've missed some)
@@ -696,7 +746,7 @@ Provides: bundled(fips181) = 2.2.3
 Provides: bundled(fontconfig) = 2.12.6
 %endif
 %if 0%{?bundlefreetype}
-Provides: bundled(freetype) = 2.9.3
+Provides: bundled(freetype) = 2.11.0git
 %endif
 Provides: bundled(gperftools) = svn144
 %if 0%{?bundleharfbuzz}
@@ -857,7 +907,11 @@ Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
 Requires: xorg-x11-server-Xvfb
+%if 0%{?build_with_python3}
+Requires: python3-psutil
+%else
 Requires: python2-psutil
+%endif
 %if 0%{?shared}
 Requires: chromium-libs%{_isa} = %{version}-%{release}
 %else
@@ -911,38 +965,39 @@ udev.
 %patch5 -p1 -b .nozlibmangle
 %patch6 -p1 -b .nounrar
 %patch7 -p1 -b .widevine-hack
-%patch8 -p1 -b .nofontconfigcache
 %patch9 -p1 -b .gcc9
 %patch10 -p1 -b .widevine-other-locations
-%patch11 -p1 -b .py2
+%if 0%{?build_with_python3}
+%patch11 -p1 -b .py3
+%endif
 
 # Short term fixes (usually gcc and backports)
 %patch51 -p1 -b .gcc-remoting-constexpr
 %if 0%{?fedora} || 0%{?rhel} >= 8
 %patch52 -p1 -b .unbundle-zlib
 %endif
-%patch53 -p1 -b .gcc-include-memory
 %patch55 -p1 -b .protobuf-export
 %patch56 -p1 -b .missing-cstdint
 %patch57 -p1 -b .missing-cstring
 %patch58 -p1 -b .ffmpeg-deprecations
-%patch59 -p1 -b .pcscan-vector-types
-%patch60 -p1 -b .libyuv-aarch64
-%patch61 -p1 -b .update-highway-0.12.2
-%patch62 -p1 -b .ruy-include
-%patch63 -p1 -b .aarch64-cxxflags-addition
-%patch64 -p1 -b .java-only-allowed
-%patch65 -p1 -b .gn-gcc-cleanup
-%patch66 -p1 -b .remoting-cstring
-%patch67 -p1 -b .i686-textrels
-%patch68 -p1 -b .aarch64-clearkeycdm-binutils-workaround
-%patch75 -p1 -b .fstatfix
+%patch60 -p1 -b .libyuv-arm
+%patch61 -p1 -b .MiraclePtr-gcc-ice
+%patch62 -p1 -b .WaylandFrameManager-check
+%patch64 -p1 -b .aarch64-cxxflags-addition
+%patch65 -p1 -b .java-only-allowed
+%patch67 -p1 -b .remoting-cstring
+%patch68 -p1 -b .i686-textrels
 %if 0%{?fedora} >= 35
 %patch76 -p1 -b .sigstkszfix
 %endif
-%patch77 -p1 -b .gcc-swiftshader-visibility
 %patch79 -p1 -b .widevine-no-download
 %patch80 -p1 -b .EnumTable-crash
+%patch84 -p1 -b .remoting-missing-cmath-header
+%patch86 -p1 -b .clang-format-py3
+%patch95 -p1 -b .mojo-header-fix
+%patch97 -p1 -b .remoting-extra-qualification
+%patch98 -p1 -b .InkDropHost-crash
+%patch99 -p1 -b .enable-WebRTCPipeWireCapturer-byDefault
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -957,6 +1012,7 @@ udev.
 %patch104 -p1 -b .el7cups
 %patch108 -p1 -b .el7-old-libdrm
 %patch109 -p1 -b .el7-erase-fix
+%patch111 -p1 -b .el7-extra-operator-equalequal
 %endif
 
 %if 0%{?rhel} == 8
@@ -981,7 +1037,11 @@ udev.
 
 # Change shebang in all relevant files in this directory and all subdirectories
 # See `man find` for how the `-exec command {} +` syntax works
+%if 0%{?build_with_python3}
+find -type f -exec sed -iE '1s=^#! */usr/bin/\(python\|env python\)[23]\?=#!%{__python3}=' {} +
+%else
 find -type f -exec sed -iE '1s=^#! */usr/bin/\(python\|env python\)[23]\?=#!%{__python2}=' {} +
+%endif
 
 %if 0%{?asan}
 export CC="clang"
@@ -1067,9 +1127,17 @@ popd
 
 # Core defines are flags that are true for both the browser and headless.
 CHROMIUM_CORE_GN_DEFINES=""
-CHROMIUM_CORE_GN_DEFINES+=' is_debug=false'
+CHROMIUM_CORE_GN_DEFINES+=' is_debug=false dcheck_always_on=false dcheck_is_configurable=false'
 %ifarch x86_64 aarch64
 CHROMIUM_CORE_GN_DEFINES+=' system_libdir="lib64"'
+%endif
+%if %{official_build}
+CHROMIUM_CORE_GN_DEFINES+=' is_official_build=true use_thin_lto=false is_cfi=false chrome_pgo_phase=0 use_debug_fission=true'
+sed -i 's|OFFICIAL_BUILD|GOOGLE_CHROME_BUILD|g' tools/generate_shim_headers/generate_shim_headers.py
+# Too much debuginfo for i686 and aarch64
+%ifarch i686 aarch64
+sed -i 's|-g2|-g0|g' build/config/compiler/BUILD.gn
+%endif
 %endif
 %if %{useapikey}
 CHROMIUM_CORE_GN_DEFINES+=' google_api_key="%{api_key}"'
@@ -1077,7 +1145,7 @@ CHROMIUM_CORE_GN_DEFINES+=' google_api_key="%{api_key}"'
 %if %{userestrictedapikeys}
 CHROMIUM_CORE_GN_DEFINES+=' google_default_client_id="%{default_client_id}" google_default_client_secret="%{default_client_secret}"'
 %endif
-CHROMIUM_CORE_GN_DEFINES+=' is_clang=false use_sysroot=false fieldtrial_testing_like_official_build=true use_lld=false rtc_enable_symbol_export=true'
+CHROMIUM_CORE_GN_DEFINES+=' is_clang=false use_sysroot=false disable_fieldtrial_testing_config=true use_lld=false rtc_enable_symbol_export=true'
 %if %{use_gold}
 CHROMIUM_CORE_GN_DEFINES+=' use_gold=true'
 %else
@@ -1131,13 +1199,21 @@ CHROMIUM_HEADLESS_GN_DEFINES+=' use_ozone=true ozone_auto_platforms=false ozone_
 CHROMIUM_HEADLESS_GN_DEFINES+=' headless_use_embedded_resources=false icu_use_data_file=false v8_use_external_startup_data=false'
 CHROMIUM_HEADLESS_GN_DEFINES+=' enable_nacl=false enable_print_preview=false enable_remoting=false use_alsa=false'
 CHROMIUM_HEADLESS_GN_DEFINES+=' use_cups=false use_dbus=false use_gio=false use_kerberos=false use_libpci=false'
-CHROMIUM_HEADLESS_GN_DEFINES+=' use_pulseaudio=false use_udev=false use_gtk=false use_glib=false use_x11=false'
+CHROMIUM_HEADLESS_GN_DEFINES+=' use_pulseaudio=false use_udev=false use_gtk=false use_glib=false'
 export CHROMIUM_HEADLESS_GN_DEFINES
 
-%if 0%{?rhel} == 7
+%if 0%{?rhel} && 0%{?rhel} <= 8
 pushd third_party/node/linux
+%ifarch x86_64
 tar xf %{SOURCE19}
-mv node-v10.15.3-linux-x64 node-linux-x64
+mv node-v12.22.6-linux-x64 node-linux-x64
+%endif
+%ifarch aarch64
+tar xf %{SOURCE21}
+mv node-v12.22.6-linux-arm64 node-linux-arm64
+# This is weird, but whatever
+ln -s node-linux-arm64 node-linux-x64
+%endif
 popd
 %else
 mkdir -p third_party/node/linux/node-linux-x64/bin
@@ -1159,6 +1235,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'base/third_party/valgrind' \
 	'base/third_party/xdg_mime' \
 	'base/third_party/xdg_user_dirs' \
+	'buildtools/third_party/eu-strip' \
 	'buildtools/third_party/libc++' \
 	'buildtools/third_party/libc++abi' \
 	'chrome/third_party/mozilla_security_manager' \
@@ -1172,7 +1249,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/angle/src/common/third_party/base' \
 	'third_party/angle/src/common/third_party/smhasher' \
 	'third_party/angle/src/common/third_party/xxhash' \
-	'third_party/angle/src/third_party/compiler' \
 	'third_party/angle/src/third_party/libXNVCtrl' \
 	'third_party/angle/src/third_party/trace_event' \
 	'third_party/angle/src/third_party/volk' \
@@ -1189,7 +1265,9 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/catapult/common/py_vulcanize/third_party/rcssmin' \
 	'third_party/catapult/common/py_vulcanize/third_party/rjsmin' \
 	'third_party/catapult/third_party/beautifulsoup4' \
+	'third_party/catapult/third_party/beautifulsoup4-4.9.3' \
 	'third_party/catapult/third_party/google-endpoints' \
+	'third_party/catapult/third_party/html5lib-1.1' \
 	'third_party/catapult/third_party/html5lib-python' \
 	'third_party/catapult/third_party/polymer' \
 	'third_party/catapult/third_party/six' \
@@ -1211,6 +1289,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/dav1d' \
 	'third_party/dawn' \
 	'third_party/dawn/third_party/khronos' \
+        'third_party/dawn/third_party/tint' \
 	'third_party/depot_tools' \
 	'third_party/devscripts' \
 	'third_party/devtools-frontend' \
@@ -1219,7 +1298,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/devtools-frontend/src/front_end/third_party/axe-core' \
 	'third_party/devtools-frontend/src/front_end/third_party/chromium' \
 	'third_party/devtools-frontend/src/front_end/third_party/codemirror' \
-	'third_party/devtools-frontend/src/front_end/third_party/fabricjs' \
+	'third_party/devtools-frontend/src/front_end/third_party/diff' \
 	'third_party/devtools-frontend/src/front_end/third_party/i18n' \
 	'third_party/devtools-frontend/src/front_end/third_party/intl-messageformat' \
 	'third_party/devtools-frontend/src/front_end/third_party/lighthouse' \
@@ -1228,6 +1307,9 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/devtools-frontend/src/front_end/third_party/marked' \
 	'third_party/devtools-frontend/src/front_end/third_party/puppeteer' \
 	'third_party/devtools-frontend/src/front_end/third_party/wasmparser' \
+	'third_party/devtools-frontend/src/test/unittests/front_end/third_party/i18n' \
+	'third_party/devtools-frontend/src/third_party' \
+	'third_party/distributed_point_functions' \
 	'third_party/dom_distiller_js' \
 	'third_party/eigen3' \
 	'third_party/emoji-segmenter' \
@@ -1296,15 +1378,17 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/lss' \
 	'third_party/lzma_sdk' \
 	'third_party/mako' \
-%if 0%{?bundlepylibs}
+	'third_party/maldoca' \
+	'third_party/maldoca/src/third_party/tensorflow_protos' \
+	'third_party/maldoca/src/third_party/zlibwrapper' \
 	'third_party/markupsafe' \
-%endif
 	'third_party/mesa' \
 	'third_party/metrics_proto' \
 	'third_party/minigbm' \
 	'third_party/modp_b64' \
 	'third_party/nasm' \
 	'third_party/nearby' \
+        'third_party/neon_2_sse' \
 	'third_party/node' \
 	'third_party/node/node_modules/polymer-bundler/lib/third_party/UglifyJS2' \
 	'third_party/one_euro_filter' \
@@ -1349,6 +1433,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/shell-encryption' \
 	'third_party/simplejson' \
 	'third_party/sinonjs' \
+	'third_party/six' \
 	'third_party/skia' \
 	'third_party/skia/include/third_party/skcms' \
 	'third_party/skia/include/third_party/vulkan' \
@@ -1371,8 +1456,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/tflite' \
 	'third_party/tflite/src/third_party/eigen3' \
 	'third_party/tflite/src/third_party/fft2d' \
-	'third_party/tflite-support' \
-	'third_party/tint' \
 	'third_party/ukey2' \
         'third_party/usb_ids' \
 	'third_party/usrsctp' \
@@ -1400,7 +1483,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
         'third_party/zlib' \
 	'third_party/zlib/google' \
 	'tools/gn/src/base/third_party/icu' \
-	'tools/grit/third_party/six' \
 	'url/third_party/mozilla' \
 	'v8/src/third_party/siphash' \
 	'v8/src/third_party/utf8-decoder' \
@@ -1408,13 +1490,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'v8/third_party/v8' \
 	'v8/third_party/inspector_protocol' \
 	--do-remove
-
-%if ! 0%{?bundlepylibs}
-# Look, I don't know. This package is spit and chewing gum. Sorry.
-rm -rf third_party/markupsafe
-ln -s %{python2_sitearch}/markupsafe third_party/markupsafe
-# We should look on removing other python2 packages as well i.e. ply
-%endif
 
 # Fix hardcoded path in remoting code
 sed -i 's|/opt/google/chrome-remote-desktop|%{crd_path}|g' remoting/host/setup/daemon_controller_delegate_linux.cc
@@ -1490,6 +1565,11 @@ sed -i '/aarch64)/ a \        exec "/usr/bin/ninja-build" "$@";;\' ../depot_tool
 %endif
 sed -i 's|exec "${THIS_DIR}/ninja-linux${LONG_BIT}"|exec "/usr/bin/ninja-build"|g' ../depot_tools/ninja
 
+# Get rid of the pre-built eu-strip binary, it is x86_64 and of mysterious origin
+rm -rf buildtools/third_party/eu-strip/bin/eu-strip
+# Replace it with a symlink to the Fedora copy
+ln -s %{_bindir}/eu-strip buildtools/third_party/eu-strip/bin/eu-strip
+
 %if 0%{?rhel} == 7
 . /opt/rh/devtoolset-%{dts_version}/enable
 %endif
@@ -1499,24 +1579,29 @@ sed -i 's|exec "${THIS_DIR}/ninja-linux${LONG_BIT}"|exec "/usr/bin/ninja-build"|
 %endif
 
 # Check that there is no system 'google' module, shadowing bundled ones:
+%if 0%{?build_with_python3}
+if python3 -c 'import google ; print google.__path__' 2> /dev/null ; then \
+    echo "Python 3 'google' module is defined, this will shadow modules of this build"; \
+%else
 if python2 -c 'import google ; print google.__path__' 2> /dev/null ; then \
     echo "Python 2 'google' module is defined, this will shadow modules of this build"; \
+%endif
     exit 1 ; \
 fi
 
 tools/gn/bootstrap/bootstrap.py -v --no-clean --gn-gen-args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES"
-%{builddir}/gn --script-executable=/usr/bin/python2 gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES" %{builddir}
+%{builddir}/gn --script-executable=%{chromium_pybin} gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES" %{builddir}
 
 %if %{freeworld}
 # do not need to do headless gen
 %else
 %if %{build_headless}
-%{builddir}/gn --script-executable=/usr/bin/python2 gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_HEADLESS_GN_DEFINES" %{headlessbuilddir}
+%{builddir}/gn --script-executable=%{chromium_pybin} gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_HEADLESS_GN_DEFINES" %{headlessbuilddir}
 %endif
 %endif
 
 %if %{build_remoting}
-%{builddir}/gn --script-executable=/usr/bin/python2 gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES" %{remotingbuilddir}
+%{builddir}/gn --script-executable=%{chromium_pybin} gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES" %{remotingbuilddir}
 %endif
 
 %if %{bundlelibusbx}
@@ -1552,7 +1637,12 @@ tar xf %{SOURCE20}
 %global optflags %(echo %{optflags} | sed 's/-g /-g1 /')
 %endif
 
-export PYTHONPATH="../../third_party/pyjson5/src:../../third_party/catapult/third_party/google-endpoints:../../xcb-proto-1.14"
+# export PYTHONPATH="../../third_party/pyjson5/src:../../third_party/catapult/third_party/google-endpoints:../../xcb-proto-1.14"
+%if 0%{?rhel} == 8
+export PYTHONPATH="../../third_party/protobuf/third_party/six:../../third_party/pyjson5/src:../../xcb-proto-1.14:../../third_party/catapult/third_party/html5lib-1.1"
+%else
+export PYTHONPATH="../../third_party/pyjson5/src:../../xcb-proto-1.14:../../third_party/catapult/third_party/html5lib-1.1"
+%endif
 
 echo
 # Now do the full browser
@@ -1578,6 +1668,9 @@ echo
 %build_target %{remotingbuilddir} remoting_all
 %endif
 %endif
+
+# bug #827861, vk_swiftshader_icd.json not getting properly installed in out/Release
+sed -e 's|${ICD_LIBRARY_PATH}|./libvk_swiftshader.so|g' third_party/swiftshader/src/Vulkan/vk_swiftshader_icd.json.tmpl > out/Release/vk_swiftshader_icd.json
 
 %install
 rm -rf %{buildroot}
@@ -1618,9 +1711,15 @@ rm -rf %{buildroot}
 		cp -a *.pak locales resources icudtl.dat %{buildroot}%{chromium_path}
 		%ifarch x86_64 i686 aarch64
 			cp -a swiftshader %{buildroot}%{chromium_path}
+			cp -a libvk_swiftshader.so* %{buildroot}%{chromium_path}
+			cp -a libvulkan.so* %{buildroot}%{chromium_path}
+			cp -a vk_swiftshader_icd.json %{buildroot}%{chromium_path}
 		%endif
 		cp -a chrome %{buildroot}%{chromium_path}/%{chromium_browser_channel}
+		# Explicitly strip chromium-browser (since we don't use debuginfo here anyway)
+		strip %{buildroot}%{chromium_path}/%{chromium_browser_channel}
 		cp -a chrome_sandbox %{buildroot}%{chromium_path}/chrome-sandbox
+		cp -a chrome_crashpad_handler %{buildroot}%{chromium_path}/chrome_crashpad_handler
 		cp -a ../../chrome/app/resources/manpage.1.in %{buildroot}%{_mandir}/man1/%{chromium_browser_channel}.1
 		sed -i "s|@@PACKAGE@@|%{chromium_browser_channel}|g" %{buildroot}%{_mandir}/man1/%{chromium_browser_channel}.1
 		sed -i "s|@@MENUNAME@@|%{chromium_menu_name}|g" %{buildroot}%{_mandir}/man1/%{chromium_browser_channel}.1
@@ -1717,6 +1816,8 @@ rm -rf %{buildroot}
 	%if %{build_headless}
 		pushd %{headlessbuilddir}
 			cp -a headless_lib.pak headless_shell %{buildroot}%{chromium_path}
+			# Explicitly strip headless_shell binary
+			strip %{buildroot}%{chromium_path}/headless_shell
 		popd
 	%endif
 
@@ -1852,6 +1953,7 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 %dir %{chromium_path}
 %{chromium_path}/*.bin
 %{chromium_path}/chrome_*.pak
+%{chromium_path}/chrome_crashpad_handler
 %{chromium_path}/resources.pak
 %{chromium_path}/icudtl.dat
 %{chromium_path}/%{chromium_browser_channel}
@@ -1859,9 +1961,6 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 %{chromium_path}/libEGL.so*
 %{chromium_path}/libGLESv2.so*
 %{chromium_path}/MEIPreload/
-%ifarch x86_64 i686 aarch64
-%{chromium_path}/swiftshader/
-%endif
 %dir %{chromium_path}/PepperFlash/
 %if 0
 %{chromium_path}/protoc
@@ -1890,6 +1989,12 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 %{chromium_path}/pyproto/
 %endif
 %{chromium_path}/resources/
+%ifarch x86_64 i686 aarch64
+%{chromium_path}/swiftshader/
+%{chromium_path}/libvk_swiftshader.so*
+%{chromium_path}/libvulkan.so*
+%{chromium_path}/vk_swiftshader_icd.json
+%endif
 %dir %{chromium_path}/locales/
 %lang(am) %{chromium_path}/locales/am.pak*
 %lang(ar) %{chromium_path}/locales/ar.pak*
@@ -1948,9 +2053,11 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 %lang(zh_CN) %{chromium_path}/locales/zh-CN.pak*
 %lang(zh_TW) %{chromium_path}/locales/zh-TW.pak*
 # These are psuedolocales, not real ones.
-# So we just include them always.
+# They only get generated when is_official_build=false
+%if ! %{official_build}
 %{chromium_path}/locales/ar-XB.pak*
 %{chromium_path}/locales/en-XA.pak*
+%endif
 
 %if %{build_headless}
 %files headless
@@ -2007,6 +2114,93 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Tue Feb  8 2022 Tom Callaway <spot@fedoraproject.org> - 98.0.4758.80-1
+- update to 98.0.4758.80
+
+* Sat Feb 05 2022 Jiri Vanek <jvanek@redhat.com> - 96.0.4664.110-9
+- Rebuilt for java-17-openjdk as system jdk
+
+* Wed Jan 19 2022 Fedora Release Engineering <releng@fedoraproject.org> - 96.0.4664.110-8
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
+
+* Wed Jan  5 2022 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-7
+- i hate regex. trying again
+
+* Tue Jan  4 2022 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-6
+- always filter provides, was previously inside conditional for shared builds
+
+* Mon Jan  3 2022 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-5
+- fix provides filtering to be more inclusive (and work properly)
+
+* Thu Dec 30 2021 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-4
+- package up more swiftshader/angle stuff
+- move swiftshader files to -common so headless can use them
+
+* Mon Dec 27 2021 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-3
+- have chromium-browser.sh check for wayland env vars and if found, set ozone flags appropriately
+  Thanks to Neal Gompa for the nudge
+
+* Mon Dec 20 2021 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-2
+- enable WebRTCPipeWireCapturer by default
+
+* Thu Dec 16 2021 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.110-1
+- update to 96.0.4664.110
+
+* Fri Nov 19 2021 Tom Callaway <spot@fedoraproject.org> - 96.0.4664.45-1
+- update to 96.0.4664.45
+
+* Fri Nov 12 2021 Tom Callaway <spot@fedoraproject.org> - 95.0.4638.69-1
+- update to 95.0.4638.69
+
+* Fri Oct  8 2021 Tom Callaway <spot@fedoraproject.org> - 94.0.4606.81-1
+- update to 94.0.4606.81
+
+* Wed Oct  6 2021 Tom Callaway <spot@fedoraproject.org> - 94.0.4606.71-2
+- add official_build flag
+- apply upstream patch to handle nullptr correctly in PartitionGetSizeEstimate()
+
+* Tue Oct  5 2021 Tom Callaway <spot@fedoraproject.org> - 94.0.4606.71-1
+- update to 94.0.4606.71
+
+* Fri Sep 24 2021 Tom Callaway <spot@fedoraproject.org> - 94.0.4606.61-1
+- update to 94.0.4606.61
+
+* Thu Sep 23 2021 Tom Callaway <spot@fedoraproject.org> - 94.0.4606.54-1
+- update to 94.0.4606.54
+
+* Mon Sep 20 2021 Tom Callaway <spot@fedoraproject.org> - 93.0.4577.82-2
+- add fix for harfbuzz v3 (thanks to Jan Beich @ FreeBSD)
+
+* Thu Sep 16 2021 Tom Callaway <spot@fedoraproject.org> - 93.0.4577.82-1
+- update to 93.0.4577.82
+
+* Thu Sep  2 2021 Tom Callaway <spot@fedoraproject.org> - 93.0.4577.63-1
+- update to 93.0.4577.63
+
+* Mon Aug 30 2021 Tom Callaway <spot@fedoraproject.org> - 92.0.4515.159-2
+- disable userfaultd code in epel8
+- include crashpad_handler (it works a lot better when it doesn't immediately crash because of this missing file)
+
+* Tue Aug 17 2021 Tom Callaway <spot@fedoraproject.org> - 92.0.4515.159-1
+- update to 92.0.4515.159
+
+* Mon Aug 16 2021 Tom Callaway <spot@fedoraproject.org> - 92.0.4515.131-1
+- update to 92.0.4515.131
+- apply upstream fix for clone3 crash
+
+* Mon Jul 26 2021 Tom Callaway <spot@fedoraproject.org> - 92.0.4515.107-1
+- update to 92.0.4515.107
+- drop python2 deps (finally)
+
+* Wed Jul 21 2021 Fedora Release Engineering <releng@fedoraproject.org> - 91.0.4472.164-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
+* Fri Jul 16 2021 Tom Callaway <spot@fedoraproject.org> - 91.0.4472.164-1
+- update to 91.0.4472.164
+
+* Tue Jul  6 2021 Tom Callaway <spot@fedoraproject.org> - 91.0.4472.114-2
+- fix ThemeService crash (thanks OpenSUSE)
+
 * Wed Jun 23 2021 Tom Callaway <spot@fedoraproject.org> - 91.0.4472.114-1
 - update to 91.0.4472.114
 
