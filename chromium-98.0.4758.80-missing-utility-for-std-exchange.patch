@@ -1,0 +1,12 @@
+diff -up chromium-98.0.4758.80/base/third_party/symbolize/symbolize.h.f36 chromium-98.0.4758.80/base/third_party/symbolize/symbolize.h
+--- chromium-98.0.4758.80/base/third_party/symbolize/symbolize.h.f36	2022-02-08 19:28:20.198873875 +0000
++++ chromium-98.0.4758.80/base/third_party/symbolize/symbolize.h	2022-02-08 19:28:57.533127622 +0000
+@@ -58,6 +58,8 @@
+ #include "config.h"
+ #include "glog/logging.h"
+ 
++#include <utility>
++
+ #ifdef HAVE_SYMBOLIZE
+ 
+ #include <algorithm>

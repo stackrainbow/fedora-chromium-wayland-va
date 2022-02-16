@@ -318,7 +318,8 @@ Patch97:	chromium-98.0.4758.80-remoting-extra-qualification.patch
 Patch98:	chromium-94.0.4606.71-InkDropHost-crash.patch
 # Enable WebRTCPPipeWireCapturer by default
 Patch99:	chromium-96.0.4664.110-enable-WebRTCPipeWireCapturer-byDefault.patch
-
+# Add include <utility> for std::exchange
+Patch100:	chromium-98.0.4758.80-missing-utility-for-std-exchange.patch
 
 
 # Use lstdc++ on EPEL7 only
@@ -998,6 +999,7 @@ udev.
 %patch97 -p1 -b .remoting-extra-qualification
 %patch98 -p1 -b .InkDropHost-crash
 %patch99 -p1 -b .enable-WebRTCPipeWireCapturer-byDefault
+%patch100 -p1 -b .missing-utility-for-std-exchange
 
 # Fedora branded user agent
 %if 0%{?fedora}
