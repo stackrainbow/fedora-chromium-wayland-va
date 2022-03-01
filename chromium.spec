@@ -220,7 +220,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4758.80
+Version:	%{majorversion}.0.4758.102
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -304,6 +304,12 @@ Patch79:	chromium-93.0.4577.63-widevine-no-download.patch
 # Fix crashes with components/cast_*
 # Thanks to Gentoo
 Patch80:	chromium-98.0.4758.80-EnumTable-crash.patch
+# Fix build issues with gcc12
+Patch81:	chromium-98.0.4758.102-gcc-12-subzero-fix.patch
+# Disable tests on remoting build
+Patch82:	chromium-98.0.4758.102-remoting-no-tests.patch
+
+
 # Add missing cmath header
 Patch84:	chromium-94.0.4606.71-remoting-missing-cmath-header.patch
 
@@ -993,6 +999,8 @@ udev.
 %endif
 %patch79 -p1 -b .widevine-no-download
 %patch80 -p1 -b .EnumTable-crash
+%patch81 -p1 -b .gcc12fix
+%patch82 -p1 -b .remoting-no-tests
 %patch84 -p1 -b .remoting-missing-cmath-header
 %patch86 -p1 -b .clang-format-py3
 %patch95 -p1 -b .mojo-header-fix
@@ -2116,6 +2124,10 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Fri Feb 25 2022 Tom Callaway <spot@fedoraproject.org> - 98.0.4758.102-1
+- update to 98.0.4758.102
+- fix build issue with subzero and gcc12
+
 * Tue Feb  8 2022 Tom Callaway <spot@fedoraproject.org> - 98.0.4758.80-1
 - update to 98.0.4758.80
 
