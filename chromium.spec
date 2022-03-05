@@ -355,7 +355,7 @@ Patch203:	chromium-86.0.4240.75-vaapi-i686-fpermissive.patch
 Patch205:	chromium-86.0.4240.75-fix-vaapi-on-intel.patch
 
 # Apply these patches to work around EPEL8 issues
-Patch300:	chromium-92.0.4515.107-rhel8-force-disable-use_gnome_keyring.patch
+Patch300:	chromium-99.0.4844.51-rhel8-force-disable-use_gnome_keyring.patch
 
 # And fixes for new compilers
 Patch400:       %{name}-gcc11.patch
