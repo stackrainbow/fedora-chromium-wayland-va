@@ -217,14 +217,14 @@ BuildRequires:  libicu-devel >= 5.4
 %global chromoting_client_id %nil
 %endif
 
-%global majorversion 98
+%global majorversion 99
 
 %if %{freeworld}
 Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4758.80
+Version:	%{majorversion}.0.4844.51
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -268,7 +268,7 @@ Patch11:        chromium-93.0.4577.63-py3-bootstrap.patch
 Patch11:	chromium-92.0.4515.107-py2-bootstrap.patch
 %endif
 # Add "Fedora" to the user agent string
-Patch12:	chromium-98.0.4758.80-fedora-user-agent.patch
+Patch12:	chromium-99.0.4844.51-fedora-user-agent.patch
 
 # Needs to be submitted..
 Patch51:	chromium-96.0.4664.45-gcc-remoting-constexpr.patch
@@ -283,12 +283,8 @@ Patch57:	chromium-96.0.4664.45-missing-cstring.patch
 # prepare for using system ffmpeg (clean)
 # http://svnweb.mageia.org/packages/cauldron/chromium-browser-stable/current/SOURCES/chromium-53-ffmpeg-no-deprecation-errors.patch?view=markup
 Patch58:	chromium-53-ffmpeg-no-deprecation-errors.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-95-libyuv-arm.patch
-Patch60:	chromium-95-libyuv-arm.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-98-MiraclePtr-gcc-ice.patch
-Patch61:	chromium-98-MiraclePtr-gcc-ice.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-98-WaylandFrameManager-check.patch
-Patch62:	chromium-98-WaylandFrameManager-check.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-99-AutofillAssistantModelExecutor-NoDestructor.patch
+Patch60:	chromium-99-AutofillAssistantModelExecutor-NoDestructor.patch
 # Extra CXXFLAGS for aarch64
 Patch64:	chromium-91.0.4472.77-aarch64-cxxflags-addition.patch
 # Fix issue where closure_compiler thinks java is only allowed in android builds
@@ -300,29 +296,32 @@ Patch67:	chromium-98.0.4758.80-remoting-cstring.patch
 # Apply fix_textrels hack for i686 (even without lld)
 Patch68:	chromium-84.0.4147.125-i686-fix_textrels.patch
 
-# Rawhide (f35) glibc defines SIGSTKSZ as a long instead of a constant
-Patch76:	chromium-92.0.4515.107-rawhide-gcc-std-max-fix.patch
 # Do not download proprietary widevine module in the background (thanks Debian)
-Patch79:	chromium-93.0.4577.63-widevine-no-download.patch
+Patch79:	chromium-99.0.4844.51-widevine-no-download.patch
 
 # Fix crashes with components/cast_*
 # Thanks to Gentoo
 Patch80:	chromium-98.0.4758.80-EnumTable-crash.patch
+# Fix build issues with gcc12
+Patch81:	chromium-98.0.4758.102-gcc-12-subzero-fix.patch
+# Disable tests on remoting build
+Patch82:	chromium-98.0.4758.102-remoting-no-tests.patch
+
+
 # Add missing cmath header
 Patch84:	chromium-94.0.4606.71-remoting-missing-cmath-header.patch
 
 # Clean up clang-format for python3
 # thanks to Jon Nettleton
 Patch86:	chromium-94.0.4606.81-clang-format.patch
-# include full UrlResponseHead header
-Patch95:	chromium-93.0.4577.63-mojo-header-fix.patch
 # Fix extra qualification error
 Patch97:	chromium-98.0.4758.80-remoting-extra-qualification.patch
 # From gentoo
 Patch98:	chromium-94.0.4606.71-InkDropHost-crash.patch
 # Enable WebRTCPPipeWireCapturer by default
 Patch99:	chromium-96.0.4664.110-enable-WebRTCPipeWireCapturer-byDefault.patch
-
+# Add include <utility> for std::exchange
+Patch100:	chromium-98.0.4758.80-missing-utility-for-std-exchange.patch
 
 
 # Use lstdc++ on EPEL7 only
@@ -360,7 +359,7 @@ Patch203:	chromium-86.0.4240.75-vaapi-i686-fpermissive.patch
 Patch205:	chromium-86.0.4240.75-fix-vaapi-on-intel.patch
 
 # Apply these patches to work around EPEL8 issues
-Patch300:	chromium-92.0.4515.107-rhel8-force-disable-use_gnome_keyring.patch
+Patch300:	chromium-99.0.4844.51-rhel8-force-disable-use_gnome_keyring.patch
 
 # And fixes for new compilers
 Patch400:       %{name}-gcc11.patch
@@ -984,24 +983,21 @@ udev.
 %patch56 -p1 -b .missing-cstdint
 %patch57 -p1 -b .missing-cstring
 %patch58 -p1 -b .ffmpeg-deprecations
-%patch60 -p1 -b .libyuv-arm
-%patch61 -p1 -b .MiraclePtr-gcc-ice
-%patch62 -p1 -b .WaylandFrameManager-check
+%patch60 -p1 -b .AutofillAssistantModelExecutor-NoDestructor
 %patch64 -p1 -b .aarch64-cxxflags-addition
 %patch65 -p1 -b .java-only-allowed
 %patch67 -p1 -b .remoting-cstring
 %patch68 -p1 -b .i686-textrels
-%if 0%{?fedora} >= 35
-%patch76 -p1 -b .sigstkszfix
-%endif
 %patch79 -p1 -b .widevine-no-download
 %patch80 -p1 -b .EnumTable-crash
+%patch81 -p1 -b .gcc12fix
+%patch82 -p1 -b .remoting-no-tests
 %patch84 -p1 -b .remoting-missing-cmath-header
 %patch86 -p1 -b .clang-format-py3
-%patch95 -p1 -b .mojo-header-fix
 %patch97 -p1 -b .remoting-extra-qualification
 %patch98 -p1 -b .InkDropHost-crash
 %patch99 -p1 -b .enable-WebRTCPipeWireCapturer-byDefault
+%patch100 -p1 -b .missing-utility-for-std-exchange
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -1298,6 +1294,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/devscripts' \
 	'third_party/devtools-frontend' \
 	'third_party/devtools-frontend/src/third_party/typescript' \
+	'third_party/devtools-frontend/src/front_end/third_party' \
 	'third_party/devtools-frontend/src/front_end/third_party/acorn' \
 	'third_party/devtools-frontend/src/front_end/third_party/axe-core' \
 	'third_party/devtools-frontend/src/front_end/third_party/chromium' \
@@ -2118,6 +2115,13 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Sat Mar  5 2022 Tom Callaway <spot@fedoraproject.org> - 99.0.4844.5-1
+- update to 99.0.4844.5
+
+* Fri Feb 25 2022 Tom Callaway <spot@fedoraproject.org> - 98.0.4758.102-1
+- update to 98.0.4758.102
+- fix build issue with subzero and gcc12
+
 * Tue Feb  8 2022 Tom Callaway <spot@fedoraproject.org> - 98.0.4758.80-1
 - update to 98.0.4758.80
 
