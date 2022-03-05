@@ -329,10 +329,10 @@ Patch101:	chromium-75.0.3770.100-epel7-stdc++.patch
 # el7 only patch
 Patch102:	chromium-80.0.3987.132-el7-noexcept.patch
 # Work around old and missing headers on EPEL7
-Patch103:	chromium-98.0.4758.80-epel7-old-headers-workarounds.patch
+Patch103:	chromium-99.0.4844.51-epel7-old-headers-workarounds.patch
 # Use old cups (chromium's code workaround breaks on gcc)
 # Revert: https://github.com/chromium/chromium/commit/c3213f8779ddc427e89d982514185ed5e4c94e91
-Patch104:	chromium-98.0.4758.80-epel7-old-cups.patch
+Patch104:	chromium-99.0.4844.51-epel7-old-cups.patch
 # Still not wrong, but it seems like only EL needs it
 Patch106:	chromium-77-clang.patch
 # ARM failures on el8 related to int clashes
