@@ -350,7 +350,7 @@ Patch109:	chromium-98.0.4758.80-epel7-erase-fix.patch
 # AARCH64 neon symbols need to be prefixed too to prevent multiple definition issue at linktime
 Patch110:	chromium-90.0.4430.93-epel8-aarch64-libpng16-symbol-prefixes.patch
 # Add additional operator== to make el7 happy.
-Patch111:	chromium-98.0.4758.80-el7-extra-operator==.patch
+Patch111:	chromium-99.0.4844.51-el7-extra-operator==.patch
 
 # VAAPI
 # Upstream turned VAAPI on in Linux in 86
