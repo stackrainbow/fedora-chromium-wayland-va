@@ -434,7 +434,11 @@ BuildRequires:	libdrm-devel
 BuildRequires:	libgcrypt-devel
 BuildRequires:	libudev-devel
 BuildRequires:	libuuid-devel
+%if 0%{?fedora} >= 37
+BuildRequires:	libusb-compat-0.1-devel
+%else
 BuildRequires:	libusb-devel
+%endif
 BuildRequires:	libXdamage-devel
 BuildRequires:	libXtst-devel
 BuildRequires:	xcb-proto
