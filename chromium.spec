@@ -224,7 +224,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4844.74
+Version:	%{majorversion}.0.4844.84
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -1712,15 +1712,21 @@ rm -rf %{buildroot}
 		cp -a *.pak locales resources icudtl.dat %{buildroot}%{chromium_path}
 		%ifarch x86_64 i686 aarch64
 			cp -a swiftshader %{buildroot}%{chromium_path}
+			strip %{buildroot}%{chromium_path}/swiftshader/libEGL.so
+			strip %{buildroot}%{chromium_path}/swiftshader/libGLESv2.so
 			cp -a libvk_swiftshader.so* %{buildroot}%{chromium_path}
+			strip %{buildroot}%{chromium_path}/libvk_swiftshader.so
 			cp -a libvulkan.so* %{buildroot}%{chromium_path}
+			strip %{buildroot}%{chromium_path}/libvulkan.so
 			cp -a vk_swiftshader_icd.json %{buildroot}%{chromium_path}
 		%endif
 		cp -a chrome %{buildroot}%{chromium_path}/%{chromium_browser_channel}
 		# Explicitly strip chromium-browser (since we don't use debuginfo here anyway)
 		strip %{buildroot}%{chromium_path}/%{chromium_browser_channel}
 		cp -a chrome_sandbox %{buildroot}%{chromium_path}/chrome-sandbox
+		strip %{buildroot}%{chromium_path}/chrome-sandbox
 		cp -a chrome_crashpad_handler %{buildroot}%{chromium_path}/chrome_crashpad_handler
+		strip %{buildroot}%{chromium_path}/chrome_crashpad_handler
 		cp -a ../../chrome/app/resources/manpage.1.in %{buildroot}%{_mandir}/man1/%{chromium_browser_channel}.1
 		sed -i "s|@@PACKAGE@@|%{chromium_browser_channel}|g" %{buildroot}%{_mandir}/man1/%{chromium_browser_channel}.1
 		sed -i "s|@@MENUNAME@@|%{chromium_menu_name}|g" %{buildroot}%{_mandir}/man1/%{chromium_browser_channel}.1
@@ -1732,6 +1738,8 @@ rm -rf %{buildroot}
 		cp -a MEIPreload %{buildroot}%{chromium_path}
 		# This is ANGLE, not to be confused with the similarly named files under swiftshader/
 		cp -a libEGL.so* libGLESv2.so* %{buildroot}%{chromium_path}
+		strip %{buildroot}%{chromium_path}/libEGL.so
+		strip %{buildroot}%{chromium_path}/libGLESv2.so
 
 		%if %{build_clear_key_cdm}
 			%ifarch i686
@@ -1747,6 +1755,7 @@ rm -rf %{buildroot}
 					%endif
 				%endif
 			%endif
+			strip %{buildroot}%{chromium_path}/libclearkeycdm.so
 		%endif
 
 		%if 0%{?shared}
@@ -1778,6 +1787,10 @@ rm -rf %{buildroot}
 	popd
 	%if %{build_remoting}
 		pushd %{remotingbuilddir}
+
+			# Hey, there is a library now.
+			cp -a libremoting_core.so* %{buildroot}%{crd_path}/
+			strip %{buildroot}%{crd_path}/libremoting_core.so
 
 			# See remoting/host/installer/linux/Makefile for logic
 			cp -a remoting_native_messaging_host %{buildroot}%{crd_path}/native-messaging-host
@@ -2078,6 +2091,7 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 %{crd_path}/chrome-remote-desktop
 %{crd_path}/chrome-remote-desktop-host
 %{crd_path}/is-remoting-session
+%{crd_path}/libremoting_core.so*
 %if 0%{?shared}
 %{crd_path}/lib*.so
 %endif
@@ -2115,6 +2129,11 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Sun Mar 27 2022 Tom Callaway <spot@fedoraproject.org> - 99.0.4844.84-1
+- update to 99.0.4844.84
+- package up libremoting_core.so* for chrome-remote-desktop
+- strip all the .so files (and binaries)
+
 * Sat Mar 19 2022 Tom Callaway <spot@fedoraproject.org> - 99.0.4844.74-1
 - update to 99.0.4844.74
 
