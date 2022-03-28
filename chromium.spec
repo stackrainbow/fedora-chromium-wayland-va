@@ -314,6 +314,11 @@ Patch84:	chromium-94.0.4606.71-remoting-missing-cmath-header.patch
 # Clean up clang-format for python3
 # thanks to Jon Nettleton
 Patch86:	chromium-94.0.4606.81-clang-format.patch
+
+# Markdownsafe 2.0.1 removed soft_unicode (replaced with soft_str)
+# This is only in Fedora 37+
+Patch87:	chromium-99.0.4844.84-markdownsafe-soft_str.patch
+
 # Fix extra qualification error
 Patch97:	chromium-98.0.4758.80-remoting-extra-qualification.patch
 # From gentoo
@@ -998,6 +1003,9 @@ udev.
 %patch82 -p1 -b .remoting-no-tests
 %patch84 -p1 -b .remoting-missing-cmath-header
 %patch86 -p1 -b .clang-format-py3
+%if 0%{?fedora} >= 37
+%patch87 -p1 -b .markdownsafe-soft_str
+%endif
 %patch97 -p1 -b .remoting-extra-qualification
 %patch98 -p1 -b .InkDropHost-crash
 %patch99 -p1 -b .enable-WebRTCPipeWireCapturer-byDefault
@@ -1721,7 +1729,7 @@ rm -rf %{buildroot}
 			cp -a libvk_swiftshader.so* %{buildroot}%{chromium_path}
 			strip %{buildroot}%{chromium_path}/libvk_swiftshader.so
 			cp -a libvulkan.so* %{buildroot}%{chromium_path}
-			strip %{buildroot}%{chromium_path}/libvulkan.so
+			strip %{buildroot}%{chromium_path}/libvulkan.so.1
 			cp -a vk_swiftshader_icd.json %{buildroot}%{chromium_path}
 		%endif
 		cp -a chrome %{buildroot}%{chromium_path}/%{chromium_browser_channel}
