@@ -58,9 +58,7 @@
 # Practically, no. But it's here in case we do.
 %global use_gold 0
 
-# 2020-08-20: F33+ aarch64 has a binutils bug trying to link clear_key_cdm
-# https://bugzilla.redhat.com/show_bug.cgi?id=1869884
-%global build_clear_key_cdm 1
+%global build_clear_key_cdm 0
 
 # Since no one liked replacing just the media components, we do not build shared anymore.
 %global shared 0
