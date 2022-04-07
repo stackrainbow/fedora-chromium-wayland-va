@@ -2145,7 +2145,7 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
-* Tue Apr 25 2022 Tom Callaway <spot@fedoraproject.org> - 100.0.4896.75-1
+* Tue Apr  5 2022 Tom Callaway <spot@fedoraproject.org> - 100.0.4896.75-1
 - update to 100.0.4896.75
 
 * Sat Apr  2 2022 Tom Callaway <spot@fedoraproject.org> - 100.0.4896.60-1
