@@ -217,14 +217,14 @@ BuildRequires:  libicu-devel >= 5.4
 %global chromoting_client_id %nil
 %endif
 
-%global majorversion 99
+%global majorversion 100
 
 %if %{freeworld}
 Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4844.84
+Version:	%{majorversion}.0.4896.75
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -257,10 +257,8 @@ Patch6:		chromium-95.0.4638.69-norar.patch
 # Use Gentoo's Widevine hack
 # https://gitweb.gentoo.org/repo/gentoo.git/tree/www-client/chromium/files/chromium-widevine-r3.patch
 Patch7:		chromium-71.0.3578.98-widevine-r3.patch
-# drop rsp clobber, which breaks gcc9 (thanks to Jeff Law)
-Patch9:		chromium-94.0.4606.54-gcc9-drop-rsp-clobber.patch
 # Try to load widevine from other places
-Patch10:	chromium-92.0.4515.107-widevine-other-locations.patch
+Patch10:	chromium-100.0.4896.60-widevine-other-locations.patch
 # Tell bootstrap.py to always use the version of Python we specify
 %if 0%{?build_with_python3}
 Patch11:        chromium-93.0.4577.63-py3-bootstrap.patch
@@ -283,8 +281,14 @@ Patch57:	chromium-96.0.4664.45-missing-cstring.patch
 # prepare for using system ffmpeg (clean)
 # http://svnweb.mageia.org/packages/cauldron/chromium-browser-stable/current/SOURCES/chromium-53-ffmpeg-no-deprecation-errors.patch?view=markup
 Patch58:	chromium-53-ffmpeg-no-deprecation-errors.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-99-AutofillAssistantModelExecutor-NoDestructor.patch
-Patch60:	chromium-99-AutofillAssistantModelExecutor-NoDestructor.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-100-GLImplementationParts-constexpr.patch
+Patch60:	chromium-100-GLImplementationParts-constexpr.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-100-InMilliseconds-constexpr.patch
+Patch61:	chromium-100-InMilliseconds-constexpr.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-100-macro-typo.patch
+Patch62:	chromium-100-macro-typo.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-100-SCTHashdanceMetadata-move.patch
+Patch63:	chromium-100-SCTHashdanceMetadata-move.patch
 # Extra CXXFLAGS for aarch64
 Patch64:	chromium-91.0.4472.77-aarch64-cxxflags-addition.patch
 # Fix issue where closure_compiler thinks java is only allowed in android builds
@@ -320,13 +324,13 @@ Patch86:	chromium-94.0.4606.81-clang-format.patch
 Patch87:	chromium-99.0.4844.84-markdownsafe-soft_str.patch
 
 # Fix extra qualification error
-Patch97:	chromium-98.0.4758.80-remoting-extra-qualification.patch
+Patch97:	chromium-100.0.4896.75-remoting-extra-qualification.patch
 # From gentoo
 Patch98:	chromium-94.0.4606.71-InkDropHost-crash.patch
 # Enable WebRTCPPipeWireCapturer by default
 Patch99:	chromium-96.0.4664.110-enable-WebRTCPipeWireCapturer-byDefault.patch
 # Add include <utility> for std::exchange
-Patch100:	chromium-98.0.4758.80-missing-utility-for-std-exchange.patch
+Patch100:	chromium-100.0.4896.60-missing-utility-for-std-exchange.patch
 
 
 # Use lstdc++ on EPEL7 only
@@ -977,7 +981,6 @@ udev.
 %patch5 -p1 -b .nozlibmangle
 %patch6 -p1 -b .nounrar
 %patch7 -p1 -b .widevine-hack
-%patch9 -p1 -b .gcc9
 %patch10 -p1 -b .widevine-other-locations
 %if 0%{?build_with_python3}
 %patch11 -p1 -b .py3
@@ -992,7 +995,10 @@ udev.
 %patch56 -p1 -b .missing-cstdint
 %patch57 -p1 -b .missing-cstring
 %patch58 -p1 -b .ffmpeg-deprecations
-%patch60 -p1 -b .AutofillAssistantModelExecutor-NoDestructor
+%patch60 -p1 -b .GLImplementationParts-constexpr
+%patch61 -p1 -b .InMilliseconds-constexpr
+%patch62 -p1 -b .macro-typo
+%patch63 -p1 -b .SCTHashdanceMetadata-move
 %patch64 -p1 -b .aarch64-cxxflags-addition
 %patch65 -p1 -b .java-only-allowed
 %patch67 -p1 -b .remoting-cstring
@@ -1463,7 +1469,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/swiftshader/third_party/marl' \
 	'third_party/swiftshader/third_party/subzero' \
 	'third_party/swiftshader/third_party/SPIRV-Headers' \
-	'third_party/tcmalloc' \
 	'third_party/tensorflow-text' \
 	'third_party/test_fonts' \
 	'third_party/tflite' \
@@ -1841,7 +1846,7 @@ rm -rf %{buildroot}
 
 	%if %{build_headless}
 		pushd %{headlessbuilddir}
-			cp -a headless_lib.pak headless_shell %{buildroot}%{chromium_path}
+			cp -a headless_lib_data.pak headless_lib_strings.pak headless_shell %{buildroot}%{chromium_path}
 			# Explicitly strip headless_shell binary
 			strip %{buildroot}%{chromium_path}/headless_shell
 		popd
@@ -2005,7 +2010,8 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 %files common
 %if %{build_headless}
-%{chromium_path}/headless_lib.pak
+%{chromium_path}/headless_lib_data.pak
+%{chromium_path}/headless_lib_strings.pak
 %endif
 %if %{build_clear_key_cdm}
 %{chromium_path}/libclearkeycdm.so
@@ -2141,6 +2147,12 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Tue Apr 25 2022 Tom Callaway <spot@fedoraproject.org> - 100.0.4896.75-1
+- update to 100.0.4896.75
+
+* Sat Apr  2 2022 Tom Callaway <spot@fedoraproject.org> - 100.0.4896.60-1
+- update to 100.0.4896.60
+
 * Sun Mar 27 2022 Tom Callaway <spot@fedoraproject.org> - 99.0.4844.84-1
 - update to 99.0.4844.84
 - package up libremoting_core.so* for chrome-remote-desktop

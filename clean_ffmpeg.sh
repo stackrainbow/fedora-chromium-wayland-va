@@ -56,6 +56,7 @@ fi
 generated_files_headers="$generated_files_headers ${generated_files//.asm/.h}"
 
 header_files="	libavcodec/x86/inline_asm.h \
+		libavcodec/x86/hpeldsp.h \
 		libavcodec/x86/mathops.h \
 		libavcodec/x86/vp56_arith.h \
 		libavcodec/aarch64/vp8dsp.h \
@@ -218,6 +219,7 @@ manual_files="	libavcodec/aarch64/fft_neon.S \
 		libavcodec/aarch64/neon.S \
 		libavcodec/aarch64/vorbisdsp_neon.S \
 		libavcodec/aarch64/vp8dsp_neon.S \
+		libavcodec/x86/hpeldsp.asm \
 		libavcodec/x86/hpeldsp_rnd_template.c \
 		libavcodec/x86/mdct15.asm \
 		libavcodec/x86/mdct15_init.c \
@@ -225,6 +227,8 @@ manual_files="	libavcodec/aarch64/fft_neon.S \
 		libavcodec/x86/videodsp.asm \
 		libavcodec/x86/videodsp_init.c \
 		libavcodec/x86/vorbisdsp_init.c \
+		libavcodec/x86/vp3dsp.asm \
+		libavcodec/x86/vp8dsp.asm \
 		libavcodec/autorename_libavcodec_mdct15.c \
 		libavcodec/bit_depth_template.c \
 		libavcodec/fft_template.c \
@@ -246,6 +250,7 @@ manual_files="	libavcodec/aarch64/fft_neon.S \
 		libavcodec/vorbisdsp.c \
 		libavcodec/vp3dsp.c \
 		libavcodec/vp8dsp.c \
+		libavformat/flacdec.c \
 		libavformat/options.c \
 		libavformat/pcm.c \
 		libavformat/utils.c \
