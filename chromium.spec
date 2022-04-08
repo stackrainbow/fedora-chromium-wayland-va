@@ -292,6 +292,8 @@ Patch64:	chromium-91.0.4472.77-aarch64-cxxflags-addition.patch
 # Fix issue where closure_compiler thinks java is only allowed in android builds
 # https://bugs.chromium.org/p/chromium/issues/detail?id=1192875
 Patch65:	chromium-91.0.4472.77-java-only-allowed-in-android-builds.patch
+# Need <tuple> for std::tie
+Patch66:	chromium-100.0.4896.75-missing-include-tuple.patch
 
 # Fix missing cstring in remoting code
 Patch67:	chromium-98.0.4758.80-remoting-cstring.patch
@@ -358,6 +360,10 @@ Patch109:	chromium-98.0.4758.80-epel7-erase-fix.patch
 Patch110:	chromium-90.0.4430.93-epel8-aarch64-libpng16-symbol-prefixes.patch
 # Add additional operator== to make el7 happy.
 Patch111:	chromium-99.0.4844.51-el7-extra-operator==.patch
+# EPEL7 and EPEL8 do not have a new enough libxkbcommon to support xkb_keymap_key_get_mods_for_level
+# and the weak attribute hack that chromium tries doesn't seem to work on gcc
+Patch112:	chromium-100.0.4896.75-old-xkb.patch
+
 
 # VAAPI
 # Upstream turned VAAPI on in Linux in 86
@@ -999,6 +1005,7 @@ udev.
 %patch63 -p1 -b .SCTHashdanceMetadata-move
 %patch64 -p1 -b .aarch64-cxxflags-addition
 %patch65 -p1 -b .java-only-allowed
+%patch66 -p1 -b .missing-include-tuple
 %patch67 -p1 -b .remoting-cstring
 %patch68 -p1 -b .i686-textrels
 %patch79 -p1 -b .widevine-no-download
@@ -1034,6 +1041,10 @@ udev.
 %if 0%{?rhel} == 8
 # %%patch107 -p1 -b .el8-arm-incompatible-ints
 %patch110 -p1 -b .el8-aarch64-libpng16-symbol-prefixes
+%endif
+
+%if 0%{?rhel} == 7 || 0%{?rhel} == 8
+%patch111 -p1 -b .old-xkb
 %endif
 
 # Feature specific patches
