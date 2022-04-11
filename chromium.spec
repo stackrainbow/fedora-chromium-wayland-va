@@ -299,6 +299,9 @@ Patch66:	chromium-100.0.4896.75-missing-include-tuple.patch
 Patch67:	chromium-98.0.4758.80-remoting-cstring.patch
 # Apply fix_textrels hack for i686 (even without lld)
 Patch68:	chromium-84.0.4147.125-i686-fix_textrels.patch
+# Need <vector> for std::vector
+Patch69:	chromium-100.0.4896.75-missing-include-vector.patch
+
 
 # Do not download proprietary widevine module in the background (thanks Debian)
 Patch79:	chromium-99.0.4844.51-widevine-no-download.patch
@@ -1008,6 +1011,7 @@ udev.
 %patch66 -p1 -b .missing-include-tuple
 %patch67 -p1 -b .remoting-cstring
 %patch68 -p1 -b .i686-textrels
+%patch69 -p1 -b .missing-include-vector
 %patch79 -p1 -b .widevine-no-download
 %patch80 -p1 -b .EnumTable-crash
 %patch81 -p1 -b .gcc12fix
@@ -1044,7 +1048,7 @@ udev.
 %endif
 
 %if 0%{?rhel} == 7 || 0%{?rhel} == 8
-%patch111 -p1 -b .old-xkb
+%patch112 -p1 -b .old-xkb
 %endif
 
 # Feature specific patches
