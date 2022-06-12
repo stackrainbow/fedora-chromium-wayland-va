@@ -7,7 +7,7 @@
 
 # This flag is so I can build things very fast on a giant system.
 # Enabling this in koji causes aarch64 builds to timeout indefinitely.
-%global use_all_cpus 0
+%global use_all_cpus 1
 
 %if %{use_all_cpus}
 %global numjobs %{_smp_build_ncpus}
@@ -215,14 +215,14 @@ BuildRequires:  libicu-devel >= 5.4
 %global chromoting_client_id %nil
 %endif
 
-%global majorversion 100
+%global majorversion 102
 
 %if %{freeworld}
 Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.4896.127
+Version:	%{majorversion}.0.5005.115
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -264,7 +264,7 @@ Patch11:        chromium-93.0.4577.63-py3-bootstrap.patch
 Patch11:	chromium-92.0.4515.107-py2-bootstrap.patch
 %endif
 # Add "Fedora" to the user agent string
-Patch12:	chromium-99.0.4844.51-fedora-user-agent.patch
+Patch12:	chromium-101.0.4951.41-fedora-user-agent.patch
 
 # Needs to be submitted..
 Patch51:	chromium-96.0.4664.45-gcc-remoting-constexpr.patch
@@ -279,28 +279,25 @@ Patch57:	chromium-96.0.4664.45-missing-cstring.patch
 # prepare for using system ffmpeg (clean)
 # http://svnweb.mageia.org/packages/cauldron/chromium-browser-stable/current/SOURCES/chromium-53-ffmpeg-no-deprecation-errors.patch?view=markup
 Patch58:	chromium-53-ffmpeg-no-deprecation-errors.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-100-GLImplementationParts-constexpr.patch
-Patch60:	chromium-100-GLImplementationParts-constexpr.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-100-InMilliseconds-constexpr.patch
-Patch61:	chromium-100-InMilliseconds-constexpr.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-100-macro-typo.patch
-Patch62:	chromium-100-macro-typo.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-100-SCTHashdanceMetadata-move.patch
-Patch63:	chromium-100-SCTHashdanceMetadata-move.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-102-fenced_frame_utils-include.patch
+Patch59:	chromium-102-fenced_frame_utils-include.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-102-regex_pattern-array.patch
+Patch60:	chromium-102-regex_pattern-array.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-102-swiftshader-template-instantiation.patch
+Patch61:	chromium-102-swiftshader-template-instantiation.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-102-symbolize-include.patch
+Patch62:	chromium-102-symbolize-include.patch
+
 # Extra CXXFLAGS for aarch64
 Patch64:	chromium-91.0.4472.77-aarch64-cxxflags-addition.patch
 # Fix issue where closure_compiler thinks java is only allowed in android builds
 # https://bugs.chromium.org/p/chromium/issues/detail?id=1192875
 Patch65:	chromium-91.0.4472.77-java-only-allowed-in-android-builds.patch
-# Need <tuple> for std::tie
-Patch66:	chromium-100.0.4896.75-missing-include-tuple.patch
 
 # Fix missing cstring in remoting code
 Patch67:	chromium-98.0.4758.80-remoting-cstring.patch
 # Apply fix_textrels hack for i686 (even without lld)
 Patch68:	chromium-84.0.4147.125-i686-fix_textrels.patch
-# Need <vector> for std::vector
-Patch69:	chromium-100.0.4896.75-missing-include-vector.patch
 
 
 # Do not download proprietary widevine module in the background (thanks Debian)
@@ -327,7 +324,7 @@ Patch86:	chromium-94.0.4606.81-clang-format.patch
 Patch87:	chromium-99.0.4844.84-markdownsafe-soft_str.patch
 
 # Fix extra qualification error
-Patch97:	chromium-100.0.4896.75-remoting-extra-qualification.patch
+Patch97:	chromium-101.0.4951.41-remoting-extra-qualification.patch
 # From gentoo
 Patch98:	chromium-94.0.4606.71-InkDropHost-crash.patch
 # Enable WebRTCPPipeWireCapturer by default
@@ -370,7 +367,7 @@ Patch112:	chromium-100.0.4896.75-old-xkb.patch
 
 # VAAPI
 # Upstream turned VAAPI on in Linux in 86
-Patch202:	chromium-98.0.4758.80-enable-hardware-accelerated-mjpeg.patch
+Patch202:	chromium-102.0.5005.61-enable-hardware-accelerated-mjpeg.patch
 Patch203:	chromium-86.0.4240.75-vaapi-i686-fpermissive.patch
 Patch205:	chromium-86.0.4240.75-fix-vaapi-on-intel.patch
 
@@ -455,6 +452,7 @@ BuildRequires:	libusb-compat-0.1-devel
 %else
 BuildRequires:	libusb-devel
 %endif
+BuildRequires:	libutempter-devel
 BuildRequires:	libXdamage-devel
 BuildRequires:	libXtst-devel
 BuildRequires:	xcb-proto
@@ -1002,19 +1000,17 @@ udev.
 %patch56 -p1 -b .missing-cstdint
 %patch57 -p1 -b .missing-cstring
 %patch58 -p1 -b .ffmpeg-deprecations
-%patch60 -p1 -b .GLImplementationParts-constexpr
-%patch61 -p1 -b .InMilliseconds-constexpr
-%patch62 -p1 -b .macro-typo
-%patch63 -p1 -b .SCTHashdanceMetadata-move
+%patch59 -p1 -b .fenced_frame_utils-include
+%patch60 -p1 -b .regex_pattern-array
+%patch61 -p1 -b .swiftshader-template-instantiation
+%patch62 -p1 -b .symbolize-include
 %patch64 -p1 -b .aarch64-cxxflags-addition
 %patch65 -p1 -b .java-only-allowed
-%patch66 -p1 -b .missing-include-tuple
 %patch67 -p1 -b .remoting-cstring
 %patch68 -p1 -b .i686-textrels
-%patch69 -p1 -b .missing-include-vector
 %patch79 -p1 -b .widevine-no-download
 %patch80 -p1 -b .EnumTable-crash
-%patch81 -p1 -b .gcc12fix
+# %%patch81 -p1 -b .gcc12fix
 %patch82 -p1 -b .remoting-no-tests
 %patch84 -p1 -b .remoting-missing-cmath-header
 %patch86 -p1 -b .clang-format-py3
@@ -1319,8 +1315,8 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/cros_system_api' \
 	'third_party/dav1d' \
 	'third_party/dawn' \
+	'third_party/dawn/third_party/gn' \
 	'third_party/dawn/third_party/khronos' \
-        'third_party/dawn/third_party/tint' \
 	'third_party/depot_tools' \
 	'third_party/devscripts' \
 	'third_party/devtools-frontend' \
@@ -1373,7 +1369,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/jstemplate' \
 	'third_party/khronos' \
 	'third_party/leveldatabase' \
-	'third_party/libXNVCtrl' \
 	'third_party/libaddressinput' \
 	'third_party/libaom' \
 	'third_party/libaom/source/libaom/third_party/fastfeat' \
@@ -1424,7 +1419,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/node' \
 	'third_party/node/node_modules/polymer-bundler/lib/third_party/UglifyJS2' \
 	'third_party/one_euro_filter' \
-	'third_party/opencv' \
 %if %{freeworld}
 	'third_party/openh264' \
 %endif
@@ -1482,6 +1476,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/swiftshader/third_party/marl' \
 	'third_party/swiftshader/third_party/subzero' \
 	'third_party/swiftshader/third_party/SPIRV-Headers' \
+	'third_party/swiftshader/third_party/SPIRV-Tools' \
 	'third_party/tensorflow-text' \
 	'third_party/test_fonts' \
 	'third_party/tflite' \
@@ -1489,7 +1484,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/tflite/src/third_party/fft2d' \
 	'third_party/ukey2' \
         'third_party/usb_ids' \
-	'third_party/usrsctp' \
 	'third_party/utf' \
 	'third_party/vulkan' \
 	'third_party/wayland' \
@@ -1741,9 +1735,9 @@ rm -rf %{buildroot}
 	pushd %{builddir}
 		cp -a *.pak locales resources icudtl.dat %{buildroot}%{chromium_path}
 		%ifarch x86_64 i686 aarch64
-			cp -a swiftshader %{buildroot}%{chromium_path}
-			strip %{buildroot}%{chromium_path}/swiftshader/libEGL.so
-			strip %{buildroot}%{chromium_path}/swiftshader/libGLESv2.so
+			# cp -a swiftshader %{buildroot}%{chromium_path}
+			# strip %{buildroot}%{chromium_path}/swiftshader/libEGL.so
+			# strip %{buildroot}%{chromium_path}/swiftshader/libGLESv2.so
 			cp -a libvk_swiftshader.so* %{buildroot}%{chromium_path}
 			strip %{buildroot}%{chromium_path}/libvk_swiftshader.so
 			cp -a libvulkan.so* %{buildroot}%{chromium_path}
@@ -2035,12 +2029,13 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 %endif
 %{chromium_path}/resources/
 %ifarch x86_64 i686 aarch64
-%{chromium_path}/swiftshader/
+# %%{chromium_path}/swiftshader/
 %{chromium_path}/libvk_swiftshader.so*
 %{chromium_path}/libvulkan.so*
 %{chromium_path}/vk_swiftshader_icd.json
 %endif
 %dir %{chromium_path}/locales/
+%lang(af) %{chromium_path}/locales/af.pak*
 %lang(am) %{chromium_path}/locales/am.pak*
 %lang(ar) %{chromium_path}/locales/ar.pak*
 %lang(bg) %{chromium_path}/locales/bg.pak*
@@ -2094,6 +2089,7 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 %lang(th) %{chromium_path}/locales/th.pak*
 %lang(tr) %{chromium_path}/locales/tr.pak*
 %lang(uk) %{chromium_path}/locales/uk.pak*
+%lang(ur) %{chromium_path}/locales/ur.pak*
 %lang(vi) %{chromium_path}/locales/vi.pak*
 %lang(zh_CN) %{chromium_path}/locales/zh-CN.pak*
 %lang(zh_TW) %{chromium_path}/locales/zh-TW.pak*
@@ -2160,6 +2156,15 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Fri Jun 10 2022 Tom Callaway <spot@fedoraproject.org> - 102.0.5005.115-1
+- update to 102.0.5005.115
+
+* Fri Jun  3 2022 Tom Callaway <spot@fedoraproject.org> - 102.0.5005.61-1
+- update to 102.0.5005.61
+
+* Wed Apr 27 2022 Tom Callaway <spot@fedoraproject.org> - 101.0.4951.41-1
+- update to 101.0.4951.41
+
 * Thu Apr 21 2022 Tom Callaway <spot@fedoraproject.org> - 100.0.4896.127-1
 - update to 100.0.4896.127
 
