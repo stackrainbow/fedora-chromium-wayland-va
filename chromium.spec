@@ -360,9 +360,6 @@ Patch109:	chromium-98.0.4758.80-epel7-erase-fix.patch
 Patch110:	chromium-90.0.4430.93-epel8-aarch64-libpng16-symbol-prefixes.patch
 # Add additional operator== to make el7 happy.
 Patch111:	chromium-99.0.4844.51-el7-extra-operator==.patch
-# EPEL7 and EPEL8 do not have a new enough libxkbcommon to support xkb_keymap_key_get_mods_for_level
-# and the weak attribute hack that chromium tries doesn't seem to work on gcc
-Patch112:	chromium-100.0.4896.75-old-xkb.patch
 
 
 # VAAPI
@@ -1043,10 +1040,6 @@ udev.
 %patch110 -p1 -b .el8-aarch64-libpng16-symbol-prefixes
 %endif
 
-%if 0%{?rhel} == 7 || 0%{?rhel} == 8
-%patch112 -p1 -b .old-xkb
-%endif
-
 # Feature specific patches
 %if %{use_vaapi}
 %patch202 -p1 -b .accel-mjpeg
@@ -1129,12 +1122,12 @@ unzip %{SOURCE113}
 cp -a /usr/share/fonts/lohit-gurmukhi/Lohit-Gurmukhi.ttf .
 cp -a /usr/share/fonts/google-noto-cjk/NotoSansCJKjp-Regular.otf .
 %endif
-%if 0%{?fedora} >= 32
+%if 0%{?fedora} >= 32 || 0%{?rhel} >= 9
 cp -a /usr/share/fonts/dejavu-sans-fonts/DejaVuSans.ttf /usr/share/fonts/dejavu-sans-fonts/DejaVuSans-Bold.ttf .
 %else
 cp -a /usr/share/fonts/dejavu/DejaVuSans.ttf /usr/share/fonts/dejavu/DejaVuSans-Bold.ttf .
 %endif
-%if 0%{?fedora} >= 33
+%if 0%{?fedora} >= 33 || 0%{?rhel} >= 9
 cp -a /usr/share/fonts/thai-scalable/Garuda.otf .
 sed -i 's|Garuda.ttf|Garuda.otf|g' ../BUILD.gn
 %else
