@@ -500,6 +500,8 @@ BuildRequires:	flac-devel
 %else
 BuildRequires:	freetype-devel
 %endif
+# One of the python scripts invokes git to look for a hash. So helpful.
+BuildRequires:	/usr/bin/git
 BuildRequires:	hwdata
 BuildRequires:	kernel-headers
 BuildRequires:	libevent-devel
