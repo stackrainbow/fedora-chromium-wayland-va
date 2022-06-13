@@ -619,7 +619,8 @@ BuildRequires:	speech-dispatcher-devel
 BuildRequires:	yasm
 BuildRequires:	zlib-devel
 # Technically, this logic probably applies to older rhel too... but whatever.
-%if 0%{?fedora} || 0%{?rhel} == 7 || 0%{?rhel} >= 9
+# RHEL 8 and 9 do not have gnome-keyring. Not sure why, but whatever again.
+%if 0%{?fedora} || 0%{?rhel} == 7
 BuildRequires:	pkgconfig(gnome-keyring-1)
 %endif
 # remote desktop needs this
@@ -1052,7 +1053,7 @@ udev.
 %patch205 -p1 -b .vaapi-intel-fix
 %endif
 
-%if 0%{?rhel} == 8
+%if 0%{?rhel} >= 8
 %patch300 -p1 -b .disblegnomekeyring
 %endif
 
