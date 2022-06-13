@@ -616,7 +616,8 @@ BuildRequires:	re2-devel >= 20160401
 BuildRequires:	speech-dispatcher-devel
 BuildRequires:	yasm
 BuildRequires:	zlib-devel
-%if 0%{?rhel} < 8
+# Technically, this logic probably applies to older rhel too... but whatever.
+%if 0%{?fedora} || 0%{?rhel} == 7 || 0%{?rhel} >= 9
 BuildRequires:	pkgconfig(gnome-keyring-1)
 %endif
 # remote desktop needs this
