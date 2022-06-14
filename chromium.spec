@@ -288,6 +288,9 @@ Patch61:	chromium-102-swiftshader-template-instantiation.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-102-symbolize-include.patch
 Patch62:	chromium-102-symbolize-include.patch
 
+# https://github.com/v8/v8/commit/2ed27bba6a881a152887f3ab1008e989fce617e3
+Patch63:	chromium-102.0.5005.115-v8-aarch64-gcc-cfi-fix.patch
+
 # Extra CXXFLAGS for aarch64
 Patch64:	chromium-91.0.4472.77-aarch64-cxxflags-addition.patch
 # Fix issue where closure_compiler thinks java is only allowed in android builds
@@ -1005,6 +1008,7 @@ udev.
 %patch60 -p1 -b .regex_pattern-array
 %patch61 -p1 -b .swiftshader-template-instantiation
 %patch62 -p1 -b .symbolize-include
+%patch63 -p1 -b .gcc-cfi-fix
 %patch64 -p1 -b .aarch64-cxxflags-addition
 %patch65 -p1 -b .java-only-allowed
 %patch67 -p1 -b .remoting-cstring
