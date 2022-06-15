@@ -350,6 +350,9 @@ Patch103:	chromium-99.0.4844.51-epel7-old-headers-workarounds.patch
 # Use old cups (chromium's code workaround breaks on gcc)
 # Revert: https://github.com/chromium/chromium/commit/c3213f8779ddc427e89d982514185ed5e4c94e91
 Patch104:	chromium-99.0.4844.51-epel7-old-cups.patch
+# Need to explicitly include a kernel header on EL7 to support MFD_CLOEXEC
+Patch105:	chromium-102.0.5005.115-el7-memfd-include.patch
+
 # Still not wrong, but it seems like only EL needs it
 Patch106:	chromium-77-clang.patch
 # ARM failures on el8 related to int clashes
@@ -1045,6 +1048,7 @@ udev.
 # %%patch102 -p1 -b .el7-noexcept
 %patch103 -p1 -b .epel7-header-workarounds
 %patch104 -p1 -b .el7cups
+%patch105 -p1 -b .el7-memfd-include
 %patch108 -p1 -b .el7-old-libdrm
 %patch109 -p1 -b .el7-erase-fix
 %patch111 -p1 -b .el7-extra-operator-equalequal
