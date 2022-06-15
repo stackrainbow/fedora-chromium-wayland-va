@@ -47,18 +47,16 @@
 %endif
 
 # We'd like to always have this on...
+%global use_vaapi 1
 # ... but the libva in EL7 (and EL8) is too old.
-# ... and EL9 doesn't ship libva-devel on aarch64?
 %if 0%{?rhel} == 7 || 0%{?rhel} == 8
 %global use_vaapi 0
-%else
+%endif
+# ... and EL9 doesn't ship libva-devel on aarch64?
 %if 0%{?rhel} == 9
-%ifarch aarch64
-%global use_vaapi 0
-%endif
-%else
-%global use_vaapi 1
-%endif
+ %ifarch aarch64
+ %global use_vaapi 0
+ %endif
 %endif
 
 # Seems like we might need this sometimes
@@ -546,7 +544,7 @@ BuildRequires:	libudev-devel
 Requires:	libusbx >= 1.0.21-0.1.git448584a
 BuildRequires:	libusbx-devel >= 1.0.21-0.1.git448584a
 %endif
-%if 0%{?use_vaapi}
+%if 0%{use_vaapi}
 BuildRequires:	libva-devel
 %endif
 # We don't use libvpx anymore because Chromium loves to
