@@ -228,7 +228,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 Name:		chromium%{chromium_channel}
 %endif
 Version:	%{majorversion}.0.5005.115
-Release:	1%{?dist}
+Release:	2%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -898,7 +898,11 @@ Requires: minizip-compat%{_isa}
 %if %{?rhel} == 7
 # Do nothing
 %else
+%if %{?rhel} == 9
+Requires: minizip1.2%{_isa}
+%else
 Requires: minizip%{_isa}
+%endif
 %endif
 %endif
 # -common doesn't have chrome-remote-desktop bits
@@ -2168,6 +2172,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Thu Jun 16 2022 Tom Callaway <spot@fedoraproject.org> - 102.0.5005.115-2
+- fix minizip Requires for EL9
+
 * Fri Jun 10 2022 Tom Callaway <spot@fedoraproject.org> - 102.0.5005.115-1
 - update to 102.0.5005.115
 
