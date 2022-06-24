@@ -77,6 +77,7 @@ header_files="	libavcodec/x86/inline_asm.h \
 		libavcodec/cbrt_tablegen.h \
 		libavcodec/codec.h \
 		libavcodec/codec_id.h \
+		libavcodec/codec_internal.h \
 		libavcodec/codec_par.h \
 		libavcodec/dct.h \
 		libavcodec/dct32.h \
@@ -92,6 +93,7 @@ header_files="	libavcodec/x86/inline_asm.h \
 		libavcodec/get_bits.h \
 		libavcodec/h263dsp.h \
 		libavcodec/h264chroma.h \
+		libavcodec/hevc.h \
 		libavcodec/hpeldsp.h \
 		libavcodec/hwaccels.h \
 		libavcodec/hwconfig.h \
@@ -140,9 +142,12 @@ header_files="	libavcodec/x86/inline_asm.h \
 		libavcodec/sbrdsp.h \
 		libavcodec/sinewin.h \
 		libavcodec/sinewin_tablegen.h \
+		libavcodec/startcode.h \
 		libavcodec/thread.h \
+		libavcodec/threadframe.h \
 		libavcodec/unary.h \
 		libavcodec/version.h \
+		libavcodec/version_major.h \
 		libavcodec/videodsp.h \
 		libavcodec/vlc.h \
 		libavcodec/vorbisdsp.h \
@@ -167,6 +172,7 @@ header_files="	libavcodec/x86/inline_asm.h \
 		libavformat/srtp.h \
 		libavformat/options_table.h \
 		libavformat/version.h \
+		libavformat/version_major.h \
 		libavformat/w64.h \
 		libavutil/aarch64/cpu.h \
 		libavutil/x86/asm.h \
@@ -209,6 +215,7 @@ header_files="	libavcodec/x86/inline_asm.h \
 		libavutil/version.h \
 		libswresample/swresample.h \
 		libswresample/version.h \
+		libswresample/version_major.h \
 		compat/va_copy.h \
 		compat/atomics/gcc/stdatomic.h "
 
