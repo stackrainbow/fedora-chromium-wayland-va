@@ -7,7 +7,7 @@
 
 # This flag is so I can build things very fast on a giant system.
 # Enabling this in koji causes aarch64 builds to timeout indefinitely.
-%global use_all_cpus 0
+%global use_all_cpus 1
 
 %if %{use_all_cpus}
 %global numjobs %{_smp_build_ncpus}
@@ -220,15 +220,15 @@ BuildRequires:  libicu-devel >= 5.4
 %global chromoting_client_id %nil
 %endif
 
-%global majorversion 102
+%global majorversion 103
 
 %if %{freeworld}
 Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.5005.115
-Release:	2%{?dist}
+Version:	%{majorversion}.0.5060.53
+Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -284,18 +284,15 @@ Patch57:	chromium-96.0.4664.45-missing-cstring.patch
 # prepare for using system ffmpeg (clean)
 # http://svnweb.mageia.org/packages/cauldron/chromium-browser-stable/current/SOURCES/chromium-53-ffmpeg-no-deprecation-errors.patch?view=markup
 Patch58:	chromium-53-ffmpeg-no-deprecation-errors.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-102-fenced_frame_utils-include.patch
-Patch59:	chromium-102-fenced_frame_utils-include.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-102-regex_pattern-array.patch
-Patch60:	chromium-102-regex_pattern-array.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-102-swiftshader-template-instantiation.patch
-Patch61:	chromium-102-swiftshader-template-instantiation.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-102-symbolize-include.patch
-Patch62:	chromium-102-symbolize-include.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-103-VirtualCursor-std-layout.patch
+Patch59:	chromium-103-VirtualCursor-std-layout.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-103-SubstringSetMatcher-packed.patch
+Patch60:	chromium-103-SubstringSetMatcher-packed.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-103-FrameLoadRequest-type.patch
+Patch61:	chromium-103-FrameLoadRequest-type.patch
 
 # https://github.com/v8/v8/commit/2ed27bba6a881a152887f3ab1008e989fce617e3
 Patch63:	chromium-102.0.5005.115-v8-aarch64-gcc-cfi-fix.patch
-
 # Extra CXXFLAGS for aarch64
 Patch64:	chromium-91.0.4472.77-aarch64-cxxflags-addition.patch
 # Fix issue where closure_compiler thinks java is only allowed in android builds
@@ -306,7 +303,6 @@ Patch65:	chromium-91.0.4472.77-java-only-allowed-in-android-builds.patch
 Patch67:	chromium-98.0.4758.80-remoting-cstring.patch
 # Apply fix_textrels hack for i686 (even without lld)
 Patch68:	chromium-84.0.4147.125-i686-fix_textrels.patch
-
 
 # Do not download proprietary widevine module in the background (thanks Debian)
 Patch79:	chromium-99.0.4844.51-widevine-no-download.patch
@@ -332,7 +328,7 @@ Patch86:	chromium-94.0.4606.81-clang-format.patch
 Patch87:	chromium-99.0.4844.84-markdownsafe-soft_str.patch
 
 # Fix extra qualification error
-Patch97:	chromium-101.0.4951.41-remoting-extra-qualification.patch
+Patch97:	chromium-103.0.5060.53-remoting-extra-qualification.patch
 # From gentoo
 Patch98:	chromium-94.0.4606.71-InkDropHost-crash.patch
 # Enable WebRTCPPipeWireCapturer by default
@@ -1018,10 +1014,10 @@ udev.
 %patch56 -p1 -b .missing-cstdint
 %patch57 -p1 -b .missing-cstring
 %patch58 -p1 -b .ffmpeg-deprecations
-%patch59 -p1 -b .fenced_frame_utils-include
-%patch60 -p1 -b .regex_pattern-array
-%patch61 -p1 -b .swiftshader-template-instantiation
-%patch62 -p1 -b .symbolize-include
+%patch59 -p1 -b .VirtualCursor-std-layout
+%patch60 -p1 -b .SubstringSetMatcher-packed
+%patch61 -p1 -b .FrameLoadRequest-type
+
 %patch63 -p1 -b .gcc-cfi-fix
 %patch64 -p1 -b .aarch64-cxxflags-addition
 %patch65 -p1 -b .java-only-allowed
@@ -1241,7 +1237,7 @@ CHROMIUM_HEADLESS_GN_DEFINES=""
 CHROMIUM_HEADLESS_GN_DEFINES+=' use_ozone=true ozone_auto_platforms=false ozone_platform="headless" ozone_platform_headless=true'
 CHROMIUM_HEADLESS_GN_DEFINES+=' headless_use_embedded_resources=false icu_use_data_file=false v8_use_external_startup_data=false'
 CHROMIUM_HEADLESS_GN_DEFINES+=' enable_nacl=false enable_print_preview=false enable_remoting=false use_alsa=false'
-CHROMIUM_HEADLESS_GN_DEFINES+=' use_cups=false use_dbus=false use_gio=false use_kerberos=false use_libpci=false'
+CHROMIUM_HEADLESS_GN_DEFINES+=' use_cups=false use_dbus=true use_gio=false use_kerberos=false use_libpci=false'
 CHROMIUM_HEADLESS_GN_DEFINES+=' use_pulseaudio=false use_udev=false use_gtk=false use_glib=false'
 export CHROMIUM_HEADLESS_GN_DEFINES
 
@@ -1324,6 +1320,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
         'third_party/ced' \
 	'third_party/cld_3' \
 	'third_party/closure_compiler' \
+	'third_party/cpuinfo' \
 	'third_party/crashpad' \
 	'third_party/crashpad/crashpad/third_party/lss' \
 	'third_party/crashpad/crashpad/third_party/zlib/' \
@@ -1365,8 +1362,10 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/flac' \
         'third_party/flatbuffers' \
 	'third_party/fontconfig' \
+	'third_party/fp16' \
 	'third_party/freetype' \
 	'third_party/fusejs' \
+	'third_party/fxdiv' \
 	'third_party/gemmlowp' \
 	'third_party/google_input_tools' \
 	'third_party/google_input_tools/third_party/closure_library' \
@@ -1458,6 +1457,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/pffft' \
         'third_party/ply' \
 	'third_party/polymer' \
+	'third_party/pthreadpool' \
 	'third_party/private-join-and-compute' \
 	'third_party/private_membership' \
 	'third_party/protobuf' \
@@ -1520,6 +1520,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/x11proto' \
 	'third_party/xcbproto' \
         'third_party/xdg-utils' \
+	'third_party/xnnpack' \
 	'third_party/zxcvbn-cpp' \
         'third_party/zlib' \
 	'third_party/zlib/google' \
@@ -2172,6 +2173,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Wed Jun 22 2022 Tom Callaway <spot@fedoraproject.org> - 103.0.5060.53-1
+- update to 103.0.5060.53
+
 * Thu Jun 16 2022 Tom Callaway <spot@fedoraproject.org> - 102.0.5005.115-2
 - fix minizip Requires for EL9
 
