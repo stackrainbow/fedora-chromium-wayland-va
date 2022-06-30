@@ -299,6 +299,9 @@ Patch64:	chromium-91.0.4472.77-aarch64-cxxflags-addition.patch
 # https://bugs.chromium.org/p/chromium/issues/detail?id=1192875
 Patch65:	chromium-91.0.4472.77-java-only-allowed-in-android-builds.patch
 
+# Python3.9 or later no longer support the 'U' mode
+Patch66:	chromium-103.0.5060.53-python3-do-not-use-deprecated-mode-U.patch
+
 # Fix missing cstring in remoting code
 Patch67:	chromium-98.0.4758.80-remoting-cstring.patch
 # Apply fix_textrels hack for i686 (even without lld)
@@ -1021,6 +1024,7 @@ udev.
 %patch63 -p1 -b .gcc-cfi-fix
 %patch64 -p1 -b .aarch64-cxxflags-addition
 %patch65 -p1 -b .java-only-allowed
+%patch66 -p1 -b .python3-do-not-use-deprecated-mode-U
 %patch67 -p1 -b .remoting-cstring
 %patch68 -p1 -b .i686-textrels
 %patch79 -p1 -b .widevine-no-download
