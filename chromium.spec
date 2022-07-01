@@ -307,6 +307,9 @@ Patch67:	chromium-98.0.4758.80-remoting-cstring.patch
 # Apply fix_textrels hack for i686 (even without lld)
 Patch68:	chromium-84.0.4147.125-i686-fix_textrels.patch
 
+# Update rjsmin to 1.2.0
+Patch69:	chromium-103.0.5060.53-update-rjsmin-to-1.2.0.patch
+
 # Do not download proprietary widevine module in the background (thanks Debian)
 Patch79:	chromium-99.0.4844.51-widevine-no-download.patch
 
@@ -1027,6 +1030,7 @@ udev.
 %patch66 -p1 -b .python3-do-not-use-deprecated-mode-U
 %patch67 -p1 -b .remoting-cstring
 %patch68 -p1 -b .i686-textrels
+%patch69 -p1 -b .update-rjsmin-to-1.2.0
 %patch79 -p1 -b .widevine-no-download
 %patch80 -p1 -b .EnumTable-crash
 # %%patch81 -p1 -b .gcc12fix
