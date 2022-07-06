@@ -310,6 +310,9 @@ Patch68:	chromium-84.0.4147.125-i686-fix_textrels.patch
 # Update rjsmin to 1.2.0
 Patch69:	chromium-103.0.5060.53-update-rjsmin-to-1.2.0.patch
 
+# Update six to 1.16.0
+Patch70:	chromium-103.0.5060.53-python-six-1.16.0.patch
+
 # Do not download proprietary widevine module in the background (thanks Debian)
 Patch79:	chromium-99.0.4844.51-widevine-no-download.patch
 
@@ -1031,6 +1034,7 @@ udev.
 %patch67 -p1 -b .remoting-cstring
 %patch68 -p1 -b .i686-textrels
 %patch69 -p1 -b .update-rjsmin-to-1.2.0
+%patch70 -p1 -b .update-six-to-1.16.0
 %patch79 -p1 -b .widevine-no-download
 %patch80 -p1 -b .EnumTable-crash
 # %%patch81 -p1 -b .gcc12fix
