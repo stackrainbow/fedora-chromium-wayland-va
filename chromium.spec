@@ -227,7 +227,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.5060.53
+Version:	%{majorversion}.0.5060.114
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -2185,6 +2185,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Wed Jul 13 2022 Tom Callaway <spot@fedoraproject.org> - 103.0.5060.114-1
+- update to 103.0.5060.114
+
 * Wed Jun 22 2022 Tom Callaway <spot@fedoraproject.org> - 103.0.5060.53-1
 - update to 103.0.5060.53
 
