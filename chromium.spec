@@ -604,6 +604,7 @@ BuildRequires:	python-html5lib
 BuildRequires:	python-markupsafe
 BuildRequires:	python-ply
 %endif
+BuildRequires:	python3-importlib-metadata
 BuildRequires:	python3-simplejson
 %endif
 %else
