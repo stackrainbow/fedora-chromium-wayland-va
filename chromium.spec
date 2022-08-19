@@ -220,15 +220,15 @@ BuildRequires:  libicu-devel >= 5.4
 %global chromoting_client_id %nil
 %endif
 
-%global majorversion 103
+%global majorversion 104
 
 %if %{freeworld}
 Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.5060.114
-Release:	2%{?dist}
+Version:	%{majorversion}.0.5112.101
+Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
 # chromium-libs-media-freeworld
@@ -286,10 +286,11 @@ Patch57:	chromium-96.0.4664.45-missing-cstring.patch
 Patch58:	chromium-53-ffmpeg-no-deprecation-errors.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-103-VirtualCursor-std-layout.patch
 Patch59:	chromium-103-VirtualCursor-std-layout.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-103-SubstringSetMatcher-packed.patch
-Patch60:	chromium-103-SubstringSetMatcher-packed.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-103-FrameLoadRequest-type.patch
-Patch61:	chromium-103-FrameLoadRequest-type.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-104-ContentRendererClient-type.patch
+Patch60:	chromium-104-ContentRendererClient-type.patch
+
+# Fix headers to look for system paths when we are using system minizip
+Patch61:	chromium-104.0.5112.101-system-minizip-header-fix.patch
 
 # https://github.com/v8/v8/commit/2ed27bba6a881a152887f3ab1008e989fce617e3
 Patch63:	chromium-102.0.5005.115-v8-aarch64-gcc-cfi-fix.patch
@@ -380,7 +381,7 @@ Patch111:	chromium-99.0.4844.51-el7-extra-operator==.patch
 
 # VAAPI
 # Upstream turned VAAPI on in Linux in 86
-Patch202:	chromium-102.0.5005.61-enable-hardware-accelerated-mjpeg.patch
+Patch202:	chromium-104.0.5112.101-enable-hardware-accelerated-mjpeg.patch
 Patch203:	chromium-86.0.4240.75-vaapi-i686-fpermissive.patch
 Patch205:	chromium-86.0.4240.75-fix-vaapi-on-intel.patch
 
@@ -1024,8 +1025,11 @@ udev.
 %patch57 -p1 -b .missing-cstring
 %patch58 -p1 -b .ffmpeg-deprecations
 %patch59 -p1 -b .VirtualCursor-std-layout
-%patch60 -p1 -b .SubstringSetMatcher-packed
-%patch61 -p1 -b .FrameLoadRequest-type
+%patch60 -p1 -b .ContentRendererType-client
+
+%if ! 0%{?bundleminizip}
+%patch61 -p1 -b .system-minizip
+%endif
 
 %patch63 -p1 -b .gcc-cfi-fix
 %patch64 -p1 -b .aarch64-cxxflags-addition
@@ -2185,6 +2189,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Thu Aug 18 2022 Tom Callaway <spot@fedoraproject.org> - 104.0.5112.101-1
+- update to 104.0.5112.101
+
 * Wed Jul 20 2022 Fedora Release Engineering <releng@fedoraproject.org> - 103.0.5060.114-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild
 

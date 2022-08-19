@@ -1,7 +1,7 @@
-diff -up chromium-102.0.5005.61/chrome/browser/about_flags.cc.accel-mjpeg chromium-102.0.5005.61/chrome/browser/about_flags.cc
---- chromium-102.0.5005.61/chrome/browser/about_flags.cc.accel-mjpeg	2022-05-19 02:16:44.000000000 +0000
-+++ chromium-102.0.5005.61/chrome/browser/about_flags.cc	2022-06-03 20:09:42.298053196 +0000
-@@ -4308,12 +4308,12 @@ const FeatureEntry kFeatureEntries[] = {
+diff -up chromium-104.0.5112.101/chrome/browser/about_flags.cc.accel-mjpeg chromium-104.0.5112.101/chrome/browser/about_flags.cc
+--- chromium-104.0.5112.101/chrome/browser/about_flags.cc.accel-mjpeg	2022-08-16 23:29:08.000000000 +0000
++++ chromium-104.0.5112.101/chrome/browser/about_flags.cc	2022-08-18 14:21:36.762266571 +0000
+@@ -4485,12 +4485,12 @@ const FeatureEntry kFeatureEntries[] = {
       flag_descriptions::kWebXrForceRuntimeDescription, kOsDesktop,
       MULTI_VALUE_TYPE(kWebXrForceRuntimeChoices)},
  #endif  // ENABLE_VR
@@ -17,10 +17,10 @@ diff -up chromium-102.0.5005.61/chrome/browser/about_flags.cc.accel-mjpeg chromi
      {"system-keyboard-lock", flag_descriptions::kSystemKeyboardLockName,
       flag_descriptions::kSystemKeyboardLockDescription, kOsDesktop,
       FEATURE_VALUE_TYPE(features::kSystemKeyboardLock)},
-diff -up chromium-102.0.5005.61/chrome/browser/flag_descriptions.cc.accel-mjpeg chromium-102.0.5005.61/chrome/browser/flag_descriptions.cc
---- chromium-102.0.5005.61/chrome/browser/flag_descriptions.cc.accel-mjpeg	2022-06-03 17:55:53.493268667 +0000
-+++ chromium-102.0.5005.61/chrome/browser/flag_descriptions.cc	2022-06-03 20:22:41.162906775 +0000
-@@ -4029,7 +4029,7 @@ const char kUseAngleGL[] = "OpenGL";
+diff -up chromium-104.0.5112.101/chrome/browser/flag_descriptions.cc.accel-mjpeg chromium-104.0.5112.101/chrome/browser/flag_descriptions.cc
+--- chromium-104.0.5112.101/chrome/browser/flag_descriptions.cc.accel-mjpeg	2022-08-16 23:29:09.000000000 +0000
++++ chromium-104.0.5112.101/chrome/browser/flag_descriptions.cc	2022-08-18 14:25:23.609572649 +0000
+@@ -4170,7 +4170,7 @@ const char kUseAngleGL[] = "OpenGL";
  
  // ChromeOS -------------------------------------------------------------------
  
@@ -29,7 +29,7 @@ diff -up chromium-102.0.5005.61/chrome/browser/flag_descriptions.cc.accel-mjpeg 
  
  const char kAcceleratedMjpegDecodeName[] =
      "Hardware-accelerated mjpeg decode for captured frame";
-@@ -4037,6 +4037,10 @@ const char kAcceleratedMjpegDecodeDescri
+@@ -4178,6 +4178,10 @@ const char kAcceleratedMjpegDecodeDescri
      "Enable hardware-accelerated mjpeg decode for captured frame where "
      "available.";
  
@@ -37,13 +37,13 @@ diff -up chromium-102.0.5005.61/chrome/browser/flag_descriptions.cc.accel-mjpeg 
 +
 +#if BUILDFLAG(IS_CHROMEOS_ASH)
 +
- const char kAllowDisableTouchpadHapticFeedbackName[] =
-     "Allow disabling touchpad haptic feedback";
- const char kAllowDisableTouchpadHapticFeedbackDescription[] =
-diff -up chromium-102.0.5005.61/chrome/browser/flag_descriptions.h.accel-mjpeg chromium-102.0.5005.61/chrome/browser/flag_descriptions.h
---- chromium-102.0.5005.61/chrome/browser/flag_descriptions.h.accel-mjpeg	2022-06-03 17:55:53.494268633 +0000
-+++ chromium-102.0.5005.61/chrome/browser/flag_descriptions.h	2022-06-03 20:23:50.514578649 +0000
-@@ -2303,11 +2303,15 @@ extern const char kUseAngleGL[];
+ const char kAdaptiveChargingForTestingName[] =
+     "Show adaptive charging notifications for testing";
+ const char kAdaptiveChargingForTestingDescription[] =
+diff -up chromium-104.0.5112.101/chrome/browser/flag_descriptions.h.accel-mjpeg chromium-104.0.5112.101/chrome/browser/flag_descriptions.h
+--- chromium-104.0.5112.101/chrome/browser/flag_descriptions.h.accel-mjpeg	2022-08-18 14:21:36.765266469 +0000
++++ chromium-104.0.5112.101/chrome/browser/flag_descriptions.h	2022-08-18 14:26:10.469983301 +0000
+@@ -2390,11 +2390,15 @@ extern const char kUseAngleGL[];
  
  // ChromeOS -------------------------------------------------------------------
  
@@ -57,6 +57,6 @@ diff -up chromium-102.0.5005.61/chrome/browser/flag_descriptions.h.accel-mjpeg c
 +
 +#if BUILDFLAG(IS_CHROMEOS_ASH)
 +
- extern const char kAllowDisableTouchpadHapticFeedbackName[];
- extern const char kAllowDisableTouchpadHapticFeedbackDescription[];
+ extern const char kAdaptiveChargingName[];
+ extern const char kAdaptiveChargingDescription[];
  

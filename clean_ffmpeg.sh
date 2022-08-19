@@ -68,6 +68,7 @@ header_files="	libavcodec/x86/inline_asm.h \
 		libavcodec/aac_ac3_parser.h \
 		libavcodec/aac_defines.h \
 		libavcodec/ac3.h \
+		libavcodec/ac3defs.h \
 		libavcodec/ac3tab.h \
 		libavcodec/adts_header.h \
 		libavcodec/avcodec.h \
@@ -261,6 +262,7 @@ manual_files="	libavcodec/aarch64/fft_neon.S \
 		libavformat/options.c \
 		libavformat/pcm.c \
 		libavformat/utils.c \
+		libavformat/version.c \
 		libavutil/aarch64/asm.S \
 		libavutil/aarch64/bswap.h \
 		libavutil/aarch64/cpu.c \
@@ -273,6 +275,7 @@ manual_files="	libavcodec/aarch64/fft_neon.S \
 		libavutil/tx_float.c \
 		libavutil/tx_template.c \
 		libavutil/utils.c \
+		libavutil/version.c \
 		libavutil/x86/cpu.c \
 		libavutil/x86/float_dsp_init.c \
 		libavutil/x86/x86inc.asm \
