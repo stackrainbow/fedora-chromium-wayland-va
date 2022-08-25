@@ -292,6 +292,11 @@ Patch60:	chromium-104-ContentRendererClient-type.patch
 # Fix headers to look for system paths when we are using system minizip
 Patch61:	chromium-104.0.5112.101-system-minizip-header-fix.patch
 
+# Fix v8 issue where GCC on arm64 fails to compile extract_first_nonzero_index because of the
+# signedness type mismatch in the NEON intrinsics
+# https://github.com/v8/v8/commit/0fc6592cf8867f0cd6d8d41b43392fb52d359649.patch
+Patch62:	0fc6592cf8867f0cd6d8d41b43392fb52d359649.patch
+
 # https://github.com/v8/v8/commit/2ed27bba6a881a152887f3ab1008e989fce617e3
 Patch63:	chromium-102.0.5005.115-v8-aarch64-gcc-cfi-fix.patch
 # Extra CXXFLAGS for aarch64
@@ -1031,6 +1036,8 @@ udev.
 %if ! 0%{?bundleminizip}
 %patch61 -p1 -b .system-minizip
 %endif
+
+%patch62 -p1 -b .arm-neon-fix
 
 %patch63 -p1 -b .gcc-cfi-fix
 %patch64 -p1 -b .aarch64-cxxflags-addition
