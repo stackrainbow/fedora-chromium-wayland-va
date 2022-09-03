@@ -220,14 +220,14 @@ BuildRequires:  libicu-devel >= 5.4
 %global chromoting_client_id %nil
 %endif
 
-%global majorversion 104
+%global majorversion 105
 
 %if %{freeworld}
 Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.5112.101
+Version:	%{majorversion}.0.5195.52
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -248,7 +248,7 @@ Patch0:		chromium-70.0.3538.67-sandbox-pie.patch
 # Use /etc/chromium for initial_prefs
 Patch1:		chromium-91.0.4472.77-initial_prefs-etc-path.patch
 # Use gn system files
-Patch2:		chromium-67.0.3396.62-gn-system.patch
+Patch2:		chromium-105.0.5195.52-gn-system.patch
 # Do not prefix libpng functions
 Patch3:		chromium-60.0.3112.78-no-libpng-prefix.patch
 # Do not mangle libjpeg
@@ -276,7 +276,7 @@ Patch51:	chromium-96.0.4664.45-gcc-remoting-constexpr.patch
 # https://gitweb.gentoo.org/repo/gentoo.git/tree/www-client/chromium/files/chromium-unbundle-zlib.patch
 Patch52:	chromium-81.0.4044.92-unbundle-zlib.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-78-protobuf-RepeatedPtrField-export.patch
-Patch55:	chromium-78-protobuf-RepeatedPtrField-export.patch
+# Patch55:	chromium-78-protobuf-RepeatedPtrField-export.patch
 # ../../third_party/perfetto/include/perfetto/base/task_runner.h:48:55: error: 'uint32_t' has not been declared
 Patch56:	chromium-96.0.4664.45-missing-cstdint-header.patch
 # Missing <cstring> (thanks c++17)
@@ -286,19 +286,15 @@ Patch57:	chromium-96.0.4664.45-missing-cstring.patch
 Patch58:	chromium-53-ffmpeg-no-deprecation-errors.patch
 # https://github.com/stha09/chromium-patches/blob/master/chromium-103-VirtualCursor-std-layout.patch
 Patch59:	chromium-103-VirtualCursor-std-layout.patch
-# https://github.com/stha09/chromium-patches/blob/master/chromium-104-ContentRendererClient-type.patch
-Patch60:	chromium-104-ContentRendererClient-type.patch
+# https://github.com/stha09/chromium-patches/blob/master/chromium-105-AdjustMaskLayerGeometry-ceilf.patch
+Patch60:	chromium-105-AdjustMaskLayerGeometry-ceilf.patch
 
 # Fix headers to look for system paths when we are using system minizip
 Patch61:	chromium-104.0.5112.101-system-minizip-header-fix.patch
 
-# Fix v8 issue where GCC on arm64 fails to compile extract_first_nonzero_index because of the
-# signedness type mismatch in the NEON intrinsics
-# https://github.com/v8/v8/commit/0fc6592cf8867f0cd6d8d41b43392fb52d359649.patch
-Patch62:	0fc6592cf8867f0cd6d8d41b43392fb52d359649.patch
+# Update bundled copy of wayland-client-core.h
+Patch62:	chromium-105.0.5195.52-update-wayland-client-core.patch
 
-# https://github.com/v8/v8/commit/2ed27bba6a881a152887f3ab1008e989fce617e3
-Patch63:	chromium-102.0.5005.115-v8-aarch64-gcc-cfi-fix.patch
 # Extra CXXFLAGS for aarch64
 Patch64:	chromium-91.0.4472.77-aarch64-cxxflags-addition.patch
 # Fix issue where closure_compiler thinks java is only allowed in android builds
@@ -317,7 +313,19 @@ Patch68:	chromium-84.0.4147.125-i686-fix_textrels.patch
 Patch69:	chromium-103.0.5060.53-update-rjsmin-to-1.2.0.patch
 
 # Update six to 1.16.0
-Patch70:	chromium-103.0.5060.53-python-six-1.16.0.patch
+Patch70:	chromium-105.0.5195.52-python-six-1.16.0.patch
+
+# https://github.com/stha09/chromium-patches/blob/master/chromium-105-Bitmap-include.patch
+Patch71:	chromium-105-Bitmap-include.patch
+
+# https://github.com/stha09/chromium-patches/blob/master/chromium-105-browser_finder-include.patch
+Patch72:	chromium-105-browser_finder-include.patch
+
+# https://github.com/stha09/chromium-patches/blob/master/chromium-105-raw_ptr-noexcept.patch
+Patch73:	chromium-105-raw_ptr-noexcept.patch
+
+# https://github.com/stha09/chromium-patches/blob/master/chromium-105-Trap-raw_ptr.patch
+Patch74:	chromium-105-Trap-raw_ptr.patch
 
 # Do not download proprietary widevine module in the background (thanks Debian)
 Patch79:	chromium-99.0.4844.51-widevine-no-download.patch
@@ -1026,20 +1034,18 @@ udev.
 %if 0%{?fedora} || 0%{?rhel} >= 8
 %patch52 -p1 -b .unbundle-zlib
 %endif
-%patch55 -p1 -b .protobuf-export
+# %%patch55 -p1 -b .protobuf-export
 %patch56 -p1 -b .missing-cstdint
 %patch57 -p1 -b .missing-cstring
 %patch58 -p1 -b .ffmpeg-deprecations
 %patch59 -p1 -b .VirtualCursor-std-layout
-%patch60 -p1 -b .ContentRendererType-client
+%patch60 -p1 -b .AdjustMaskLayerGeometry-ceilf
 
 %if ! 0%{?bundleminizip}
 %patch61 -p1 -b .system-minizip
 %endif
+%patch62 -p1 -b .update-wayland-client-core
 
-%patch62 -p1 -b .arm-neon-fix
-
-%patch63 -p1 -b .gcc-cfi-fix
 %patch64 -p1 -b .aarch64-cxxflags-addition
 %patch65 -p1 -b .java-only-allowed
 %patch66 -p1 -b .python3-do-not-use-deprecated-mode-U
@@ -1047,6 +1053,10 @@ udev.
 %patch68 -p1 -b .i686-textrels
 %patch69 -p1 -b .update-rjsmin-to-1.2.0
 %patch70 -p1 -b .update-six-to-1.16.0
+%patch71 -p1 -b .Bitmap-include
+%patch72 -p1 -b .browser_finder-include
+%patch73 -p1 -b .raw_ptr-noexcept
+%patch74 -p1 -b .Trap-raw_ptr
 %patch79 -p1 -b .widevine-no-download
 %patch80 -p1 -b .EnumTable-crash
 # %%patch81 -p1 -b .gcc12fix
@@ -1291,7 +1301,6 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'base/third_party/double_conversion' \
 	'base/third_party/dynamic_annotations' \
 	'base/third_party/icu' \
-	'base/third_party/libevent' \
 	'base/third_party/nspr' \
 	'base/third_party/superfasthash' \
 	'base/third_party/symbolize' \
@@ -1344,6 +1353,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
         'third_party/ced' \
 	'third_party/cld_3' \
 	'third_party/closure_compiler' \
+	'third_party/content_analysis_sdk' \
 	'third_party/cpuinfo' \
 	'third_party/crashpad' \
 	'third_party/crashpad/crashpad/third_party/lss' \
@@ -1415,6 +1425,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/libaom/source/libaom/third_party/x86inc' \
 	'third_party/libavif' \
 	'third_party/libdrm' \
+	'third_party/libevent' \
 	'third_party/libgav1' \
 	'third_party/libgifcodec' \
 	'third_party/libjingle' \
@@ -1472,7 +1483,7 @@ build/linux/unbundle/remove_bundled_libraries.py \
 	'third_party/pdfium/third_party/bigint' \
 	'third_party/pdfium/third_party/freetype' \
 	'third_party/pdfium/third_party/lcms' \
-	'third_party/pdfium/third_party/libopenjpeg20' \
+	'third_party/pdfium/third_party/libopenjpeg' \
         'third_party/pdfium/third_party/libpng16' \
         'third_party/pdfium/third_party/libtiff' \
 	'third_party/pdfium/third_party/skia_shared' \
@@ -2197,6 +2208,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Thu Sep  1 2022 Tom Callaway <spot@fedoraproject.org> - 105.0.5195.52-1
+- update to 105.0.5195.52
+
 * Thu Aug 18 2022 Tom Callaway <spot@fedoraproject.org> - 104.0.5112.101-1
 - update to 104.0.5112.101
 
