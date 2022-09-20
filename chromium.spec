@@ -350,6 +350,9 @@ Patch86:	chromium-94.0.4606.81-clang-format.patch
 # This is only in Fedora 37+
 Patch87:	chromium-99.0.4844.84-markdownsafe-soft_str.patch
 
+# There is a corner case where v8 tries to pass a clang only flag without checking is_clang
+Patch88:	chromium-105.0.5195.125-arm64-gcc-fix.patch
+
 # Fix extra qualification error
 Patch97:	chromium-103.0.5060.53-remoting-extra-qualification.patch
 # From gentoo
@@ -1066,6 +1069,7 @@ udev.
 %if 0%{?fedora} >= 37
 %patch87 -p1 -b .markdownsafe-soft_str
 %endif
+%patch88 -p1 -b .arm64-gcc-fix
 %patch97 -p1 -b .remoting-extra-qualification
 %patch98 -p1 -b .InkDropHost-crash
 %patch99 -p1 -b .enable-WebRTCPipeWireCapturer-byDefault
