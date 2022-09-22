@@ -1283,11 +1283,11 @@ export CHROMIUM_HEADLESS_GN_DEFINES
 pushd third_party/node/linux
 %ifarch x86_64
 tar xf %{SOURCE19}
-mv node-v12.22.6-linux-x64 node-linux-x64
+mv node-v16.17.0-linux-x64 node-linux-x64
 %endif
 %ifarch aarch64
 tar xf %{SOURCE21}
-mv node-v12.22.6-linux-arm64 node-linux-arm64
+mv node-v16.17.0-linux-arm64 node-linux-arm64
 # This is weird, but whatever
 ln -s node-linux-arm64 node-linux-x64
 %endif
