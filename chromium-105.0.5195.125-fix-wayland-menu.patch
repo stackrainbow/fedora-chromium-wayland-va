@@ -1,0 +1,26 @@
+diff -up chromium-105.0.5195.125/ui/ozone/platform/wayland/host/wayland_window.cc.fix-wayland-menu chromium-105.0.5195.125/ui/ozone/platform/wayland/host/wayland_window.cc
+--- chromium-105.0.5195.125/ui/ozone/platform/wayland/host/wayland_window.cc.fix-wayland-menu	2022-09-23 18:29:51.872286569 +0000
++++ chromium-105.0.5195.125/ui/ozone/platform/wayland/host/wayland_window.cc	2022-09-23 18:30:18.819376074 +0000
+@@ -950,7 +950,7 @@ void WaylandWindow::ProcessPendingBounds
+     // window has been applied.
+     SetWindowGeometry(pending_bounds_dip_);
+     AckConfigure(serial);
+-    root_surface()->Commit();
++    connection()->ScheduleFlush();
+   } else if (!pending_configures_.empty() &&
+              pending_bounds_dip_.size() ==
+                  pending_configures_.back().bounds_dip.size()) {
+diff -up chromium-105.0.5195.125/ui/ozone/platform/wayland/wayland_buffer_manager_unittest.cc.fix-wayland-menu chromium-105.0.5195.125/ui/ozone/platform/wayland/wayland_buffer_manager_unittest.cc
+--- chromium-105.0.5195.125/ui/ozone/platform/wayland/wayland_buffer_manager_unittest.cc.fix-wayland-menu	2022-09-23 18:30:41.936594397 +0000
++++ chromium-105.0.5195.125/ui/ozone/platform/wayland/wayland_buffer_manager_unittest.cc	2022-09-23 18:31:31.703911576 +0000
+@@ -1103,9 +1103,7 @@ TEST_P(WaylandBufferManagerTest, TestCom
+     EXPECT_CALL(*xdg_surface, AckConfigure(_)).Times(1);
+     EXPECT_CALL(*mock_surface, Attach(_, _, _)).Times(1);
+     EXPECT_CALL(*mock_surface, Frame(_)).Times(1);
+-    // Commit() can be called a second time as part of the configure -> ack
+-    // sequence.
+-    EXPECT_CALL(*mock_surface, Commit()).Times(testing::Between(1, 2));
++    EXPECT_CALL(*mock_surface, Commit()).Times(1);
+ 
+     ActivateSurface(mock_surface->xdg_surface());
+     Sync();
