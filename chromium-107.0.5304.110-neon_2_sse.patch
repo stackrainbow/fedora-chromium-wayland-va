@@ -1,0 +1,12 @@
+diff -up iridium-browser-2022.11.107/third_party/neon_2_sse/src/NEON_2_SSE.h.me iridium-browser-2022.11.107/third_party/neon_2_sse/src/NEON_2_SSE.h
+--- iridium-browser-2022.11.107/third_party/neon_2_sse/src/NEON_2_SSE.h.me	2022-11-18 22:17:57.883182823 +0100
++++ iridium-browser-2022.11.107/third_party/neon_2_sse/src/NEON_2_SSE.h	2022-11-18 22:18:51.883143167 +0100
+@@ -2292,7 +2292,7 @@ _NEON2SSESTORAGE float64x2_t vsqrtq_f64(
+ // the following macros solve the problem of the "immediate parameters requirement" for some x86 intrinsics.
+ // we need it to compile the code unless the "Intrinsic parameter must be an immediate value" error is our goal
+ //
+-#if  ( defined (__INTEL_COMPILER)  || defined (__GNUC__) && !defined(__llvm__) )
++#if  ( defined (__INTEL_COMPILER)  && !defined(__llvm__) )
+ #   define _MM_ALIGNR_EPI8 _mm_alignr_epi8
+ #   define _MM_EXTRACT_EPI16  (int16_t) _mm_extract_epi16
+ #   define _MM_INSERT_EPI16 _mm_insert_epi16

@@ -1,0 +1,17 @@
+diff -up iridium-browser-2022.11.107/third_party/wayland/src/src/wayland-shm.c.me iridium-browser-2022.11.107/third_party/wayland/src/src/wayland-shm.c
+--- iridium-browser-2022.11.107/third_party/wayland/src/src/wayland-shm.c.me	2022-11-18 12:07:56.724329365 +0100
++++ iridium-browser-2022.11.107/third_party/wayland/src/src/wayland-shm.c	2022-11-18 12:18:38.009916441 +0100
+@@ -45,6 +45,13 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ 
++#ifndef F_GET_SEALS
++#define F_GET_SEALS 1034  /* Get seals for file. */
++#endif
++#ifndef F_SEAL_SHRINK
++#define F_SEAL_SHRINK 0x0002  /* Prevent file from shrinking. */
++#endif
++
+ #include "wayland-util.h"
+ #include "wayland-private.h"
+ #include "wayland-server.h"

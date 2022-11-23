@@ -1,0 +1,11 @@
+diff -up chromium-107.0.5304.110/remoting/codec/video_encoder_active_map.cc.me chromium-107.0.5304.110/remoting/codec/video_encoder_active_map.cc
+--- chromium-107.0.5304.110/remoting/codec/video_encoder_active_map.cc.me	2022-11-20 19:17:37.781264509 +0100
++++ chromium-107.0.5304.110/remoting/codec/video_encoder_active_map.cc	2022-11-20 19:18:12.040865033 +0100
+@@ -6,6 +6,7 @@
+ 
+ #include <algorithm>
+ #include <utility>
++#include <cstring>
+ 
+ #include "base/check_op.h"
+ #include "third_party/webrtc/modules/desktop_capture/desktop_geometry.h"
