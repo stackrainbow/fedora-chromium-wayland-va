@@ -58,9 +58,10 @@ generated_files_headers="$generated_files_headers ${generated_files//.asm/.h}"
 header_files="	libavcodec/x86/inline_asm.h \
 		libavcodec/x86/hpeldsp.h \
 		libavcodec/x86/mathops.h \
-		libavcodec/x86/vp56_arith.h \
+		libavcodec/x86/vpx_arith.h \
 		libavcodec/aarch64/vp8dsp.h \
 		libavcodec/arm/vp8dsp.h \
+		libavcodec/arm/vpx_arith.h \
 		libavcodec/aac.h \
 		libavcodec/aacps.h \
 		libavcodec/aacpsdsp.h \
@@ -90,6 +91,7 @@ header_files="	libavcodec/x86/inline_asm.h \
 		libavcodec/fft_table.h \
 		libavcodec/flac.h \
 		libavcodec/flacdsp.h \
+		libavcodec/flac_parse.h \
 		libavcodec/frame_thread_encoder.h \
 		libavcodec/get_bits.h \
 		libavcodec/h263dsp.h \
@@ -159,6 +161,7 @@ header_files="	libavcodec/x86/inline_asm.h \
 		libavcodec/vp56dsp.h \
 		libavcodec/vp8data.h \
 		libavcodec/vp8dsp.h \
+		libavcodec/vp89_rac.h \
 		libavformat/apetag.h \
 		libavformat/avformat.h \
 		libavformat/dv.h \
@@ -184,6 +187,7 @@ header_files="	libavcodec/x86/inline_asm.h \
 		libavutil/x86/intmath.h
 		libavutil/x86/timer.h \
 		libavutil/attributes.h \
+		libavutil/attributes_internal.h \
 		libavutil/audio_fifo.h \
 		libavutil/avassert.h \
 		libavutil/avutil.h \
@@ -278,6 +282,7 @@ manual_files="	libavcodec/aarch64/fft_neon.S \
 		libavutil/version.c \
 		libavutil/x86/cpu.c \
 		libavutil/x86/float_dsp_init.c \
+		libavutil/x86/tx_float_init.c \
 		libavutil/x86/x86inc.asm \
 		libavutil/x86/x86util.asm "
 

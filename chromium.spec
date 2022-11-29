@@ -229,7 +229,7 @@ Name:		chromium%{chromium_channel}%{nsuffix}
 %else
 Name:		chromium%{chromium_channel}
 %endif
-Version:	%{majorversion}.0.5304.110
+Version:	%{majorversion}.0.5304.121
 Release:	1%{?dist}
 %if %{?freeworld}
 %if %{?shared}
@@ -2181,6 +2181,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 
 
 %changelog
+* Tue Nov 29 2022 Than Ngo <than@redhat.com> - 107.0.5304.121-1
+- update to 107.0.5304.121
+
 * Fri Nov 11 2022 Than Ngo <than@redhat.com> - 107.0.5304.110-1
 - update to 107.0.5304.110
 
