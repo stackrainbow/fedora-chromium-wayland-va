@@ -1666,7 +1666,7 @@ sed -i.orig -e 's/getenv("CHROME_VERSION_EXTRA")/"Fedora Project"/' $FILE
 %build
 # utf8 issue in epel7
 # Internal parsing error 'ascii' codec can't decode byte 0xe2 in position 474: ordinal not in range(128)
-export LC_CTYPE=en_US.UTF-8
+export LC_CTYPE=C.UTF-8
 
 # Turning the buildsystem up to 11.
 ulimit -n 4096

@@ -231,6 +231,7 @@ manual_files="	libavcodec/aarch64/fft_neon.S \
 		libavcodec/aarch64/mdct_neon.S \
 		libavcodec/aarch64/neon.S \
 		libavcodec/aarch64/vorbisdsp_neon.S \
+		libavcodec/aarch64/vorbisdsp_init.c \
 		libavcodec/aarch64/vp8dsp_neon.S \
 		libavcodec/x86/hpeldsp.asm \
 		libavcodec/x86/hpeldsp_rnd_template.c \
@@ -271,6 +272,7 @@ manual_files="	libavcodec/aarch64/fft_neon.S \
 		libavutil/aarch64/asm.S \
 		libavutil/aarch64/bswap.h \
 		libavutil/aarch64/cpu.c \
+		libavutil/aarch64/float_dsp_init.c \
 		libavutil/aarch64/float_dsp_neon.S \
 		libavutil/aarch64/timer.h \
 		libavutil/cpu.c \
