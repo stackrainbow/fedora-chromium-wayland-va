@@ -164,7 +164,7 @@ BuildRequires:  libicu-devel >= 5.4
 %global gtk3 1
 
 %if 0%{?rhel} == 7 || 0%{?rhel} == 8
-%global dts_version 12
+%global dts_version 11
 
 %global bundleopus 1
 %global bundlelibusbx 1
