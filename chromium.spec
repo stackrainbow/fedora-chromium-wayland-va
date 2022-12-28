@@ -313,8 +313,8 @@ Patch86:	chromium-94.0.4606.81-clang-format.patch
 # This is only in Fedora 37+
 Patch87:	chromium-99.0.4844.84-markdownsafe-soft_str.patch
 
-# There is a corner case where v8 tries to pass a clang only flag without checking is_clang
-Patch88:	chromium-105.0.5195.125-arm64-gcc-fix.patch
+# drop build dependency on python3-importlib-metadata
+Patch88: chromium-108-drop-python-importlib-metadata.patch
 
 # Fix extra qualification error
 Patch97:	chromium-107.0.5304.110-remoting-extra-qualification.patch
@@ -330,9 +330,6 @@ Patch100: chromium-108-el7-include-fcntl-memfd.patch
 
 # add define HAVE_STRNDUP on epel7
 Patch101: chromium-108-el7-wayland-strndup-error.patch
-
-# drop build dependency of python3-importlib-metadata on el7
-Patch102: chromium-108-el7-drop-python-importlib-metadata.patch
 
 # Work around old and missing headers on EPEL7
 Patch103: chromium-99.0.4844.51-epel7-old-headers-workarounds.patch
@@ -613,11 +610,9 @@ BuildRequires:	pkgconfig(gtk+-2.0)
 %if %{build_with_python3}
 BuildRequires:	python3-devel
 BuildRequires: python3-zipp
-BuildRequires: python3-importlib-metadata
 %else
 BuildRequires: python2-devel
 BuildRequires: python-zipp
-BuildRequires: python-importlib-metadata
 %endif
 
 %if 0%{?build_with_python3}
@@ -996,7 +991,7 @@ udev.
 %patch87 -p1 -b .markdownsafe-soft_str
 %endif
 
-# %%patch88 -p1 -b .arm64-gcc-fix
+%patch88 -p1 -b .drop-build-dep-on-python3-importlib-metadata
 %patch97 -p1 -b .remoting-extra-qualification
 %patch98 -p1 -b .InkDropHost-crash
 %patch99 -p1 -b .enable-WebRTCPipeWireCapturer-byDefault
@@ -1019,8 +1014,6 @@ udev.
 %if 0%{?rhel} == 7
 %patch100 -p1 -b .el7-memfd-fcntl-include
 %patch101 -p1 -b .wayland-strndup-error
-# drop BR on python3-importlib-metadata
-# %%patch102 -p1 -b .drop-python-importlib-metadata
 %patch103 -p1 -b .epel7-header-workarounds
 %patch104 -p1 -b .el7cups
 %patch105 -p1 -b .el7-old-libdrm
@@ -1439,8 +1432,7 @@ sed -i "s|@@CHROMIUM_BROWSER_CHANNEL@@|$CHROMIUM_BROWSER_CHANNEL|g" %{buildroot}
 	sed -i "s|@@EXTRA_FLAGS@@|$EXTRA_FLAGS|g" %{buildroot}%{chromium_path}/%{chromium_browser_channel}.sh
 %endif
 
-
-ln -sr %{chromium_path}/%{chromium_browser_channel}.sh %{buildroot}%{_bindir}/%{chromium_browser_channel}
+ln -s ../%{chromium_path}/%{chromium_browser_channel}.sh %{buildroot}%{_bindir}/%{chromium_browser_channel}
 mkdir -p %{buildroot}%{_mandir}/man1/
 
 pushd %{builddir}
@@ -1494,7 +1486,7 @@ pushd %{builddir}
 
 	# chromedriver
 	cp -a chromedriver %{buildroot}%{chromium_path}/chromedriver
-	ln -sr %{chromium_path}/chromedriver %{buildroot}%{_bindir}/chromedriver
+	ln -s ../%{chromium_path}/chromedriver %{buildroot}%{_bindir}/chromedriver
 
 	%if %{build_remoting}
 		# Remote desktop bits
