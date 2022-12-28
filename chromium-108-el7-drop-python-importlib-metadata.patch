@@ -1,0 +1,80 @@
+diff -up chromium-108.0.5359.124/third_party/mako/mako/mako/compat.py.drop-python-importlib-metadata chromium-108.0.5359.124/third_party/mako/mako/mako/compat.py
+--- chromium-108.0.5359.124/third_party/mako/mako/mako/compat.py.drop-python-importlib-metadata	2022-12-14 01:40:09.000000000 +0100
++++ chromium-108.0.5359.124/third_party/mako/mako/mako/compat.py	2022-12-28 14:07:33.761045114 +0100
+@@ -11,7 +11,6 @@ import sys
+ 
+ win32 = sys.platform.startswith("win")
+ pypy = hasattr(sys, "pypy_version_info")
+-py38 = sys.version_info >= (3, 8)
+ 
+ ArgSpec = collections.namedtuple(
+     "ArgSpec", ["args", "varargs", "keywords", "defaults"]
+@@ -60,17 +59,3 @@ def exception_as():
+ 
+ def exception_name(exc):
+     return exc.__class__.__name__
+-
+-
+-if py38:
+-    from importlib import metadata as importlib_metadata
+-else:
+-    import importlib_metadata  # noqa
+-
+-
+-def importlib_metadata_get(group):
+-    ep = importlib_metadata.entry_points()
+-    if hasattr(ep, "select"):
+-        return ep.select(group=group)
+-    else:
+-        return ep.get(group, ())
+diff -up chromium-108.0.5359.124/third_party/mako/mako/mako/util.py.drop-python-importlib-metadata chromium-108.0.5359.124/third_party/mako/mako/mako/util.py
+--- chromium-108.0.5359.124/third_party/mako/mako/mako/util.py.drop-python-importlib-metadata	2022-12-14 01:40:09.000000000 +0100
++++ chromium-108.0.5359.124/third_party/mako/mako/mako/util.py	2022-12-28 14:07:33.761045114 +0100
+@@ -11,8 +11,6 @@ import os
+ import re
+ import timeit
+ 
+-from .compat import importlib_metadata_get
+-
+ 
+ def update_wrapper(decorated, fn):
+     decorated.__wrapped__ = fn
+@@ -28,17 +26,17 @@ class PluginLoader:
+     def load(self, name):
+         if name in self.impls:
+             return self.impls[name]()
++        import pkg_resources
+ 
+-        for impl in importlib_metadata_get(self.group):
+-            if impl.name == name:
+-                self.impls[name] = impl.load
+-                return impl.load()
+-
+-        from mako import exceptions
+-
+-        raise exceptions.RuntimeException(
+-            "Can't load plugin %s %s" % (self.group, name)
+-        )
++        for impl in pkg_resources.iter_entry_points(self.group, name):
++            self.impls[name] = impl.load
++            return impl.load()
++        else:
++            from mako import exceptions
++
++            raise exceptions.RuntimeException(
++                "Can't load plugin %s %s" % (self.group, name)
++            )
+ 
+     def register(self, name, modulepath, objname):
+         def load():
+diff -up chromium-108.0.5359.124/third_party/mako/mako/setup.cfg.drop-python-importlib-metadata chromium-108.0.5359.124/third_party/mako/mako/setup.cfg
+--- chromium-108.0.5359.124/third_party/mako/mako/setup.cfg.drop-python-importlib-metadata	2022-12-28 14:07:33.761045114 +0100
++++ chromium-108.0.5359.124/third_party/mako/mako/setup.cfg	2022-12-28 15:30:47.024152133 +0100
+@@ -33,7 +33,6 @@ python_requires = >=3.7
+ zip_safe = false
+ install_requires = 
+ 	MarkupSafe >= 0.9.2
+-	importlib-metadata;python_version<"3.8"
+ 
+ [options.packages.find]
+ exclude = 

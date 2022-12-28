@@ -55,12 +55,4 @@ if [ "$XDG_SESSION_TYPE" == "wayland" ] || [[ $WAYLAND_DISPLAY ]] ; then
   CHROMIUM_DISTRO_FLAGS="--ozone-platform=wayland $CHROMIUM_DISTRO_FLAGS"
 fi
 
-if [ -f "$HERE/PepperFlash/libpepflashplayer.so" ] && [ -f "$HERE/PepperFlash/manifest.json" ] ; then
-  CHROMIUM_FLASH_VERSION=$(grep '"version":' "$HERE/PepperFlash/manifest.json" | awk -F\" '{ print $4 }')
-  CHROMIUM_FLASH_FLAGS=" --ppapi-flash-path=$HERE/PepperFlash/libpepflashplayer.so \
-                         --ppapi-flash-version=$CHROMIUM_FLASH_VERSION"
-else
-  CHROMIUM_FLASH_FLAGS=""
-fi
-
-exec -a "$0" "$HERE/@@CHROMIUM_BROWSER_CHANNEL@@" $CHROMIUM_DISTRO_FLAGS $CHROMIUM_FLASH_FLAGS "$@"
+exec -a "$0" "$HERE/@@CHROMIUM_BROWSER_CHANNEL@@" $CHROMIUM_DISTRO_FLAGS "$@"

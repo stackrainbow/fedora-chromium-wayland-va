@@ -1,0 +1,22 @@
+--- chromium-108.0.5359.124/media/gpu/vaapi/BUILD.gn.orig	2022-12-14 01:39:52.992482000 +0100
++++ chromium-108.0.5359.124/media/gpu/vaapi/BUILD.gn	2022-12-24 11:14:19.118033967 +0100
+@@ -14,6 +14,10 @@
+ assert(is_linux || is_chromeos)
+ assert(use_vaapi)
+ 
++config("vaapi_permissive") {
++  cflags = [ "-fpermissive" ]
++}
++
+ generate_stubs("libva_stubs") {
+   extra_header = "va_stub_header.fragment"
+   sigs = [ "va.sigs" ]
+@@ -138,6 +142,8 @@
+     ]
+   }
+ 
++  configs += [ ":vaapi_permissive" ]
++
+   if (use_vaapi_x11) {
+     deps += [ "//ui/gfx/x" ]
+     sources += [

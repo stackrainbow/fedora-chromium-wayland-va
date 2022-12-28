@@ -1,6 +1,6 @@
-diff -up chromium-95.0.4638.69/chrome/common/safe_browsing/BUILD.gn.nounrar chromium-95.0.4638.69/chrome/common/safe_browsing/BUILD.gn
---- chromium-95.0.4638.69/chrome/common/safe_browsing/BUILD.gn.nounrar	2021-10-28 23:07:12.000000000 -0400
-+++ chromium-95.0.4638.69/chrome/common/safe_browsing/BUILD.gn	2021-11-12 11:33:52.691346496 -0500
+diff -up chromium-108.0.5359.124/chrome/common/safe_browsing/BUILD.gn.nounrar chromium-108.0.5359.124/chrome/common/safe_browsing/BUILD.gn
+--- chromium-108.0.5359.124/chrome/common/safe_browsing/BUILD.gn.nounrar	2022-12-14 01:39:45.000000000 +0100
++++ chromium-108.0.5359.124/chrome/common/safe_browsing/BUILD.gn	2022-12-24 13:15:57.877070764 +0100
 @@ -58,39 +58,6 @@ if (safe_browsing_mode == 1) {
      public_deps = [ "//components/safe_browsing/core/common/proto:csd_proto" ]
    }
@@ -41,27 +41,28 @@ diff -up chromium-95.0.4638.69/chrome/common/safe_browsing/BUILD.gn.nounrar chro
    if (is_linux || is_win) {
      source_set("document_analyzer") {
        sources = [
-@@ -189,7 +156,6 @@ source_set("safe_browsing") {
+@@ -191,7 +158,6 @@ source_set("safe_browsing") {
        ":archive_analyzer_results",
        ":binary_feature_extractor",
        ":download_type_util",
 -      ":rar_analyzer",
        "//components/safe_browsing/core/common",
+       "//third_party/lzma_sdk/google:seven_zip_reader",
      ]
- 
-diff -up chromium-95.0.4638.69/chrome/common/safe_browsing/DEPS.nounrar chromium-95.0.4638.69/chrome/common/safe_browsing/DEPS
---- chromium-95.0.4638.69/chrome/common/safe_browsing/DEPS.nounrar	2021-11-12 11:30:02.629954310 -0500
-+++ chromium-95.0.4638.69/chrome/common/safe_browsing/DEPS	2021-11-12 11:34:16.732491978 -0500
-@@ -3,6 +3,5 @@ include_rules = [
+diff -up chromium-108.0.5359.124/chrome/common/safe_browsing/DEPS.nounrar chromium-108.0.5359.124/chrome/common/safe_browsing/DEPS
+--- chromium-108.0.5359.124/chrome/common/safe_browsing/DEPS.nounrar	2022-12-24 12:49:52.621400599 +0100
++++ chromium-108.0.5359.124/chrome/common/safe_browsing/DEPS	2022-12-24 13:16:21.551486489 +0100
+@@ -3,7 +3,6 @@ include_rules = [
    "+components/safe_browsing/core/common",
    "+third_party/maldoca",
    "+third_party/protobuf",
 -  "+third_party/unrar",
    "+third_party/zlib",
+   "+third_party/lzma_sdk/google",
  ]
-diff -up chromium-95.0.4638.69/chrome/services/file_util/BUILD.gn.nounrar chromium-95.0.4638.69/chrome/services/file_util/BUILD.gn
---- chromium-95.0.4638.69/chrome/services/file_util/BUILD.gn.nounrar	2021-11-12 11:30:02.629954310 -0500
-+++ chromium-95.0.4638.69/chrome/services/file_util/BUILD.gn	2021-11-12 11:36:08.277168386 -0500
+diff -up chromium-108.0.5359.124/chrome/services/file_util/BUILD.gn.nounrar chromium-108.0.5359.124/chrome/services/file_util/BUILD.gn
+--- chromium-108.0.5359.124/chrome/services/file_util/BUILD.gn.nounrar	2022-12-14 01:39:45.000000000 +0100
++++ chromium-108.0.5359.124/chrome/services/file_util/BUILD.gn	2022-12-24 12:49:52.622400617 +0100
 @@ -60,7 +60,6 @@ source_set("file_util") {
      deps += [
        "//chrome/common/safe_browsing",
@@ -70,10 +71,10 @@ diff -up chromium-95.0.4638.69/chrome/services/file_util/BUILD.gn.nounrar chromi
      ]
  
      if (is_linux || is_win) {
-diff -up chromium-95.0.4638.69/chrome/services/file_util/safe_archive_analyzer.cc.nounrar chromium-95.0.4638.69/chrome/services/file_util/safe_archive_analyzer.cc
---- chromium-95.0.4638.69/chrome/services/file_util/safe_archive_analyzer.cc.nounrar	2021-10-28 23:07:12.000000000 -0400
-+++ chromium-95.0.4638.69/chrome/services/file_util/safe_archive_analyzer.cc	2021-11-12 11:30:02.630954316 -0500
-@@ -45,10 +45,14 @@ void SafeArchiveAnalyzer::AnalyzeDmgFile
+diff -up chromium-108.0.5359.124/chrome/services/file_util/safe_archive_analyzer.cc.nounrar chromium-108.0.5359.124/chrome/services/file_util/safe_archive_analyzer.cc
+--- chromium-108.0.5359.124/chrome/services/file_util/safe_archive_analyzer.cc.nounrar	2022-12-24 12:49:52.622400617 +0100
++++ chromium-108.0.5359.124/chrome/services/file_util/safe_archive_analyzer.cc	2022-12-24 13:18:43.477966285 +0100
+@@ -45,12 +45,16 @@ void SafeArchiveAnalyzer::AnalyzeDmgFile
  void SafeArchiveAnalyzer::AnalyzeRarFile(base::File rar_file,
                                           base::File temporary_file,
                                           AnalyzeRarFileCallback callback) {
@@ -88,3 +89,5 @@ diff -up chromium-95.0.4638.69/chrome/services/file_util/safe_archive_analyzer.c
 +  NOTREACHED();
 +#endif
  }
+ 
+ void SafeArchiveAnalyzer::AnalyzeSevenZipFile(

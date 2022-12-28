@@ -1,6 +1,7 @@
-diff -up chromium-98.0.4758.80/components/cast_channel/enum_table.h.EnumTable-crash chromium-98.0.4758.80/components/cast_channel/enum_table.h
---- chromium-98.0.4758.80/components/cast_channel/enum_table.h.EnumTable-crash	2022-02-01 00:41:47.000000000 +0000
-+++ chromium-98.0.4758.80/components/cast_channel/enum_table.h	2022-02-02 18:54:23.096214186 +0000
+diff --git a/components/media_router/common/providers/cast/channel/enum_table.h b/components/media_router/common/providers/cast/channel/enum_table.h
+index 842553a..89de703 100644
+--- a/components/media_router/common/providers/cast/channel/enum_table.h
++++ b/components/media_router/common/providers/cast/channel/enum_table.h
 @@ -8,6 +8,7 @@
  #include <cstdint>
  #include <cstring>
