@@ -7,7 +7,7 @@
 
 # This flag is so I can build things very fast on a giant system.
 # Enabling this in koji causes aarch64 builds to timeout indefinitely.
-%global use_all_cpus 1
+%global use_all_cpus 0
 
 %if %{use_all_cpus}
 %global numjobs %{_smp_build_ncpus}
@@ -1019,7 +1019,8 @@ udev.
 %if 0%{?rhel} == 7
 %patch100 -p1 -b .el7-memfd-fcntl-include
 %patch101 -p1 -b .wayland-strndup-error
-%patch102 -p1 -b .drop-python-importlib-metadata
+# drop BR on python3-importlib-metadata
+# %%patch102 -p1 -b .drop-python-importlib-metadata
 %patch103 -p1 -b .epel7-header-workarounds
 %patch104 -p1 -b .el7cups
 %patch105 -p1 -b .el7-old-libdrm
@@ -1169,7 +1170,7 @@ sed -i 's|-g2|-g0|g' build/config/compiler/BUILD.gn
 %build
 # utf8 issue on epel7
 # Internal parsing error 'ascii' codec can't decode byte 0xe2 in position 474: ordinal not in range(128)
-export LC_ALL=en_US.UTF-8
+export LANG=C.UTF-8
 
 # Turning the buildsystem up to 11.
 ulimit -n 4096
