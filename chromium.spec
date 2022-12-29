@@ -33,9 +33,6 @@
 # This doesn't work and it doesn't even build as of Chromium 83
 %global build_remoting 1
 
-# This is finally possible with Chromium 93
-%global build_with_python3 1
-
 # set nodejs_version
 %global nodejs_version v16.17.0
 
@@ -52,14 +49,10 @@
 %global toolset gcc-toolset
 %endif
 
-%if 0%{?build_with_python3}
 %if 0%{?rhel} == 7
 %global chromium_pybin /usr/bin/python3
 %else
 %global chromium_pybin %{__python3}
-%endif
-%else
-%global chromium_pybin %{__python2}
 %endif
 
 # We'd like to always have this on...
@@ -246,11 +239,7 @@ Patch7: chromium-71.0.3578.98-widevine-r3.patch
 Patch8: chromium-100.0.4896.60-widevine-other-locations.patch
 
 # Tell bootstrap.py to always use the version of Python we specify
-%if 0%{?build_with_python3}
 Patch11: chromium-93.0.4577.63-py3-bootstrap.patch
-%else
-Patch11: chromium-92.0.4515.107-py2-bootstrap.patch
-%endif
 
 # Add "Fedora" to the user agent string
 Patch12:	chromium-101.0.4951.41-fedora-user-agent.patch
@@ -589,7 +578,7 @@ BuildRequires:	libxslt-devel
 BuildRequires:	libxshmfence-devel
 
 # Same here, it seems.
-# BuildRequires:	libyuv-devel
+# BuildRequires: libyuv-devel
 BuildRequires:	mesa-libGL-devel
 
 %if %{bundleopus}
@@ -607,15 +596,10 @@ BuildRequires:	pkgconfig(gtk+-3.0)
 BuildRequires:	pkgconfig(gtk+-2.0)
 %endif
 
-%if %{build_with_python3}
 BuildRequires:	python3-devel
 BuildRequires: python3-zipp
-%else
-BuildRequires: python2-devel
-BuildRequires: python-zipp
-%endif
+BuildRequires: python3-simplejson
 
-%if 0%{?build_with_python3}
 %if 0%{?bundlepylibs}
 # Using bundled bits, do nothing.
 %else
@@ -626,31 +610,9 @@ BuildRequires: python3-markupsafe
 BuildRequires: python3-ply
 %else
 BuildRequires:	python-beautifulsoup4
-BuildRequires:	python-BeautifulSoup
 BuildRequires:	python-html5lib
 BuildRequires:	python-markupsafe
 BuildRequires:	python-ply
-%endif
-BuildRequires: python3-simplejson
-%endif
-%else
-%if 0%{?bundlepylibs}
-# Using bundled bits, do nothing.
-%else
-%if 0%{?fedora}
-BuildRequires: python2-beautifulsoup4
-BuildRequires: python2-beautifulsoup
-BuildRequires: python2-html5lib
-BuildRequires: python2-markupsafe
-BuildRequires: python2-ply
-%else
-BuildRequires: python-beautifulsoup4
-BuildRequires: python-BeautifulSoup
-BuildRequires: python-html5lib
-BuildRequires: python-markupsafe
-BuildRequires: python-ply
-%endif
-BuildRequires: python2-simplejson
 %endif
 %endif
 
@@ -911,11 +873,7 @@ Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
 Requires: xorg-x11-server-Xvfb
-%if 0%{?build_with_python3}
 Requires: python3-psutil
-%else
-Requires: python2-psutil
-%endif
 Requires: chromium-common%{_isa} = %{version}-%{release}
 Summary: Remote desktop support for google-chrome & chromium
 
@@ -955,10 +913,7 @@ udev.
 %patch6 -p1 -b .nounrar
 %patch7 -p1 -b .widevine-hack
 %patch8 -p1 -b .widevine-other-locations
-
-%if 0%{?build_with_python3}
 %patch11 -p1 -b .py3
-%endif
 
 # Short term fixes (usually gcc and backports)
 %patch51 -p1 -b .gcc-remoting-constexpr
@@ -975,7 +930,6 @@ udev.
 %patch61 -p1 -b .system-minizip
 %endif
 
-# %%patch62 -p1 -b .update-wayland-client-core
 %patch65 -p1 -b .java-only-allowed
 %patch67 -p1 -b .remoting-cstring
 %patch68 -p1 -b .i686-textrels
@@ -1040,11 +994,7 @@ udev.
 
 # Change shebang in all relevant files in this directory and all subdirectories
 # See `man find` for how the `-exec command {} +` syntax works
-%if 0%{?build_with_python3}
 find -type f -exec sed -iE '1s=^#! */usr/bin/\(python\|env python\)[23]\?=#!%{__python3}=' {} +
-%else
-find -type f -exec sed -iE '1s=^#! */usr/bin/\(python\|env python\)[23]\?=#!%{__python2}=' {} +
-%endif
 
 # Unpack fonts
 pushd third_party/test_fonts
@@ -1161,10 +1111,6 @@ sed -i 's|/opt/google/chrome-remote-desktop|%{crd_path}|g' remoting/host/setup/d
 sed -i 's|-g2|-g0|g' build/config/compiler/BUILD.gn
 
 %build
-# utf8 issue on epel7
-# Internal parsing error 'ascii' codec can't decode byte 0xe2 in position 474: ordinal not in range(128)
-export LANG=C.UTF-8
-
 # Turning the buildsystem up to 11.
 ulimit -n 4096
 
@@ -1189,6 +1135,8 @@ export READELF="eu-readelf"
 
 # enable toolset on el7
 %if 0%{?rhel} == 7
+# utf8 issue on epel7, Internal parsing error 'ascii' codec can't decode byte 0xe2 in position 474: ordinal not in range(128)
+export LANG=en_US.UTF-8
 %if 0%{?clang}
 . /opt/rh/llvm-toolset-%{llvm_toolset_version}/enable
 %else
@@ -1363,13 +1311,8 @@ build/linux/unbundle/replace_gn_files.py --system-libraries \
 	flac
 
 # Check that there is no system 'google' module, shadowing bundled ones:
-%if 0%{?build_with_python3}
 if python3 -c 'import google ; print google.__path__' 2> /dev/null ; then \
     echo "Python 3 'google' module is defined, this will shadow modules of this build"; \
-%else
-if python2 -c 'import google ; print google.__path__' 2> /dev/null ; then \
-    echo "Python 2 'google' module is defined, this will shadow modules of this build"; \
-%endif
     exit 1 ; \
 fi
 
