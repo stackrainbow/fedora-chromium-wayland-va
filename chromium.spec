@@ -23,15 +23,11 @@
 	export NINJA_STATUS="[%2:%f/%t] " ; \
 	ninja -j %{numjobs} -C '%1' '%2'
 
-# This was faster when it worked, but it didn't always.
-# As of chromium 80, it is no longer supported. RIP.
-%global use_jumbo 0
-
 # We usually want this.
-%global build_headless 1
+%global build_headless 0
 
 # This doesn't work and it doesn't even build as of Chromium 83
-%global build_remoting 1
+%global build_remoting 0
 
 # set nodejs_version
 %global nodejs_version v16.17.0
@@ -1202,10 +1198,6 @@ CHROMIUM_CORE_GN_DEFINES+=' enable_js_type_check=false'
   CHROMIUM_CORE_GN_DEFINES+=' target_cpu="arm64"'
 %endif
 
-%if %{?use_jumbo}
-  CHROMIUM_CORE_GN_DEFINES+=' use_jumbo_build=true jumbo_file_merge_limit=8'
-%endif
-
 %if 0%{?rhel} == 8
   CHROMIUM_CORE_GN_DEFINES+=' use_gnome_keyring=false use_glib=true'
 %endif
@@ -1356,7 +1348,7 @@ sed -e 's|${ICD_LIBRARY_PATH}|./libvk_swiftshader.so|g' third_party/swiftshader/
 rm -rf %{buildroot}
 
 mkdir -p %{buildroot}%{_bindir}
-mkdir -p %{buildroot}%{chromium_path}
+mkdir -p %{buildroot}%{chromium_path}/locales
 cp -a %{SOURCE3} %{buildroot}%{chromium_path}/%{chromium_browser_channel}.sh
 
 export BUILD_TARGET=`cat /etc/redhat-release`
@@ -1375,11 +1367,12 @@ sed -i "s|@@CHROMIUM_BROWSER_CHANNEL@@|$CHROMIUM_BROWSER_CHANNEL|g" %{buildroot}
 	sed -i "s|@@EXTRA_FLAGS@@|$EXTRA_FLAGS|g" %{buildroot}%{chromium_path}/%{chromium_browser_channel}.sh
 %endif
 
-ln -s ../%{chromium_path}/%{chromium_browser_channel}.sh %{buildroot}%{_bindir}/%{chromium_browser_channel}
+ln -s ..%{chromium_path}/%{chromium_browser_channel}.sh %{buildroot}%{_bindir}/%{chromium_browser_channel}
 mkdir -p %{buildroot}%{_mandir}/man1/
 
 pushd %{builddir}
-	cp -a chrom*.pak resources.pak locales resources icudtl.dat %{buildroot}%{chromium_path}
+	cp -a chrom*.pak resources.pak icudtl.dat %{buildroot}%{chromium_path}
+	cp -a locales/*.pak %{buildroot}%{chromium_path}/locales/
 	%ifarch x86_64 i686 aarch64
 		cp -a libvk_swiftshader.so %{buildroot}%{chromium_path}
 		strip %{buildroot}%{chromium_path}/libvk_swiftshader.so
@@ -1429,7 +1422,7 @@ pushd %{builddir}
 
 	# chromedriver
 	cp -a chromedriver %{buildroot}%{chromium_path}/chromedriver
-	ln -s ../%{chromium_path}/chromedriver %{buildroot}%{_bindir}/chromedriver
+	ln -s ..%{chromium_path}/chromedriver %{buildroot}%{_bindir}/chromedriver
 
 	%if %{build_remoting}
 		# Remote desktop bits
@@ -1440,13 +1433,14 @@ popd
 %if %{build_remoting}
 	pushd %{remotingbuilddir}
 		# Hey, there is a library now.
-		cp -a libremoting_core.so* %{buildroot}%{crd_path}/
+		cp -a libremoting_core.so %{buildroot}%{crd_path}/
 		strip %{buildroot}%{crd_path}/libremoting_core.so
 
 		# See remoting/host/installer/linux/Makefile for logic
+		mkdir -p %{buildroot}%{crd_path}/remoting_locales
 		cp -a remoting_native_messaging_host %{buildroot}%{crd_path}/native-messaging-host
 		cp -a remote_assistance_host %{buildroot}%{crd_path}/remote-assistance-host
-		cp -a remoting_locales %{buildroot}%{crd_path}/
+		cp -a remoting_locales/*.pak %{buildroot}%{crd_path}/remoting_locales/
 		cp -a remoting_me2me_host %{buildroot}%{crd_path}/chrome-remote-desktop-host
 		cp -a remoting_start_host %{buildroot}%{crd_path}/start-host
 		cp -a remoting_user_session %{buildroot}%{crd_path}/user-session
@@ -1608,69 +1602,69 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 %{chromium_path}/vk_swiftshader_icd.json
 %endif
 %dir %{chromium_path}/locales/
-%lang(af) %{chromium_path}/locales/af.pak*
-%lang(am) %{chromium_path}/locales/am.pak*
-%lang(ar) %{chromium_path}/locales/ar.pak*
-%lang(bg) %{chromium_path}/locales/bg.pak*
-%lang(bn) %{chromium_path}/locales/bn.pak*
-%lang(ca) %{chromium_path}/locales/ca.pak*
-%lang(cs) %{chromium_path}/locales/cs.pak*
-%lang(da) %{chromium_path}/locales/da.pak*
-%lang(de) %{chromium_path}/locales/de.pak*
-%lang(el) %{chromium_path}/locales/el.pak*
-%lang(en_GB) %{chromium_path}/locales/en-GB.pak*
+%lang(af) %{chromium_path}/locales/af.pak
+%lang(am) %{chromium_path}/locales/am.pak
+%lang(ar) %{chromium_path}/locales/ar.pak
+%lang(bg) %{chromium_path}/locales/bg.pak
+%lang(bn) %{chromium_path}/locales/bn.pak
+%lang(ca) %{chromium_path}/locales/ca.pak
+%lang(cs) %{chromium_path}/locales/cs.pak
+%lang(da) %{chromium_path}/locales/da.pak
+%lang(de) %{chromium_path}/locales/de.pak
+%lang(el) %{chromium_path}/locales/el.pak
+%lang(en_GB) %{chromium_path}/locales/en-GB.pak
 # Chromium _ALWAYS_ needs en-US.pak as a fallback
 # This means we cannot apply the lang code here.
 # Otherwise, it is filtered out on install.
-%{chromium_path}/locales/en-US.pak*
-%lang(es) %{chromium_path}/locales/es.pak*
-%lang(es) %{chromium_path}/locales/es-419.pak*
-%lang(et) %{chromium_path}/locales/et.pak*
-%lang(fa) %{chromium_path}/locales/fa.pak*
-%lang(fi) %{chromium_path}/locales/fi.pak*
-%lang(fil) %{chromium_path}/locales/fil.pak*
-%lang(fr) %{chromium_path}/locales/fr.pak*
-%lang(gu) %{chromium_path}/locales/gu.pak*
-%lang(he) %{chromium_path}/locales/he.pak*
-%lang(hi) %{chromium_path}/locales/hi.pak*
-%lang(hr) %{chromium_path}/locales/hr.pak*
-%lang(hu) %{chromium_path}/locales/hu.pak*
-%lang(id) %{chromium_path}/locales/id.pak*
-%lang(it) %{chromium_path}/locales/it.pak*
-%lang(ja) %{chromium_path}/locales/ja.pak*
-%lang(kn) %{chromium_path}/locales/kn.pak*
-%lang(ko) %{chromium_path}/locales/ko.pak*
-%lang(lt) %{chromium_path}/locales/lt.pak*
-%lang(lv) %{chromium_path}/locales/lv.pak*
-%lang(ml) %{chromium_path}/locales/ml.pak*
-%lang(mr) %{chromium_path}/locales/mr.pak*
-%lang(ms) %{chromium_path}/locales/ms.pak*
-%lang(nb) %{chromium_path}/locales/nb.pak*
-%lang(nl) %{chromium_path}/locales/nl.pak*
-%lang(pl) %{chromium_path}/locales/pl.pak*
-%lang(pt_BR) %{chromium_path}/locales/pt-BR.pak*
-%lang(pt_PT) %{chromium_path}/locales/pt-PT.pak*
-%lang(ro) %{chromium_path}/locales/ro.pak*
-%lang(ru) %{chromium_path}/locales/ru.pak*
-%lang(sk) %{chromium_path}/locales/sk.pak*
-%lang(sl) %{chromium_path}/locales/sl.pak*
-%lang(sr) %{chromium_path}/locales/sr.pak*
-%lang(sv) %{chromium_path}/locales/sv.pak*
-%lang(sw) %{chromium_path}/locales/sw.pak*
-%lang(ta) %{chromium_path}/locales/ta.pak*
-%lang(te) %{chromium_path}/locales/te.pak*
-%lang(th) %{chromium_path}/locales/th.pak*
-%lang(tr) %{chromium_path}/locales/tr.pak*
-%lang(uk) %{chromium_path}/locales/uk.pak*
-%lang(ur) %{chromium_path}/locales/ur.pak*
-%lang(vi) %{chromium_path}/locales/vi.pak*
-%lang(zh_CN) %{chromium_path}/locales/zh-CN.pak*
-%lang(zh_TW) %{chromium_path}/locales/zh-TW.pak*
+%{chromium_path}/locales/en-US.pak
+%lang(es) %{chromium_path}/locales/es.pak
+%lang(es) %{chromium_path}/locales/es-419.pak
+%lang(et) %{chromium_path}/locales/et.pak
+%lang(fa) %{chromium_path}/locales/fa.pak
+%lang(fi) %{chromium_path}/locales/fi.pak
+%lang(fil) %{chromium_path}/locales/fil.pak
+%lang(fr) %{chromium_path}/locales/fr.pak
+%lang(gu) %{chromium_path}/locales/gu.pak
+%lang(he) %{chromium_path}/locales/he.pak
+%lang(hi) %{chromium_path}/locales/hi.pak
+%lang(hr) %{chromium_path}/locales/hr.pak
+%lang(hu) %{chromium_path}/locales/hu.pak
+%lang(id) %{chromium_path}/locales/id.pak
+%lang(it) %{chromium_path}/locales/it.pak
+%lang(ja) %{chromium_path}/locales/ja.pak
+%lang(kn) %{chromium_path}/locales/kn.pak
+%lang(ko) %{chromium_path}/locales/ko.pak
+%lang(lt) %{chromium_path}/locales/lt.pak
+%lang(lv) %{chromium_path}/locales/lv.pak
+%lang(ml) %{chromium_path}/locales/ml.pak
+%lang(mr) %{chromium_path}/locales/mr.pak
+%lang(ms) %{chromium_path}/locales/ms.pak
+%lang(nb) %{chromium_path}/locales/nb.pak
+%lang(nl) %{chromium_path}/locales/nl.pak
+%lang(pl) %{chromium_path}/locales/pl.pak
+%lang(pt_BR) %{chromium_path}/locales/pt-BR.pak
+%lang(pt_PT) %{chromium_path}/locales/pt-PT.pak
+%lang(ro) %{chromium_path}/locales/ro.pak
+%lang(ru) %{chromium_path}/locales/ru.pak
+%lang(sk) %{chromium_path}/locales/sk.pak
+%lang(sl) %{chromium_path}/locales/sl.pak
+%lang(sr) %{chromium_path}/locales/sr.pak
+%lang(sv) %{chromium_path}/locales/sv.pak
+%lang(sw) %{chromium_path}/locales/sw.pak
+%lang(ta) %{chromium_path}/locales/ta.pak
+%lang(te) %{chromium_path}/locales/te.pak
+%lang(th) %{chromium_path}/locales/th.pak
+%lang(tr) %{chromium_path}/locales/tr.pak
+%lang(uk) %{chromium_path}/locales/uk.pak
+%lang(ur) %{chromium_path}/locales/ur.pak
+%lang(vi) %{chromium_path}/locales/vi.pak
+%lang(zh_CN) %{chromium_path}/locales/zh-CN.pak
+%lang(zh_TW) %{chromium_path}/locales/zh-TW.pak
 # These are psuedolocales, not real ones.
 # They only get generated when is_official_build=false
 %if ! %{official_build}
-%{chromium_path}/locales/ar-XB.pak*
-%{chromium_path}/locales/en-XA.pak*
+%{chromium_path}/locales/ar-XB.pak
+%{chromium_path}/locales/en-XA.pak
 %endif
 
 %if %{build_headless}
