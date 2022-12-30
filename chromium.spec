@@ -23,10 +23,10 @@
 	export NINJA_STATUS="[%2:%f/%t] " ; \
 	ninja -j %{numjobs} -C '%1' '%2'
 
-# We usually want this.
+# enable|disable headless client build
 %global build_headless 0
 
-# This doesn't work and it doesn't even build as of Chromium 83
+# enable|disable chrome-remote-desktop build
 %global build_remoting 0
 
 # set nodejs_version
@@ -1591,11 +1591,6 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 %if %{build_clear_key_cdm}
 %{chromium_path}/libclearkeycdm.so
 %endif
-
-%if 0
-%{chromium_path}/pyproto/
-%endif
-%{chromium_path}/resources/
 %ifarch x86_64 i686 aarch64
 %{chromium_path}/libvk_swiftshader.so*
 %{chromium_path}/libvulkan.so*
