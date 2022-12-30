@@ -109,6 +109,9 @@
 # enable clang by default
 %global clang 1
 
+# enable system brotli
+%global bundlebrotli 0
+
 # set bundleffmpeg 0 to enable system ffmpeg-free
 %global bundleffmpeg 1
 
@@ -300,6 +303,13 @@ Patch87:	chromium-99.0.4844.84-markdownsafe-soft_str.patch
 
 # drop build dependency on python3-importlib-metadata
 Patch88: chromium-108-drop-python-importlib-metadata.patch
+
+# patch for using system brotli
+Patch89: chromium-108-system-brotli.patch
+
+# disable GlobalMediaControlsCastStartStop to avoid crash
+# when using the address bar media player button
+Patch90: chromium-108-disable-GlobalMediaControlsCastStartStop.patch
 
 # Fix extra qualification error
 Patch97:	chromium-107.0.5304.110-remoting-extra-qualification.patch
@@ -721,7 +731,9 @@ Provides: bundled(angle) = 2422
 Provides: bundled(bintrees) = 1.0.1
 # This is a fork of openssl.
 Provides: bundled(boringssl)
+%if 0%{?bundlebrotli}
 Provides: bundled(brotli) = 222564a95d9ab58865a096b8d9f7324ea5f2e03e
+%endif
 Provides: bundled(bspatch)
 Provides: bundled(cacheinvalidation) = 20150720
 Provides: bundled(colorama) = 799604a104
@@ -942,6 +954,12 @@ udev.
 %endif
 
 %patch88 -p1 -b .drop-build-dep-on-python3-importlib-metadata
+
+%if ! 0%{?bundlebrotli}
+%patch89 -p1 -b .system-brotli
+%endif
+
+%patch90 -p1 -b .disable-GlobalMediaControlsCastStartStop
 %patch97 -p1 -b .remoting-extra-qualification
 %patch98 -p1 -b .InkDropHost-crash
 %patch99 -p1 -b .enable-WebRTCPipeWireCapturer-byDefault
@@ -953,9 +971,7 @@ udev.
 
 %patch113 -p1 -b .memset
 
-%if 0%{?bundleffmpeg}
-# nothing
-%else
+%if ! 0%{?bundleffmpeg}
 %patch114 -p1 -b .system-ffmppeg
 %patch115 -p1 -b .prop-codecs
 %endif
@@ -1243,62 +1259,51 @@ CHROMIUM_HEADLESS_GN_DEFINES+=' use_pulseaudio=false use_udev=false use_gtk=fals
 export CHROMIUM_HEADLESS_GN_DEFINES
 
 build/linux/unbundle/replace_gn_files.py --system-libraries \
-%if 0%{?bundlefontconfig}
-%else
+%if ! 0%{?bundlebrotli}
+	brotli \
+%endif
+%if ! 0%{?bundlefontconfig}
 	fontconfig \
 %endif
-%if 0%{?bundlefreetype}
-%else
+%if ! 0%{?bundleffmpeg}
+	ffmpeg \
+%endif
+%if ! 0%{?bundlefreetype}
 	freetype \
 %endif
-%if 0%{?bundleharfbuzz}
-%else
+%if ! 0%{?bundleharfbuzz}
 	harfbuzz-ng \
 %endif
-%if 0%{?bundleicu}
-%else
+%if ! 0%{?bundleicu}
 	icu \
 %endif
-%if %{bundlelibdrm}
-%else
+%if ! %{bundlelibdrm}
 	libdrm \
 %endif
-%if %{bundlelibjpeg}
-%else
+%if ! %{bundlelibjpeg}
 	libjpeg \
 %endif
-%if %{bundlelibpng}
-%else
+%if !%{bundlelibpng}
 	libpng \
 %endif
-%if %{bundlelibusbx}
-%else
+%if !%{bundlelibusbx}
 	libusb \
 %endif
-%if %{bundlelibwebp}
-%else
+%if ! %{bundlelibwebp}
 	libwebp \
 %endif
-%if %{bundlelibxml}
-%else
+%if ! %{bundlelibxml}
 	libxml \
 %endif
 	libxslt \
-%if %{bundleopus}
-%else
+%if ! %{bundleopus}
 	opus \
 %endif
-%if 0%{?bundlere2}
-%else
+%if ! 0%{?bundlere2}
 	re2 \
 %endif
-%if 0%{?bundleminizip}
-%else
+%if ! 0%{?bundleminizip}
 	zlib \
-%endif
-%if 0%{?bundleffmpeg}
-%else
-	ffmpeg \
 %endif
 	flac
 
