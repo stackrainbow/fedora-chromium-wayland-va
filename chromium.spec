@@ -1367,7 +1367,7 @@ sed -i "s|@@CHROMIUM_BROWSER_CHANNEL@@|$CHROMIUM_BROWSER_CHANNEL|g" %{buildroot}
 	sed -i "s|@@EXTRA_FLAGS@@|$EXTRA_FLAGS|g" %{buildroot}%{chromium_path}/%{chromium_browser_channel}.sh
 %endif
 
-ln -s ..%{chromium_path}/%{chromium_browser_channel}.sh %{buildroot}%{_bindir}/%{chromium_browser_channel}
+ln -s ../..%{chromium_path}/%{chromium_browser_channel}.sh %{buildroot}%{_bindir}/%{chromium_browser_channel}
 mkdir -p %{buildroot}%{_mandir}/man1/
 
 pushd %{builddir}
@@ -1422,7 +1422,7 @@ pushd %{builddir}
 
 	# chromedriver
 	cp -a chromedriver %{buildroot}%{chromium_path}/chromedriver
-	ln -s ..%{chromium_path}/chromedriver %{buildroot}%{_bindir}/chromedriver
+	ln -s ../..%{chromium_path}/chromedriver %{buildroot}%{_bindir}/chromedriver
 
 	%if %{build_remoting}
 		# Remote desktop bits
