@@ -1,0 +1,4 @@
+Widevine is not a free library and cannot be shipped in fedora.
+You have to get it from Google first and install it under
+/usr/lib64/chromium-browser or /opt/google/chrome if you want
+Chromium to use widevine.
