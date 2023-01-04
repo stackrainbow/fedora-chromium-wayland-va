@@ -48,6 +48,7 @@ CHROMIUM_DISTRO_FLAGS=" --enable-plugins \
                         --enable-printing \
                         --enable-gpu-rasterization \
                         --enable-sync \
+                        --disable-features=AudioServiceSandbox,UseChromeOSDirectVideoDecoder \
                         --auto-ssl-client-auth @@EXTRA_FLAGS@@"
 
 # This provides a much better experience on Wayland.
