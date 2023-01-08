@@ -39,9 +39,6 @@ export CHROME_VERSION_EXTRA="Built from source for @@BUILD_TARGET@@"
 # We don't want bug-buddy intercepting our crashes. http://crbug.com/24120
 export GNOME_DISABLE_CRASH_DIALOG=SET_BY_GOOGLE_CHROME
 
-# Disable allow_rgb_configs to fix odd color and vaapi issues with Mesa
-export allow_rgb10_configs=false
-
 CHROMIUM_DISTRO_FLAGS=" --enable-plugins \
                         --enable-extensions \
                         --enable-user-scripts \
@@ -49,6 +46,7 @@ CHROMIUM_DISTRO_FLAGS=" --enable-plugins \
                         --enable-gpu-rasterization \
                         --enable-sync \
                         --disable-features=AudioServiceSandbox,UseChromeOSDirectVideoDecoder \
+                        --enable-features=VaapiVideoDecoder,VaapiVideoEncoder \
                         --auto-ssl-client-auth @@EXTRA_FLAGS@@"
 
 # This provides a much better experience on Wayland.

@@ -576,7 +576,7 @@ Requires: libusbx >= 1.0.21-0.1.git448584a
 BuildRequires: libusbx-devel >= 1.0.21-0.1.git448584a
 %endif
 
-%if 0%{use_vaapi}
+%if 0%{?use_vaapi}
 BuildRequires:	libva-devel
 %endif
 
@@ -1025,7 +1025,7 @@ udev.
 %endif
 
 # Feature specific patches
-%if %{use_vaapi}
+%if 0%{?use_vaapi}
 %patch202 -p1 -b .accel-mjpeg
 %patch205 -p1 -b .vaapi-intel-fix
 %patch206 -p1 -b .wayland-vaapi
@@ -1277,7 +1277,7 @@ CHROMIUM_BROWSER_GN_DEFINES+=' blink_symbol_level=0 enable_hangout_services_exte
 CHROMIUM_BROWSER_GN_DEFINES+=' use_aura=true'
 CHROMIUM_BROWSER_GN_DEFINES+=' enable_widevine=true'
 
-%if %{use_vaapi}
+%if 0%{?use_vaapi}
 CHROMIUM_BROWSER_GN_DEFINES+=' use_vaapi=true'
 %else
 CHROMIUM_BROWSER_GN_DEFINES+=' use_vaapi=false'
@@ -1398,7 +1398,12 @@ rm -rf %{buildroot}
 
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{chromium_path}/locales
+
+%if 0%{?use_vaapi}
 cp -a %{SOURCE3} %{buildroot}%{chromium_path}/%{chromium_browser_channel}.sh
+%%else
+grep -v features /usr/bin/chromium-browser > %{buildroot}%{chromium_path}/%{chromium_browser_channel}.sh
+%endif
 
 export BUILD_TARGET=`cat /etc/redhat-release`
 export CHROMIUM_PATH=%{chromium_path}
