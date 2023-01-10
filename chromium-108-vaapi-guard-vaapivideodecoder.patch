@@ -1,0 +1,71 @@
+commit	f8f456983cf238d0429ab63466d75357d79a32da
+author	Ted Meyer <tmathmeyer@chromium.org>	Thu Dec 08 21:24:37 2022
+committer	Chromium LUCI CQ <chromium-scoped@luci-project-accounts.iam.gserviceaccount.com>	Thu Dec 08 21:24:37 2022
+tree	ebfdab985b269b73b48322db0caa594766c9bb58
+parent	cbf3167e80fd2dc3a87cdc7143dcdb1edfcb1f72 [diff]
+Guard VaapiVideoDecoder behind more correct flags
+
+Vulkan on linux also needs the features kVulkanFromANGLE and
+kDefaultANGLEVulkan to function properly.
+
+Additinoally, Vaapi on GL needs to be guarded behind a flag.
+
+Bug: 1236697
+Bug: 1394888
+Bug: 1381114
+Bug: 1383140
+Change-Id: Ifb9da84b95e71fa39c1559455f25e7efcdc083f1
+Reviewed-on: https://chromium-review.googlesource.com/c/chromium/src/+/4088731
+Reviewed-by: Dale Curtis <dalecurtis@chromium.org>
+Commit-Queue: Ted (Chromium) Meyer <tmathmeyer@chromium.org>
+Cr-Commit-Position: refs/heads/main@{#1081118}
+diff -up chromium-108.0.5359.124/media/base/media_switches.cc.orig chromium-108.0.5359.124/media/base/media_switches.cc
+--- chromium-108.0.5359.124/media/base/media_switches.cc.orig	2023-01-08 16:37:39.373874165 +0100
++++ chromium-108.0.5359.124/media/base/media_switches.cc	2023-01-10 08:16:23.492761745 +0100
+@@ -577,6 +577,10 @@ BASE_FEATURE(kVaapiVideoDecodeLinux,
+              "VaapiVideoDecoder",
+              base::FEATURE_ENABLED_BY_DEFAULT);
+ 
++BASE_FEATURE(kVaapiVideoDecodeLinuxGL,
++             "VaapiVideoDecodeLinuxGL",
++             base::FEATURE_DISABLED_BY_DEFAULT);
++
+ BASE_FEATURE(kVaapiVideoEncodeLinux,
+              "VaapiVideoEncoder",
+              base::FEATURE_DISABLED_BY_DEFAULT);
+diff -up chromium-108.0.5359.124/media/base/media_switches.h.orig chromium-108.0.5359.124/media/base/media_switches.h
+--- chromium-108.0.5359.124/media/base/media_switches.h.orig	2023-01-08 16:37:39.379874227 +0100
++++ chromium-108.0.5359.124/media/base/media_switches.h	2023-01-10 08:16:23.493761763 +0100
+@@ -216,6 +216,7 @@ MEDIA_EXPORT BASE_DECLARE_FEATURE(kUseMe
+ MEDIA_EXPORT BASE_DECLARE_FEATURE(kUseR16Texture);
+ #if BUILDFLAG(IS_LINUX)
+ MEDIA_EXPORT BASE_DECLARE_FEATURE(kVaapiVideoDecodeLinux);
++MEDIA_EXPORT BASE_DECLARE_FEATURE(kVaapiVideoDecodeLinuxGL);
+ MEDIA_EXPORT BASE_DECLARE_FEATURE(kVaapiVideoEncodeLinux);
+ MEDIA_EXPORT BASE_DECLARE_FEATURE(kVaapiIgnoreDriverChecks);
+ #endif  // BUILDFLAG(IS_LINUX)
+diff -up chromium-108.0.5359.124/media/mojo/services/gpu_mojo_media_client_cros.cc.orig chromium-108.0.5359.124/media/mojo/services/gpu_mojo_media_client_cros.cc
+--- chromium-108.0.5359.124/media/mojo/services/gpu_mojo_media_client_cros.cc.orig	2023-01-10 08:16:23.493761763 +0100
++++ chromium-108.0.5359.124/media/mojo/services/gpu_mojo_media_client_cros.cc	2023-01-10 08:21:55.617909016 +0100
+@@ -78,10 +78,19 @@ VideoDecoderType GetActualPlatformDecode
+     }
+     case VideoDecoderType::kVaapi: {
+       // Allow VaapiVideoDecoder on GL.
+-      if (gpu_preferences.gr_context_type == gpu::GrContextType::kGL)
+-        return VideoDecoderType::kVaapi;
++      if (gpu_preferences.gr_context_type == gpu::GrContextType::kGL) {
++        if (base::FeatureList::IsEnabled(kVaapiVideoDecodeLinuxGL)) {
++          return VideoDecoderType::kVaapi;
++        } else {
++          return VideoDecoderType::kUnknown;
++        }
++      }
+       if (gpu_preferences.gr_context_type != gpu::GrContextType::kVulkan)
+         return VideoDecoderType::kUnknown;
++      if (!base::FeatureList::IsEnabled(features::kVulkanFromANGLE))
++        return VideoDecoderType::kUnknown;
++      if (!base::FeatureList::IsEnabled(features::kDefaultANGLEVulkan))
++        return VideoDecoderType::kUnknown;
+       // If Vulkan is active, check Vulkan info if VaapiVideoDecoder is allowed.
+       if (!gpu_info.vulkan_info.has_value())
+         return VideoDecoderType::kUnknown;
