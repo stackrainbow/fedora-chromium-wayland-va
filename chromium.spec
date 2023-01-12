@@ -13,7 +13,7 @@
 
 # This flag is so I can build things very fast on a giant system.
 # Enabling this in koji causes aarch64 builds to timeout indefinitely.
-%global use_all_cpus 1
+%global use_all_cpus 0
 
 %if %{use_all_cpus}
 %global numjobs %{_smp_build_ncpus}
@@ -30,7 +30,7 @@
 	ninja -j %{numjobs} -C '%1' '%2'
 
 # enable|disable headless client build
-%global build_headless 0
+%global build_headless 1
 
 # enable|disable chrome-remote-desktop build
 %global build_remoting 0
@@ -381,6 +381,7 @@ Patch300: chromium-99.0.4844.51-rhel8-force-disable-use_gnome_keyring.patch
 # https://commondatastorage.googleapis.com/chromium-browser-official/chromium-%%{version}.tar.xz
 Source0: chromium-%{version}-clean.tar.xz
 Source1: README.fedora
+Source2: chromium.conf
 Source3: chromium-browser.sh
 Source4: %{chromium_browser_channel}.desktop
 # Also, only used if you want to reproduce the clean tarball.
@@ -1568,6 +1569,9 @@ cp -a chrome/app/theme/chromium/product_logo_24.png %{buildroot}%{_datadir}/icon
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}
 install -m 0644 %{SOURCE13} %{buildroot}%{_sysconfdir}/%{name}/
 
+# Install system wide chromium config
+install -m 0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/%{name}/
+
 mkdir -p %{buildroot}%{_datadir}/applications/
 desktop-file-install --dir %{buildroot}%{_datadir}/applications %{SOURCE4}
 
@@ -1619,6 +1623,7 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 %doc chrome_policy_list.html *.json
 %license LICENSE
 %config %{_sysconfdir}/%{name}/
+%config(noreplace) %{_sysconfdir}/%{name}/chromium.conf
 %if %{build_remoting}
 %exclude %{_sysconfdir}/%{name}/native-messaging-hosts/*
 %endif

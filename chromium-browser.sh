@@ -39,6 +39,11 @@ export CHROME_VERSION_EXTRA="Built from source for @@BUILD_TARGET@@"
 # We don't want bug-buddy intercepting our crashes. http://crbug.com/24120
 export GNOME_DISABLE_CRASH_DIALOG=SET_BY_GOOGLE_CHROME
 
+# Allow users to override command-line options and prefer user defined
+# CHROMIUM_USER_FLAGS from env over system wide CHROMIUM_FLAGS
+[[ -f /etc/chromium/chromium.conf ]] && . /etc/chromium/chromium.conf
+CHROMIUM_FLAGS=${CHROMIUM_USER_FLAGS:-$CHROMIUM_FLAGS}
+
 CHROMIUM_DISTRO_FLAGS=" --enable-plugins \
                         --enable-extensions \
                         --enable-user-scripts \
@@ -49,9 +54,4 @@ CHROMIUM_DISTRO_FLAGS=" --enable-plugins \
                         --enable-features=VaapiVideoDecoder,VaapiVideoEncoder \
                         --auto-ssl-client-auth @@EXTRA_FLAGS@@"
 
-# This provides a much better experience on Wayland.
-if [ "$XDG_SESSION_TYPE" == "wayland" ] || [[ $WAYLAND_DISPLAY ]] ; then
-  CHROMIUM_DISTRO_FLAGS="--ozone-platform=wayland $CHROMIUM_DISTRO_FLAGS"
-fi
-
-exec -a "$0" "$HERE/@@CHROMIUM_BROWSER_CHANNEL@@" $CHROMIUM_DISTRO_FLAGS "$@"
+exec -a "$0" "$HERE/@@CHROMIUM_BROWSER_CHANNEL@@" $CHROMIUM_FLAGS $CHROMIUM_DISTRO_FLAGS "$@"
