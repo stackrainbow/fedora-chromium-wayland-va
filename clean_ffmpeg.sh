@@ -122,7 +122,6 @@ header_files="	libavcodec/x86/inline_asm.h \
 		libavcodec/mpegutils.h \
 		libavcodec/mpegvideo.h \
 		libavcodec/mpegvideodata.h \
-		libavcodec/mpegvideodsp.h \
 		libavcodec/mpegvideoencdsp.h \
 		libavcodec/options_table.h \
 		libavcodec/opusdsp.h \
