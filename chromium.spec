@@ -610,7 +610,7 @@ BuildRequires:	python3-devel
 BuildRequires: python3-zipp
 BuildRequires: python3-simplejson
 
-%if 0%{?rhel} <= 8
+%if 0%{?rhel} == 7 || 0%{?rhel} == 8  
 BuildRequires: python3-dataclasses
 %endif
 
