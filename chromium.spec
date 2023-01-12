@@ -1622,8 +1622,9 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 %doc AUTHORS README.fedora
 %doc chrome_policy_list.html *.json
 %license LICENSE
-%config %{_sysconfdir}/%{name}/
 %config(noreplace) %{_sysconfdir}/%{name}/chromium.conf
+%config %{_sysconfdir}/%{name}/master_preferences
+%config %{_sysconfdir}/%{name}/policies/
 %if %{build_remoting}
 %exclude %{_sysconfdir}/%{name}/native-messaging-hosts/*
 %endif
