@@ -1405,7 +1405,7 @@ mkdir -p %{buildroot}%{chromium_path}/locales
 %if 0%{?use_vaapi}
 cp -a %{SOURCE3} %{buildroot}%{chromium_path}/%{chromium_browser_channel}.sh
 %%else
-grep -v features /usr/bin/chromium-browser > %{buildroot}%{chromium_path}/%{chromium_browser_channel}.sh
+grep -v features %{SOURCE3} > %{buildroot}%{chromium_path}/%{chromium_browser_channel}.sh
 %endif
 
 export BUILD_TARGET=`cat /etc/redhat-release`
