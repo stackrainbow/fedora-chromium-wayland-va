@@ -1404,7 +1404,7 @@ mkdir -p %{buildroot}%{chromium_path}/locales
 
 %if 0%{?use_vaapi}
 cp -a %{SOURCE3} %{buildroot}%{chromium_path}/%{chromium_browser_channel}.sh
-%%else
+%else
 grep -v features %{SOURCE3} > %{buildroot}%{chromium_path}/%{chromium_browser_channel}.sh
 %endif
 
