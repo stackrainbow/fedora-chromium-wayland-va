@@ -997,7 +997,7 @@ udev.
 %patch114 -p1 -b .system-ffmppeg
 %patch115 -p1 -b .prop-codecs
 %patch116 -p1 -b .first_dts
-%if 0%{fedora} == 36
+%if 0%{?fedora} == 36
 %patch117 -p1 -b .revert-new-channel-layout-api
 %endif
 %endif
