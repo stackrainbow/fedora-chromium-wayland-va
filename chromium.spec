@@ -1259,7 +1259,8 @@ CHROMIUM_CORE_GN_DEFINES+=' use_custom_libcxx=false'
 CHROMIUM_CORE_GN_DEFINES+=' enable_iterator_debugging=false'
 CHROMIUM_CORE_GN_DEFINES+=' enable_js_type_check=false'
 CHROMIUM_CORE_GN_DEFINES+=' enable_vr=false'
-CHROMIUM_CORE_GN_DEFINES+=' build_dawn_tests=false'
+CHROMIUM_CORE_GN_DEFINES+=' build_dawn_tests=false enable_perfetto_unittests=false'
+CHROMIUM_CORE_GN_DEFINES+=' disable_fieldtrial_testing_config=true'
 CHROMIUM_CORE_GN_DEFINES+=' blink_symbol_level=0 symbol_level=0 v8_symbol_level=0'
 export CHROMIUM_CORE_GN_DEFINES
 
@@ -1392,7 +1393,9 @@ tools/gn/bootstrap/bootstrap.py --gn-gen-args="$CHROMIUM_CORE_GN_DEFINES $CHROMI
 %build_target %{headlessbuilddir} headless_shell
 %endif
 
-%build_target %{builddir} chrome chrome_sandbox chromedriver
+%build_target %{builddir} chrome
+%build_target %{builddir} chrome_sandbox
+%build_target %{builddir} chromedriver
 
 %if %{build_clear_key_cdm}
 %build_target %{builddir} clear_key_cdm
