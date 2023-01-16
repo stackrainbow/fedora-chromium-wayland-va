@@ -731,12 +731,12 @@ Requires: chromium-common%{_isa} = %{version}-%{release}
 # fedora 32 or older: ia32, x86_64, aarch64
 # fedora 33+: x86_64 aarch64 only
 %if 0%{?rhel} == 7
-ExclusiveArch: x86_64 i686
+ExclusiveArch: x86_64
 %else
 %if 0%{?fedora} > 32
 ExclusiveArch: x86_64 aarch64
 %else
-ExclusiveArch: x86_64 i686 aarch64
+ExclusiveArch: x86_64 aarch64
 %endif
 %endif
 
@@ -1252,6 +1252,7 @@ CHROMIUM_CORE_GN_DEFINES+=' use_gold=false'
 CHROMIUM_CORE_GN_DEFINES+=' target_cpu="arm64"'
 %endif
 
+CHROMIUM_CORE_GN_DEFINES+=' icu_use_data_file=true'
 CHROMIUM_CORE_GN_DEFINES+=' target_os="linux"'
 CHROMIUM_CORE_GN_DEFINES+=' current_os="linux"'
 CHROMIUM_CORE_GN_DEFINES+=' treat_warnings_as_errors=false'
@@ -1288,7 +1289,7 @@ CHROMIUM_BROWSER_GN_DEFINES+=' use_qt=true'
 CHROMIUM_BROWSER_GN_DEFINES+=' use_qt=false'
 %endif
 
-CHROMIUM_BROWSER_GN_DEFINES+=' use_gio=true use_pulseaudio=true icu_use_data_file=true'
+CHROMIUM_BROWSER_GN_DEFINES+=' use_gio=true use_pulseaudio=true'
 CHROMIUM_BROWSER_GN_DEFINES+=' enable_hangout_services_extension=true'
 CHROMIUM_BROWSER_GN_DEFINES+=' use_aura=true'
 CHROMIUM_BROWSER_GN_DEFINES+=' enable_widevine=true'
@@ -1310,7 +1311,7 @@ export CHROMIUM_BROWSER_GN_DEFINES
 CHROMIUM_HEADLESS_GN_DEFINES=""
 CHROMIUM_HEADLESS_GN_DEFINES+=' use_ozone=true ozone_auto_platforms=false ozone_platform="headless" ozone_platform_headless=true'
 CHROMIUM_HEADLESS_GN_DEFINES+=' angle_enable_vulkan=true angle_enable_swiftshader=true headless_use_embedded_resources=false'
-CHROMIUM_HEADLESS_GN_DEFINES+=' headless_use_prefs=false headless_use_policy=false icu_use_data_file=false'
+CHROMIUM_HEADLESS_GN_DEFINES+=' headless_use_prefs=false headless_use_policy=false'
 CHROMIUM_HEADLESS_GN_DEFINES+=' v8_use_external_startup_data=false enable_print_preview=false enable_remoting=false'
 CHROMIUM_HEADLESS_GN_DEFINES+=' use_alsa=false use_bluez=false use_cups=false use_dbus=false use_gio=false use_kerberos=false'
 CHROMIUM_HEADLESS_GN_DEFINES+=' use_libpci=false use_pulseaudio=false use_udev=false rtc_use_pipewire=false'
@@ -1647,7 +1648,6 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 %{chromium_path}/chrome_*.pak
 %{chromium_path}/chrome_crashpad_handler
 %{chromium_path}/resources.pak
-%{chromium_path}/icudtl.dat
 %{chromium_path}/%{chromium_browser_channel}
 %{chromium_path}/%{chromium_browser_channel}.sh
 %{chromium_path}/libEGL.so*
@@ -1673,11 +1673,12 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 %if %{build_clear_key_cdm}
 %{chromium_path}/libclearkeycdm.so
 %endif
-%ifarch x86_64 i686 aarch64
+%ifarch x86_64 aarch64
 %{chromium_path}/libvk_swiftshader.so*
 %{chromium_path}/libvulkan.so*
 %{chromium_path}/vk_swiftshader_icd.json
 %endif
+%{chromium_path}/icudtl.dat
 %dir %{chromium_path}/
 %dir %{chromium_path}/locales/
 %lang(af) %{chromium_path}/locales/af.pak
