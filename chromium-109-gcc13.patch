@@ -1,0 +1,180 @@
+diff -up chromium-109.0.5414.74/base/check_op.h.me chromium-109.0.5414.74/base/check_op.h
+--- chromium-109.0.5414.74/base/check_op.h.me	2023-01-17 17:39:27.620875883 +0100
++++ chromium-109.0.5414.74/base/check_op.h	2023-01-17 17:39:42.546060957 +0100
+@@ -5,6 +5,7 @@
+ #ifndef BASE_CHECK_OP_H_
+ #define BASE_CHECK_OP_H_
+ 
++#include <cstdint>
+ #include <cstddef>
+ #include <string>
+ #include <type_traits>
+diff -up chromium-109.0.5414.74/base/debug/profiler.h.me chromium-109.0.5414.74/base/debug/profiler.h
+--- chromium-109.0.5414.74/base/debug/profiler.h.me	2023-01-17 16:29:26.368090073 +0100
++++ chromium-109.0.5414.74/base/debug/profiler.h	2023-01-17 16:59:41.190628679 +0100
+@@ -7,6 +7,7 @@
+ 
+ #include <stddef.h>
+ 
++#include <cstdint>
+ #include <string>
+ 
+ #include "base/base_export.h"
+diff -up chromium-109.0.5414.74/build/build_config.h.me chromium-109.0.5414.74/build/build_config.h
+--- chromium-109.0.5414.74/build/build_config.h.me	2023-01-17 16:38:09.335227281 +0100
++++ chromium-109.0.5414.74/build/build_config.h	2023-01-17 16:57:37.281446372 +0100
+@@ -49,6 +49,8 @@
+ #ifndef BUILD_BUILD_CONFIG_H_
+ #define BUILD_BUILD_CONFIG_H_
+ 
++#include <cstdint>
++
+ #include "build/buildflag.h"  // IWYU pragma: export
+ 
+ // A set of macros to use for platform detection.
+diff -up chromium-109.0.5414.74/components/viz/common/view_transition_element_resource_id.h.me chromium-109.0.5414.74/components/viz/common/view_transition_element_resource_id.h
+--- chromium-109.0.5414.74/components/viz/common/view_transition_element_resource_id.h.me	2023-01-17 19:03:10.920014806 +0100
++++ chromium-109.0.5414.74/components/viz/common/view_transition_element_resource_id.h	2023-01-17 19:03:48.736395274 +0100
+@@ -5,6 +5,7 @@
+ #ifndef COMPONENTS_VIZ_COMMON_VIEW_TRANSITION_ELEMENT_RESOURCE_ID_H_
+ #define COMPONENTS_VIZ_COMMON_VIEW_TRANSITION_ELEMENT_RESOURCE_ID_H_
+ 
++#include <cstdint>
+ #include <string>
+ #include <vector>
+ 
+diff -up chromium-109.0.5414.74/gpu/config/gpu_feature_info.h.me chromium-109.0.5414.74/gpu/config/gpu_feature_info.h
+--- chromium-109.0.5414.74/gpu/config/gpu_feature_info.h.me	2023-01-17 19:06:53.530675129 +0100
++++ chromium-109.0.5414.74/gpu/config/gpu_feature_info.h	2023-01-17 19:07:08.874849879 +0100
+@@ -5,6 +5,7 @@
+ #ifndef GPU_CONFIG_GPU_FEATURE_INFO_H_
+ #define GPU_CONFIG_GPU_FEATURE_INFO_H_
+ 
++#include <cstdint>
+ #include <string>
+ #include <vector>
+ 
+diff -up chromium-109.0.5414.74/net/base/net_export.h.me chromium-109.0.5414.74/net/base/net_export.h
+--- chromium-109.0.5414.74/net/base/net_export.h.me	2023-01-17 18:16:34.133854615 +0100
++++ chromium-109.0.5414.74/net/base/net_export.h	2023-01-17 18:16:15.945623153 +0100
+@@ -5,6 +5,8 @@
+ #ifndef NET_BASE_NET_EXPORT_H_
+ #define NET_BASE_NET_EXPORT_H_
+ 
++#include <cstdint>
++
+ // Defines NET_EXPORT so that functionality implemented by the net module can
+ // be exported to consumers, and NET_EXPORT_PRIVATE that allows unit tests to
+ // access features not intended to be used directly by real consumers.
+diff -up chromium-109.0.5414.74/net/third_party/quiche/src/quiche/quic/core/crypto/quic_hkdf.cc.me chromium-109.0.5414.74/net/third_party/quiche/src/quiche/quic/core/crypto/quic_hkdf.cc
+diff -up chromium-109.0.5414.74/net/third_party/quiche/src/quiche/quic/core/quic_connection_id.h.me chromium-109.0.5414.74/net/third_party/quiche/src/quiche/quic/core/quic_connection_id.h
+--- chromium-109.0.5414.74/net/third_party/quiche/src/quiche/quic/core/quic_connection_id.h.me	2023-01-17 17:46:30.830283261 +0100
++++ chromium-109.0.5414.74/net/third_party/quiche/src/quiche/quic/core/quic_connection_id.h	2023-01-17 17:46:40.158407274 +0100
+@@ -5,6 +5,7 @@
+ #ifndef QUICHE_QUIC_CORE_QUIC_CONNECTION_ID_H_
+ #define QUICHE_QUIC_CORE_QUIC_CONNECTION_ID_H_
+ 
++#include <cstdint>
+ #include <string>
+ #include <vector>
+ 
+diff -up chromium-109.0.5414.74/net/third_party/quiche/src/quiche/quic/core/quic_versions.h.me chromium-109.0.5414.74/net/third_party/quiche/src/quiche/quic/core/quic_versions.h
+diff -up chromium-109.0.5414.74/sandbox/linux/syscall_broker/broker_file_permission.h.me chromium-109.0.5414.74/sandbox/linux/syscall_broker/broker_file_permission.h
+--- chromium-109.0.5414.74/sandbox/linux/syscall_broker/broker_file_permission.h.me	2023-01-17 17:12:34.184686515 +0100
++++ chromium-109.0.5414.74/sandbox/linux/syscall_broker/broker_file_permission.h	2023-01-17 17:13:16.537162420 +0100
+@@ -5,6 +5,7 @@
+ #ifndef SANDBOX_LINUX_SYSCALL_BROKER_BROKER_FILE_PERMISSION_H_
+ #define SANDBOX_LINUX_SYSCALL_BROKER_BROKER_FILE_PERMISSION_H_
+ 
++#include <cstdint>
+ #include <bitset>
+ #include <string>
+ 
+diff -up chromium-109.0.5414.74/third_party/abseil-cpp/absl/strings/string_view.h.me chromium-109.0.5414.74/third_party/abseil-cpp/absl/strings/string_view.h
+--- chromium-109.0.5414.74/third_party/abseil-cpp/absl/strings/string_view.h.me	2023-01-17 17:33:20.895717307 +0100
++++ chromium-109.0.5414.74/third_party/abseil-cpp/absl/strings/string_view.h	2023-01-17 17:34:03.456185365 +0100
+@@ -27,6 +27,7 @@
+ #ifndef ABSL_STRINGS_STRING_VIEW_H_
+ #define ABSL_STRINGS_STRING_VIEW_H_
+ 
++#include <cstdint>
+ #include <algorithm>
+ #include <cassert>
+ #include <cstddef>
+diff -up chromium-109.0.5414.74/third_party/angle/include/GLSLANG/ShaderVars.h.me chromium-109.0.5414.74/third_party/angle/include/GLSLANG/ShaderVars.h
+--- chromium-109.0.5414.74/third_party/angle/include/GLSLANG/ShaderVars.h.me	2023-01-17 17:36:15.017616250 +0100
++++ chromium-109.0.5414.74/third_party/angle/include/GLSLANG/ShaderVars.h	2023-01-17 17:36:48.960982195 +0100
+@@ -10,6 +10,7 @@
+ #ifndef GLSLANG_SHADERVARS_H_
+ #define GLSLANG_SHADERVARS_H_
+ 
++#include <cstdint>
+ #include <algorithm>
+ #include <array>
+ #include <string>
+diff -up chromium-109.0.5414.74/third_party/blink/public/common/bluetooth/web_bluetooth_device_id.h.me chromium-109.0.5414.74/third_party/blink/public/common/bluetooth/web_bluetooth_device_id.h
+--- chromium-109.0.5414.74/third_party/blink/public/common/bluetooth/web_bluetooth_device_id.h.me	2023-01-17 19:17:40.480876171 +0100
++++ chromium-109.0.5414.74/third_party/blink/public/common/bluetooth/web_bluetooth_device_id.h	2023-01-17 19:17:46.803958320 +0100
+@@ -5,6 +5,7 @@
+ #ifndef THIRD_PARTY_BLINK_PUBLIC_COMMON_BLUETOOTH_WEB_BLUETOOTH_DEVICE_ID_H_
+ #define THIRD_PARTY_BLINK_PUBLIC_COMMON_BLUETOOTH_WEB_BLUETOOTH_DEVICE_ID_H_
+ 
++#include <cstdint>
+ #include <array>
+ #include <string>
+ 
+diff -up chromium-109.0.5414.74/third_party/dawn/src/dawn/native/stream/ByteVectorSink.h.me chromium-109.0.5414.74/third_party/dawn/src/dawn/native/stream/ByteVectorSink.h
+--- chromium-109.0.5414.74/third_party/dawn/src/dawn/native/stream/ByteVectorSink.h.me	2023-01-17 18:00:37.123218954 +0100
++++ chromium-109.0.5414.74/third_party/dawn/src/dawn/native/stream/ByteVectorSink.h	2023-01-17 18:00:50.610300138 +0100
+@@ -15,6 +15,7 @@
+ #ifndef SRC_DAWN_NATIVE_STREAM_BYTEVECTORSINK_H_
+ #define SRC_DAWN_NATIVE_STREAM_BYTEVECTORSINK_H_
+ 
++#include <cstdint>
+ #include <ostream>
+ #include <vector>
+ 
+diff -up chromium-109.0.5414.74/third_party/dawn/src/tint/reader/spirv/namer.h.me chromium-109.0.5414.74/third_party/dawn/src/tint/reader/spirv/namer.h
+--- chromium-109.0.5414.74/third_party/dawn/src/tint/reader/spirv/namer.h.me	2023-01-17 18:02:44.681538107 +0100
++++ chromium-109.0.5414.74/third_party/dawn/src/tint/reader/spirv/namer.h	2023-01-17 18:02:57.208679140 +0100
+@@ -15,6 +15,7 @@
+ #ifndef SRC_TINT_READER_SPIRV_NAMER_H_
+ #define SRC_TINT_READER_SPIRV_NAMER_H_
+ 
++#include <cstdint>
+ #include <string>
+ #include <unordered_map>
+ #include <vector>
+diff -up chromium-109.0.5414.74/third_party/swiftshader/src/System/LRUCache.hpp.me chromium-109.0.5414.74/third_party/swiftshader/src/System/LRUCache.hpp
+--- chromium-109.0.5414.74/third_party/swiftshader/src/System/LRUCache.hpp.me	2023-01-17 15:37:48.530626516 +0100
++++ chromium-109.0.5414.74/third_party/swiftshader/src/System/LRUCache.hpp	2023-01-17 16:57:46.025548092 +0100
+@@ -17,6 +17,7 @@
+ 
+ #include "System/Debug.hpp"
+ 
++#include <cstdint>
+ #include <cstddef>
+ #include <functional>
+ #include <unordered_set>
+diff -up chromium-109.0.5414.74/third_party/vulkan_memory_allocator/include/vk_mem_alloc.h.me chromium-109.0.5414.74/third_party/vulkan_memory_allocator/include/vk_mem_alloc.h
+--- chromium-109.0.5414.74/third_party/vulkan_memory_allocator/include/vk_mem_alloc.h.me	2023-01-17 15:40:23.854386206 +0100
++++ chromium-109.0.5414.74/third_party/vulkan_memory_allocator/include/vk_mem_alloc.h	2023-01-17 16:58:19.397862885 +0100
+@@ -2388,6 +2388,7 @@ VMA_CALL_PRE void VMA_CALL_POST vmaFreeV
+ #ifdef VMA_IMPLEMENTATION
+ #undef VMA_IMPLEMENTATION
+ 
++#include <cstdio>
+ #include <cstdint>
+ #include <cstdlib>
+ #include <cstring>
+diff -up chromium-109.0.5414.74/ui/gfx/geometry/linear_gradient.h.me chromium-109.0.5414.74/ui/gfx/geometry/linear_gradient.h
+--- chromium-109.0.5414.74/ui/gfx/geometry/linear_gradient.h.me	2023-01-17 18:08:25.745491353 +0100
++++ chromium-109.0.5414.74/ui/gfx/geometry/linear_gradient.h	2023-01-17 18:08:35.777667632 +0100
+@@ -5,6 +5,7 @@
+ #ifndef UI_GFX_LINEAR_GRADIENT_H_
+ #define UI_GFX_LINEAR_GRADIENT_H_
+ 
++#include <cstdint>
+ #include <array>
+ #include <string>
+ 
