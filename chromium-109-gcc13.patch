@@ -145,6 +145,17 @@ diff -up chromium-109.0.5414.74/third_party/dawn/src/tint/reader/spirv/namer.h.m
  #include <string>
  #include <unordered_map>
  #include <vector>
+diff -up chromium-109.0.5414.74/third_party/openscreen/src/discovery/dnssd/public/dns_sd_txt_record.h.me chromium-109.0.5414.74/third_party/openscreen/src/discovery/dnssd/public/dns_sd_txt_record.h
+--- chromium-109.0.5414.74/third_party/openscreen/src/discovery/dnssd/public/dns_sd_txt_record.h.me	2023-01-18 15:22:38.472940648 +0100
++++ chromium-109.0.5414.74/third_party/openscreen/src/discovery/dnssd/public/dns_sd_txt_record.h	2023-01-18 15:23:09.380255101 +0100
+@@ -5,6 +5,7 @@
+ #ifndef DISCOVERY_DNSSD_PUBLIC_DNS_SD_TXT_RECORD_H_
+ #define DISCOVERY_DNSSD_PUBLIC_DNS_SD_TXT_RECORD_H_
+ 
++#include <cstdint>
+ #include <functional>
+ #include <map>
+ #include <set>
 diff -up chromium-109.0.5414.74/third_party/swiftshader/src/System/LRUCache.hpp.me chromium-109.0.5414.74/third_party/swiftshader/src/System/LRUCache.hpp
 --- chromium-109.0.5414.74/third_party/swiftshader/src/System/LRUCache.hpp.me	2023-01-17 15:37:48.530626516 +0100
 +++ chromium-109.0.5414.74/third_party/swiftshader/src/System/LRUCache.hpp	2023-01-17 16:57:46.025548092 +0100
@@ -173,6 +184,17 @@ diff -up chromium-109.0.5414.74/ui/gfx/geometry/linear_gradient.h.me chromium-10
 @@ -5,6 +5,7 @@
  #ifndef UI_GFX_LINEAR_GRADIENT_H_
  #define UI_GFX_LINEAR_GRADIENT_H_
+ 
++#include <cstdint>
+ #include <array>
+ #include <string>
+ 
+diff -up chromium-109.0.5414.74/third_party/perfetto/include/perfetto/ext/base/uuid.h.me chromium-109.0.5414.74/third_party/perfetto/include/perfetto/ext/base/uuid.h
+--- chromium-109.0.5414.74/third_party/perfetto/include/perfetto/ext/base/uuid.h.me	2023-01-18 16:00:58.563875881 +0100
++++ chromium-109.0.5414.74/third_party/perfetto/include/perfetto/ext/base/uuid.h	2023-01-18 16:02:01.773517452 +0100
+@@ -17,6 +17,7 @@
+ #ifndef INCLUDE_PERFETTO_EXT_BASE_UUID_H_
+ #define INCLUDE_PERFETTO_EXT_BASE_UUID_H_
  
 +#include <cstdint>
  #include <array>
