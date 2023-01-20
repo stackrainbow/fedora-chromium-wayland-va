@@ -9,9 +9,9 @@
 %undefine _package_note_file
 %endif
 
-%global numjobs 10
+%global numjobs 32
 %ifarch aarch64
-%global numjobs 8
+%global numjobs 32
 %endif
 
 # This flag is so I can build things very fast on a giant system.
