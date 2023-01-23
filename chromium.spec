@@ -510,7 +510,9 @@ BuildRequires:	minizip-compat-devel
 %endif
 
 # RHEL 8 needs newer nodejs
-%if ! 0%{?rhel} == 8
+%if 0%{?rhel} == 8
+# nothing
+%else
 BuildRequires: nodejs
 %endif
 
@@ -1388,7 +1390,7 @@ fi
 %if %{bootstrap}
 tools/gn/bootstrap/bootstrap.py --gn-gen-args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES"
 %else
-cp -a %{_bindir}/gn %{builddir}/
+mkdir -p %{builddir} && cp -a %{_bindir}/gn %{builddir}/
 %endif
 
 %{builddir}/gn --script-executable=%{chromium_pybin} gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES" %{builddir}
