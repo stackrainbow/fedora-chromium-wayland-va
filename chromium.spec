@@ -341,6 +341,10 @@ Patch103: chromium-99.0.4844.51-epel7-old-headers-workarounds.patch
 # Revert: https://github.com/chromium/chromium/commit/c3213f8779ddc427e89d982514185ed5e4c94e91
 Patch104: chromium-99.0.4844.51-epel7-old-cups.patch
 
+# libdrm on EL7 is rather old and chromium assumes newer
+# This gets us by for now
+Patch105: chromium-85.0.4183.83-el7-old-libdrm.patch
+
 # error: no matching function for call to 'std::basic_string<char>::erase(std::basic_string<char>::const_iterator, __gnu_cxx::__normal_iterator<const char*, std::basic_string<char> >&)'
 #   33 |   property_name.erase(property_name.cbegin(), cur);
 # Not sure how this EVER worked anywhere, but it only seems to fail on EPEL-7.
@@ -1011,6 +1015,7 @@ udev.
 %patch101 -p1 -b .wayland-strndup-error
 %patch103 -p1 -b .epel7-header-workarounds
 %patch104 -p1 -b .el7cups
+%patch105 -p1 -b .el7-old-libdrm
 %patch106 -p1 -b .el7-erase-fix
 %patch107 -p1 -b .el7-extra-operator-equalequal
 %endif
