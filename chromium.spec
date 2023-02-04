@@ -516,7 +516,6 @@ BuildRequires:	minizip-compat-devel
 BuildRequires: nodejs
 %endif
 
-# use system gn on fedora and rhel >=8, el7 needs bundle gn
 %if ! %{bootstrap}
 BuildRequires: gn
 %endif
