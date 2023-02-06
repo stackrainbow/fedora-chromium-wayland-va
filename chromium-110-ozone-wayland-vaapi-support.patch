@@ -243,192 +243,6 @@ diff -up chromium-109.0.5359.124/ui/ozone/public/ozone_platform.h.wayland-vaapi 
  #endif
  
      // Indicates that the platform allows client applications to manipulate
-diff -up chromium-109.0.5414.74/media/gpu/vaapi/vaapi_video_decode_accelerator_unittest.cc.orig chromium-109.0.5414.74/media/gpu/vaapi/vaapi_video_decode_accelerator_unittest.cc
---- chromium-109.0.5414.74/media/gpu/vaapi/vaapi_video_decode_accelerator_unittest.cc.orig	2023-01-04 20:20:18.000000000 +0100
-+++ chromium-109.0.5414.74/media/gpu/vaapi/vaapi_video_decode_accelerator_unittest.cc	2023-01-11 14:31:01.033496121 +0100
-@@ -39,6 +39,11 @@ struct TestParams {
-   bool decode_using_client_picture_buffers;
- };
- 
-+#if BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
-+// TODO: Add it in TestParams to cover Ozone/Wayland.
-+bool kMayUseVaapiOverX11 = true;
-+#endif  // BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
-+
- constexpr int32_t kBitstreamId = 123;
- constexpr size_t kInputSize = 256;
- 
-@@ -131,7 +136,13 @@ class MockVaapiPicture : public VaapiPic
- 
- class MockVaapiPictureFactory : public VaapiPictureFactory {
-  public:
-+#if BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
-+  explicit MockVaapiPictureFactory(absl::optional<bool> may_use_vaapi_over_x11)
-+      : VaapiPictureFactory(may_use_vaapi_over_x11) {}
-+#else
-   MockVaapiPictureFactory() = default;
-+#endif  // BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
-+
-   ~MockVaapiPictureFactory() override = default;
- 
-   MOCK_METHOD3(MockCreateVaapiPicture,
-@@ -165,7 +176,12 @@ class VaapiVideoDecodeAcceleratorTest :
-                                    bool can_bind_to_sampler) { return true; })),
-         decoder_thread_("VaapiVideoDecodeAcceleratorTestThread"),
-         mock_decoder_(new ::testing::StrictMock<MockAcceleratedVideoDecoder>),
-+#if BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
-+        mock_vaapi_picture_factory_(
-+            new MockVaapiPictureFactory(kMayUseVaapiOverX11)),
-+#else
-         mock_vaapi_picture_factory_(new MockVaapiPictureFactory()),
-+#endif  // BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
-         mock_vaapi_wrapper_(new MockVaapiWrapper(VaapiWrapper::kDecode)),
-         mock_vpp_vaapi_wrapper_(new MockVaapiWrapper(VaapiWrapper::kDecode)),
-         weak_ptr_factory_(this) {
-@@ -421,14 +437,16 @@ TEST_P(VaapiVideoDecodeAcceleratorTest,
-             mock_vaapi_picture_factory_->GetVaapiImplementation(
-                 gl::kGLImplementationEGLGLES2));
- 
--#if BUILDFLAG(USE_VAAPI_X11)
--  EXPECT_EQ(VaapiPictureFactory::kVaapiImplementationAngle,
--            mock_vaapi_picture_factory_->GetVaapiImplementation(
--                gl::kGLImplementationEGLANGLE));
--  EXPECT_EQ(VaapiPictureFactory::kVaapiImplementationX11,
--            mock_vaapi_picture_factory_->GetVaapiImplementation(
--                gl::kGLImplementationDesktopGL));
--#elif BUILDFLAG(IS_OZONE)
-+#if BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
-+  if (kMayUseVaapiOverX11) {
-+    EXPECT_EQ(VaapiPictureFactory::kVaapiImplementationAngle,
-+              mock_vaapi_picture_factory_->GetVaapiImplementation(
-+                  gl::kGLImplementationEGLANGLE));
-+    EXPECT_EQ(VaapiPictureFactory::kVaapiImplementationX11,
-+              mock_vaapi_picture_factory_->GetVaapiImplementation(
-+                  gl::kGLImplementationDesktopGL));
-+  }
-+#else
-   EXPECT_EQ(VaapiPictureFactory::kVaapiImplementationDrm,
-             mock_vaapi_picture_factory_->GetVaapiImplementation(
-                 gl::kGLImplementationEGLANGLE));
-diff -up chromium-109.0.5414.74/media/gpu/vaapi/vaapi_picture_factory.cc.orig chromium-109.0.5414.74/media/gpu/vaapi/vaapi_picture_factory.cc
---- chromium-109.0.5414.74/media/gpu/vaapi/vaapi_picture_factory.cc.orig	2023-01-04 20:20:18.000000000 +0100
-+++ chromium-109.0.5414.74/media/gpu/vaapi/vaapi_picture_factory.cc	2023-01-11 14:45:36.405506479 +0100
-@@ -13,10 +13,10 @@
- #if BUILDFLAG(IS_OZONE)
- #include "media/gpu/vaapi/vaapi_picture_native_pixmap_ozone.h"
- #endif  // BUILDFLAG(IS_OZONE)
--#if BUILDFLAG(USE_VAAPI_X11)
-+#if BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
- #include "media/gpu/vaapi/vaapi_picture_native_pixmap_angle.h"
- #include "media/gpu/vaapi/vaapi_picture_tfp.h"
--#endif  // BUILDFLAG(USE_VAAPI_X11)
-+#endif  // BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
- #if defined(USE_EGL)
- #include "media/gpu/vaapi/vaapi_picture_native_pixmap_egl.h"
- #endif
-@@ -42,22 +42,32 @@
- 
- }  // namespace
- 
-+#if BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
-+VaapiPictureFactory::VaapiPictureFactory(
-+    absl::optional<bool> may_use_vaapi_over_x11)
-+    : may_use_vaapi_over_x11_(may_use_vaapi_over_x11) {
-+#else
- VaapiPictureFactory::VaapiPictureFactory() {
-+#endif   // BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
-   vaapi_impl_pairs_.insert(
-       std::make_pair(gl::kGLImplementationEGLGLES2,
-                      VaapiPictureFactory::kVaapiImplementationDrm));
--#if BUILDFLAG(USE_VAAPI_X11)
--  vaapi_impl_pairs_.insert(
--      std::make_pair(gl::kGLImplementationEGLANGLE,
--                     VaapiPictureFactory::kVaapiImplementationAngle));
--  vaapi_impl_pairs_.insert(
--      std::make_pair(gl::kGLImplementationDesktopGL,
--                     VaapiPictureFactory::kVaapiImplementationX11));
--#elif BUILDFLAG(IS_OZONE)
-+
-+#if BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
-+  CHECK(may_use_vaapi_over_x11_.has_value());
-+  if (may_use_vaapi_over_x11_.value()) {
-+    vaapi_impl_pairs_.insert(
-+        std::make_pair(gl::kGLImplementationEGLANGLE,
-+                       VaapiPictureFactory::kVaapiImplementationAngle));
-+    vaapi_impl_pairs_.insert(
-+        std::make_pair(gl::kGLImplementationDesktopGL,
-+                       VaapiPictureFactory::kVaapiImplementationX11));
-+  }
-+#else
-   vaapi_impl_pairs_.insert(
-       std::make_pair(gl::kGLImplementationEGLANGLE,
-                      VaapiPictureFactory::kVaapiImplementationDrm));
--#endif
-+#endif  // BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
- 
-   DeterminePictureCreationAndDownloadingMechanism();
- }
-@@ -98,19 +108,19 @@
- }
- 
- uint32_t VaapiPictureFactory::GetGLTextureTarget() {
--#if BUILDFLAG(USE_VAAPI_X11)
--  return GL_TEXTURE_2D;
--#else
-+#if BUILDFLAG(IS_CHROMEOS)
-   return GL_TEXTURE_EXTERNAL_OES;
--#endif
-+#else
-+  return GL_TEXTURE_2D;
-+#endif  // BUILDFLAG(IS_CHROMEOS)
- }
- 
- gfx::BufferFormat VaapiPictureFactory::GetBufferFormat() {
--#if BUILDFLAG(USE_VAAPI_X11)
--  return gfx::BufferFormat::RGBX_8888;
--#else
-+#if BUILDFLAG(IS_CHROMEOS)
-   return gfx::BufferFormat::YUV_420_BIPLANAR;
--#endif
-+#else
-+  return gfx::BufferFormat::RGBX_8888;
-+#endif  // BUILDFLAG(IS_CHROMEOS)
- }
- 
- void VaapiPictureFactory::DeterminePictureCreationAndDownloadingMechanism() {
-@@ -118,25 +128,30 @@
- #if BUILDFLAG(IS_OZONE)
-     // We can be called without GL initialized, which is valid if we use Ozone.
-     case kVaapiImplementationNone:
-+#if BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
-+      DCHECK(may_use_vaapi_over_x11_.value_or(false));
-+#endif
-       create_picture_cb_ = base::BindRepeating(
-           &CreateVaapiPictureNativeImpl<VaapiPictureNativePixmapOzone>);
-       needs_vpp_for_downloading_ = true;
-       break;
- #endif  // BUILDFLAG(IS_OZONE)
--#if BUILDFLAG(USE_VAAPI_X11)
-+#if BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
-     case kVaapiImplementationX11:
-+      DCHECK(may_use_vaapi_over_x11_.value_or(false));
-       create_picture_cb_ =
-           base::BindRepeating(&CreateVaapiPictureNativeImpl<VaapiTFPPicture>);
-       // Neither VaapiTFPPicture or VaapiPictureNativePixmapAngle needs the VPP.
-       needs_vpp_for_downloading_ = false;
-       break;
-     case kVaapiImplementationAngle:
-+      DCHECK(may_use_vaapi_over_x11_.value_or(false));
-       create_picture_cb_ = base::BindRepeating(
-           &CreateVaapiPictureNativeImpl<VaapiPictureNativePixmapAngle>);
-       // Neither VaapiTFPPicture or VaapiPictureNativePixmapAngle needs the VPP.
-       needs_vpp_for_downloading_ = false;
-       break;
--#endif  // BUILDFLAG(USE_VAAPI_X11)
-+#endif  // BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
-     case kVaapiImplementationDrm:
- #if BUILDFLAG(IS_OZONE)
-       create_picture_cb_ = base::BindRepeating(
 diff -up chromium-109.0.5414.74/media/gpu/vaapi/vaapi_wrapper.cc.orig chromium-109.0.5414.74/media/gpu/vaapi/vaapi_wrapper.cc
 --- chromium-109.0.5414.74/media/gpu/vaapi/vaapi_wrapper.cc.orig	2023-01-04 20:20:18.000000000 +0100
 +++ chromium-109.0.5414.74/media/gpu/vaapi/vaapi_wrapper.cc	2023-01-11 15:08:02.721768243 +0100
@@ -664,3 +478,107 @@ diff -up chromium-109.0.5414.74/media/gpu/vaapi/vaapi_picture_native_pixmap_ozon
    // The 'VaapiVideoDecodeAccelerator' requires the VPP to download the decoded
    // frame from the internal surface to the allocated native pixmap.
    // 'SCANOUT_VDA_WRITE' is used for 'YUV_420_BIPLANAR' on ChromeOS; For Linux,
+diff -up chromium-110.0.5481.61/media/gpu/vaapi/vaapi_picture_factory.cc.me1 chromium-110.0.5481.61/media/gpu/vaapi/vaapi_picture_factory.cc
+--- chromium-110.0.5481.61/media/gpu/vaapi/vaapi_picture_factory.cc.me1	2023-02-01 16:42:01.000000000 +0100
++++ chromium-110.0.5481.61/media/gpu/vaapi/vaapi_picture_factory.cc	2023-02-04 16:45:27.769211581 +0100
+@@ -13,9 +13,9 @@
+ #if BUILDFLAG(IS_OZONE)
+ #include "media/gpu/vaapi/vaapi_picture_native_pixmap_ozone.h"
+ #endif  // BUILDFLAG(IS_OZONE)
+-#if BUILDFLAG(USE_VAAPI_X11)
++#if BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
+ #include "media/gpu/vaapi/vaapi_picture_native_pixmap_angle.h"
+-#endif  // BUILDFLAG(USE_VAAPI_X11)
++#endif  // BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
+ #if defined(USE_EGL)
+ #include "media/gpu/vaapi/vaapi_picture_native_pixmap_egl.h"
+ #endif
+@@ -41,19 +41,28 @@ std::unique_ptr<VaapiPicture> CreateVaap
+ 
+ }  // namespace
+ 
++#if BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
++VaapiPictureFactory::VaapiPictureFactory(
++    absl::optional<bool> may_use_vaapi_over_x11)
++    : may_use_vaapi_over_x11_(may_use_vaapi_over_x11) {
++#else
+ VaapiPictureFactory::VaapiPictureFactory() {
++#endif
+   vaapi_impl_pairs_.insert(
+       std::make_pair(gl::kGLImplementationEGLGLES2,
+                      VaapiPictureFactory::kVaapiImplementationDrm));
+-#if BUILDFLAG(USE_VAAPI_X11)
+-  vaapi_impl_pairs_.insert(
+-      std::make_pair(gl::kGLImplementationEGLANGLE,
+-                     VaapiPictureFactory::kVaapiImplementationAngle));
+-#elif BUILDFLAG(IS_OZONE)
++#if BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
++  CHECK(may_use_vaapi_over_x11_.has_value());
++  if (may_use_vaapi_over_x11_.value()) {
++    vaapi_impl_pairs_.insert(
++        std::make_pair(gl::kGLImplementationEGLANGLE,
++                       VaapiPictureFactory::kVaapiImplementationAngle));
++  }
++#else
+   vaapi_impl_pairs_.insert(
+       std::make_pair(gl::kGLImplementationEGLANGLE,
+                      VaapiPictureFactory::kVaapiImplementationDrm));
+-#endif
++#endif // BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
+ 
+   DeterminePictureCreationAndDownloadingMechanism();
+ }
+@@ -93,19 +102,19 @@ VaapiPictureFactory::GetVaapiImplementat
+ }
+ 
+ uint32_t VaapiPictureFactory::GetGLTextureTarget() {
+-#if BUILDFLAG(USE_VAAPI_X11)
+-  return GL_TEXTURE_2D;
+-#else
++#if BUILDFLAG(IS_CHROMEOS)
+   return GL_TEXTURE_EXTERNAL_OES;
+-#endif
++#else
++  return GL_TEXTURE_2D;
++#endif  // BUILDFLAG(IS_CHROMEOS)
+ }
+ 
+ gfx::BufferFormat VaapiPictureFactory::GetBufferFormat() {
+-#if BUILDFLAG(USE_VAAPI_X11)
+-  return gfx::BufferFormat::RGBX_8888;
+-#else
++#if BUILDFLAG(IS_CHROMEOS)
+   return gfx::BufferFormat::YUV_420_BIPLANAR;
+-#endif
++#else
++  return gfx::BufferFormat::RGBX_8888;
++#endif  // BUILDFLAG(IS_CHROMEOS)
+ }
+ 
+ void VaapiPictureFactory::DeterminePictureCreationAndDownloadingMechanism() {
+@@ -113,19 +122,23 @@ void VaapiPictureFactory::DeterminePictu
+ #if BUILDFLAG(IS_OZONE)
+     // We can be called without GL initialized, which is valid if we use Ozone.
+     case kVaapiImplementationNone:
++#if BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
++      DCHECK(may_use_vaapi_over_x11_.value_or(false));
++#endif
+       create_picture_cb_ = base::BindRepeating(
+           &CreateVaapiPictureNativeImpl<VaapiPictureNativePixmapOzone>);
+       needs_vpp_for_downloading_ = true;
+       break;
+ #endif  // BUILDFLAG(IS_OZONE)
+-#if BUILDFLAG(USE_VAAPI_X11)
++#if BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
+     case kVaapiImplementationAngle:
++      CHECK(may_use_vaapi_over_x11_.value_or(false));
+       create_picture_cb_ = base::BindRepeating(
+           &CreateVaapiPictureNativeImpl<VaapiPictureNativePixmapAngle>);
+       // Neither VaapiTFPPicture or VaapiPictureNativePixmapAngle needs the VPP.
+       needs_vpp_for_downloading_ = false;
+       break;
+-#endif  // BUILDFLAG(USE_VAAPI_X11)
++#endif  // BUILDFLAG(SUPPORT_VAAPI_OVER_X11)
+     case kVaapiImplementationDrm:
+ #if BUILDFLAG(IS_OZONE)
+       create_picture_cb_ = base::BindRepeating(
