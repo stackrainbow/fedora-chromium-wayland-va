@@ -1180,7 +1180,7 @@ sed -i 's|moc|moc-qt5|g' ui/qt/moc_wrapper.py
 export LANG=en_US.UTF-8
 
 # Turning the buildsystem up to 11.
-ulimit -n 2048
+ulimit -n 4096
 
 # reduce warnings
 FLAGS=' -Wno-deprecated-declarations -Wno-unknown-warning-option -Wno-unused-command-line-argument'
