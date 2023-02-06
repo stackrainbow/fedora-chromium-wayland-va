@@ -1441,14 +1441,19 @@ mkdir -p %{builddir} && cp -a %{_bindir}/gn %{builddir}/
 %install
 rm -rf %{buildroot}
 
-mkdir -p %{buildroot}%{_bindir}
-mkdir -p %{buildroot}%{chromium_path}/locales
+mkdir -p %{buildroot}%{_bindir} \
+         %{buildroot}%{chromium_path}/locales \
+         %{buildroot}%{_sysconfdir}/%{name}
 
-%if %{use_vaapi}
+# install system wide chromium config
+cp -a %{SOURCE2} %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
 cp -a %{SOURCE3} %{buildroot}%{chromium_path}/%{chromium_browser_channel}.sh
-%else
+
+%if ! %{use_vaapi}
+# remove vaapi flags
 grep -v features %{SOURCE3} > %{buildroot}%{chromium_path}/%{chromium_browser_channel}.sh
 chmod 755 %{buildroot}%{chromium_path}/%{chromium_browser_channel}.sh
+echo "# system wide chromium flags" > %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
 %endif
 
 export BUILD_TARGET=`cat /etc/redhat-release`
@@ -1607,11 +1612,7 @@ mkdir -p %{buildroot}%{_datadir}/icons/hicolor/24x24/apps
 cp -a chrome/app/theme/chromium/product_logo_24.png %{buildroot}%{_datadir}/icons/hicolor/24x24/apps/%{chromium_browser_channel}.png
 
 # Install the master_preferences file
-mkdir -p %{buildroot}%{_sysconfdir}/%{name}
 install -m 0644 %{SOURCE13} %{buildroot}%{_sysconfdir}/%{name}/
-
-# Install system wide chromium config
-install -m 0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/%{name}/
 
 mkdir -p %{buildroot}%{_datadir}/applications/
 desktop-file-install --dir %{buildroot}%{_datadir}/applications %{SOURCE4}
