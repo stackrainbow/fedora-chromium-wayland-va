@@ -13,9 +13,10 @@
 %endif
 
 # set default numjobs for the koji build
-%global numjobs 16
+# we got the aarch64 builder with 224 cores and x86_64 builder with 46 cores
+%global numjobs 48
 %ifarch aarch64
-%global numjobs 8
+%global numjobs 64
 %endif
  
 # This flag is so I can build things very fast on a giant system.
