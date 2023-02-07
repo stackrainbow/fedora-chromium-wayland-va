@@ -12,24 +12,18 @@
 %undefine _package_note_file
 %endif
 
-# Require 2 GB of RAM per CPU core
-# %%constrain_build -m 2048
-
 # set default numjobs for the koji build
 %ifarch aarch64
-%if %{_smp_build_ncpus} >= 8
 %global numjobs 8
-%endif
-%if %{_smp_build_ncpus} >= 16
-%global numjobs 16
-%endif
-%if %{_smp_build_ncpus} >= 32
-%global numjobs 32
-%endif
-%if %{_smp_build_ncpus} >= 64
-%global numjobs 64
-%endif
 %else
+%global numjobs %{_smp_build_ncpus}
+%endif
+
+# This flag is so I can build things very fast on a giant system.
+# Enabling this in koji causes aarch64 builds to timeout indefinitely.
+%global use_all_cpus 0
+
+%if %{use_all_cpus}
 %global numjobs %{_smp_build_ncpus}
 %endif
  
