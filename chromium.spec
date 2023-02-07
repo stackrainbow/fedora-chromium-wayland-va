@@ -12,21 +12,27 @@
 %undefine _package_note_file
 %endif
 
+# Require 2 GB of RAM per CPU core
+# %%constrain_build -m 2048
+
 # set default numjobs for the koji build
-# we got the aarch64 builder with 224 cores and x86_64 builder with 46 cores
-%global numjobs 48
 %ifarch aarch64
+%if %{_smp_build_ncpus} >= 8
+%global numjobs 8
+%endif
+%if %{_smp_build_ncpus} >= 16
+%global numjobs 16
+%endif
+%if %{_smp_build_ncpus} >= 32
+%global numjobs 32
+%endif
+%if %{_smp_build_ncpus} >= 64
 %global numjobs 64
 %endif
- 
-# This flag is so I can build things very fast on a giant system.
-# Enabling this in koji causes aarch64 builds to timeout indefinitely.
-%global use_all_cpus 0
- 
-%if %{use_all_cpus}
+%else
 %global numjobs %{_smp_build_ncpus}
 %endif
-
+ 
 # official builds have less debugging and go faster... but we have to shut some things off.
 %global official_build 1
 
@@ -38,7 +44,7 @@
 # %2 what
 %global build_target() \
 	export NINJA_STATUS="[%2:%f/%t] " ; \
-	ninja -j %{numjobs} -C '%1' -v '%2'
+	ninja -j %{numjobs} -C '%1' '%2'
 
 # enable|disable headless client build
 %global build_headless 1
@@ -1179,10 +1185,6 @@ sed -i 's|moc|moc-qt5|g' ui/qt/moc_wrapper.py
 # decode byte 0xe2 in position 474: ordinal not in range(128)
 export LANG=en_US.UTF-8
 
-# Turning the buildsystem up to 11.
-ulimit -a
-ulimit -n 2048
-
 # reduce warnings
 FLAGS=' -Wno-deprecated-declarations -Wno-unknown-warning-option -Wno-unused-command-line-argument'
 FLAGS+=' -Wno-unused-but-set-variable -Wno-unused-result -Wno-unused-function -Wno-unused-variable'
@@ -1211,9 +1213,7 @@ export CXX=g++
 %endif
 export CFLAGS
 export CXXFLAGS
-%ifarch aarch64
-export LDFLAGS="$LDFLAGS -Wl,-no-threads"
-%endif
+export LDFLAGS="$LDFLAGS -Wl,--threads=4"
 export AR="llvm-ar"
 export NM="llvm-nm"
 export READELF="llvm-readelf"
