@@ -38,7 +38,7 @@
 # %2 what
 %global build_target() \
 	export NINJA_STATUS="[%2:%f/%t] " ; \
-	ninja -j %{numjobs} -C '%1' '%2'
+	ninja -j %{numjobs} -C '%1' -v '%2'
 
 # enable|disable headless client build
 %global build_headless 1
@@ -1180,7 +1180,8 @@ sed -i 's|moc|moc-qt5|g' ui/qt/moc_wrapper.py
 export LANG=en_US.UTF-8
 
 # Turning the buildsystem up to 11.
-ulimit -n 4096
+ulimit -a
+ulimit -n 2048
 
 # reduce warnings
 FLAGS=' -Wno-deprecated-declarations -Wno-unknown-warning-option -Wno-unused-command-line-argument'
@@ -1199,7 +1200,6 @@ CXXFLAGS="$CFLAGS"
 # override system build flags
 CFLAGS="$FLAGS"
 CXXFLAGS="$FLAGS"
-LDFLAGS=""
 %endif
 
 %if %{clang}
@@ -1211,9 +1211,12 @@ export CXX=g++
 %endif
 export CFLAGS
 export CXXFLAGS
-export LDFLAGS
-export AR=ar
-export NM=nm
+%ifarch aarch64
+export LDFLAGS="$LDFLAGS -Wl,-no-threads"
+%endif
+export AR="llvm-ar"
+export NM="llvm-nm"
+export READELF="llvm-readelf"
 
 # enable toolset on el7
 %if 0%{?rhel} == 7
