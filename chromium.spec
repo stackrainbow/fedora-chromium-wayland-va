@@ -21,7 +21,7 @@
 
 # This flag is so I can build things very fast on a giant system.
 # Enabling this in koji causes aarch64 builds to timeout indefinitely.
-%global use_all_cpus 0
+%global use_all_cpus 1
 
 %if %{use_all_cpus}
 %global numjobs %{_smp_build_ncpus}
@@ -268,9 +268,6 @@ Patch12: chromium-101.0.4951.41-fedora-user-agent.patch
 # debian patch, disable font-test 
 Patch20: chromium-disable-font-tests.patch
 
-# Needs to be submitted..
-Patch51: chromium-96.0.4664.45-gcc-remoting-constexpr.patch
-
 # https://gitweb.gentoo.org/repo/gentoo.git/tree/www-client/chromium/files/chromium-unbundle-zlib.patch
 Patch52: chromium-81.0.4044.92-unbundle-zlib.patch
 
@@ -296,10 +293,6 @@ Patch69: chromium-103.0.5060.53-update-rjsmin-to-1.2.0.patch
 # Update six to 1.16.0
 Patch70: chromium-105.0.5195.52-python-six-1.16.0.patch
 
-# Fix crashes with components/cast_*
-# Thanks to Gentoo
-Patch80: chromium-108-EnumTable-crash.patch
-
 # Disable tests on remoting build
 Patch82: chromium-98.0.4758.102-remoting-no-tests.patch
 
@@ -323,7 +316,7 @@ Patch100: chromium-108-el7-include-fcntl-memfd.patch
 Patch101: chromium-108-el7-wayland-strndup-error.patch
 
 # Work around old and missing headers on EPEL7
-Patch103: chromium-99.0.4844.51-epel7-old-headers-workarounds.patch
+Patch103: chromium-110-epel7-old-headers-workarounds.patch
 
 # Use old cups (chromium's code workaround breaks on gcc)
 # Revert: https://github.com/chromium/chromium/commit/c3213f8779ddc427e89d982514185ed5e4c94e91
@@ -910,9 +903,6 @@ udev.
 
 %patch20 -p1 -b .disable-font-test
 
-# Short term fixes (usually gcc and backports)
-%patch51 -p1 -b .gcc-remoting-constexpr
-
 %if 0%{?fedora} || 0%{?rhel} >= 8
 %patch52 -p1 -b .unbundle-zlib
 %endif
@@ -927,7 +917,6 @@ udev.
 %patch65 -p1 -b .java-only-allowed
 %patch69 -p1 -b .update-rjsmin-to-1.2.0
 %patch70 -p1 -b .update-six-to-1.16.0
-%patch80 -p1 -b .EnumTable-crash
 %patch82 -p1 -b .remoting-no-tests
 
 %if ! %{bundlebrotli}

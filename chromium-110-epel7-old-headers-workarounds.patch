@@ -1,3 +1,17 @@
+diff -up chromium-110.0.5481.77/sandbox/policy/linux/bpf_hardware_video_decoding_policy_linux.cc.me chromium-110.0.5481.77/sandbox/policy/linux/bpf_hardware_video_decoding_policy_linux.cc
+--- chromium-110.0.5481.77/sandbox/policy/linux/bpf_hardware_video_decoding_policy_linux.cc.me	2023-02-08 20:34:02.700010846 +0100
++++ chromium-110.0.5481.77/sandbox/policy/linux/bpf_hardware_video_decoding_policy_linux.cc	2023-02-08 20:35:30.455580670 +0100
+@@ -4,7 +4,9 @@
+ 
+ #include "sandbox/policy/linux/bpf_hardware_video_decoding_policy_linux.h"
+ 
+-#include <linux/kcmp.h>
++#ifndef KCMP_FILE
++#define KCMP_FILE 0
++#endif
+ 
+ #include "media/gpu/buildflags.h"
+ #include "sandbox/linux/seccomp-bpf-helpers/sigsys_handlers.h"
 diff -up chromium-99.0.4844.51/mojo/core/channel_linux.cc.epel7-header-workarounds chromium-99.0.4844.51/mojo/core/channel_linux.cc
 --- chromium-99.0.4844.51/mojo/core/channel_linux.cc.epel7-header-workarounds	2022-02-28 19:05:54.000000000 -0500
 +++ chromium-99.0.4844.51/mojo/core/channel_linux.cc	2022-03-05 14:50:49.876812909 -0500
