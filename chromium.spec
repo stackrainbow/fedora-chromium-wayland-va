@@ -14,7 +14,7 @@
 
 # set default numjobs for the koji build
 %ifarch aarch64
-%global numjobs 16
+%global numjobs 8
 %else
 %global numjobs %{_smp_build_ncpus}
 %endif
