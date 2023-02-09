@@ -14,7 +14,7 @@
 
 # set default numjobs for the koji build
 %ifarch aarch64
-%global numjobs 64
+%global numjobs 32
 %else
 %global numjobs %{_smp_build_ncpus}
 %endif
@@ -1048,8 +1048,6 @@ sed -i 's|moc|moc-qt5|g' ui/qt/moc_wrapper.py
 # utf8 issue on epel7, Internal parsing error 'ascii' codec can't
 # decode byte 0xe2 in position 474: ordinal not in range(128)
 export LANG=en_US.UTF-8
-
-ulimit -n 4096
 
 # reduce warnings
 FLAGS=' -Wno-deprecated-declarations -Wno-unknown-warning-option -Wno-unused-command-line-argument'
