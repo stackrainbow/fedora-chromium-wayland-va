@@ -1049,6 +1049,8 @@ sed -i 's|moc|moc-qt5|g' ui/qt/moc_wrapper.py
 # decode byte 0xe2 in position 474: ordinal not in range(128)
 export LANG=en_US.UTF-8
 
+ulimit -n 4096
+
 # reduce warnings
 FLAGS=' -Wno-deprecated-declarations -Wno-unknown-warning-option -Wno-unused-command-line-argument'
 FLAGS+=' -Wno-unused-but-set-variable -Wno-unused-result -Wno-unused-function -Wno-unused-variable'
