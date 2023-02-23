@@ -160,8 +160,8 @@
 %global bundleminizip 1
 %endif
 
-# enable qt backend for el >= 9 and fedora >= 35
-%if 0%{?rhel} >= 9 || 0%{?fedora} >=35
+# enable qt backend for el >= 8 and fedora >= 35
+%if 0%{?rhel} >= 8 || 0%{?fedora} >=35
 %global use_qt 1
 %else
 %global use_qt 0
@@ -237,8 +237,8 @@
 %endif
 
 Name:	chromium%{chromium_channel}
-Version: 110.0.5481.100
-Release: 3%{?dist}
+Version: 110.0.5481.177
+Release: 1%{?dist}
 Summary: A WebKit (Blink) powered web browser that Google doesn't want you to use
 Url: http://www.chromium.org/Home
 License: BSD-3-Clause AND LGPL-2.1-or-later AND Apache-2.0 AND IJG AND MIT AND GPL-2.0-or-later AND ISC AND OpenSSL AND (MPL-1.1 OR GPL-2.0-only OR LGPL-2.0-only)
@@ -1055,7 +1055,7 @@ cp -a %{_includedir}/libusb-1.0/libusb.h third_party/libusb/src/libusb/libusb.h
 %endif
 
 # Hard code extra version
-sed -i.orig -e 's/getenv("CHROME_VERSION_EXTRA")/"Fedora Project"/' chrome/common/channel_info_posix.cc
+sed -i 's/getenv("CHROME_VERSION_EXTRA")/"Fedora Project"/' chrome/common/channel_info_posix.cc
 
 # Fix hardcoded path in remoting code
 sed -i 's|/opt/google/chrome-remote-desktop|%{crd_path}|g' remoting/host/setup/daemon_controller_delegate_linux.cc
