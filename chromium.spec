@@ -14,7 +14,7 @@
 
 # set default numjobs for the koji build
 %ifarch aarch64
-%global numjobs 64
+%global numjobs 8
 %else
 %global numjobs %{_smp_build_ncpus}
 %endif
@@ -425,9 +425,6 @@ Source13: master_preferences
 Source19: https://nodejs.org/dist/latest-v16.x/node-%{nodejs_version}-linux-x64.tar.xz
 Source21: https://nodejs.org/dist/latest-v16.x/node-%{nodejs_version}-linux-arm64.tar.xz
 %endif
-
-# for test build
-BuildRequires: /usr/bin/ps
 
 %if %{clang}
 %if 0%{?rhel} == 7
@@ -910,15 +907,8 @@ without support for alsa, cups, dbus, gconf, gio, kerberos, pulseaudio, or
 udev.
 
 %prep
-echo state: prep
-echo check the value of /sys/fs/cgroup/pids.max inside the container
-cat /sys/fs/cgroup/pids.max || true
 
 %setup -q -n chromium-%{version}
-echo state: setup
-echo check the value of /sys/fs/cgroup/pids.max inside the container
-cat /sys/fs/cgroup/pids.max || true
-
 ### Chromium Fedora Patches ###
 %patch0 -p1 -b .sandboxpie
 %patch1 -p1 -b .etc
@@ -1082,16 +1072,6 @@ sed -i 's|-g2|-g0|g' build/config/compiler/BUILD.gn
 sed -i 's|moc|moc-qt5|g' ui/qt/moc_wrapper.py
 
 %build
-echo state: build
-echo check the value of /sys/fs/cgroup/pids.max inside the container
-cat /sys/fs/cgroup/pids.max || true
-
-echo ulimit -a
-ulimit -a || true
-
-echo ulimit -u
-ulimit -u || true
-
 # utf8 issue on epel7, Internal parsing error 'ascii' codec can't
 # decode byte 0xe2 in position 474: ordinal not in range(128)
 export LANG=en_US.UTF-8
@@ -1200,6 +1180,12 @@ CHROMIUM_CORE_GN_DEFINES+=' enable_vr=false'
 CHROMIUM_CORE_GN_DEFINES+=' build_dawn_tests=false enable_perfetto_unittests=false'
 CHROMIUM_CORE_GN_DEFINES+=' disable_fieldtrial_testing_config=true'
 CHROMIUM_CORE_GN_DEFINES+=' blink_symbol_level=0 symbol_level=0 v8_symbol_level=0'
+%ifarch aarch64
+%if 0%{?rhel} == 8
+# workaround crash on el8
+CHROMIUM_CORE_GN_DEFINES+=' use_partition_alloc_as_malloc=false enable_backup_ref_ptr_support=false'
+%endif
+%endif
 export CHROMIUM_CORE_GN_DEFINES
 
 # browser gn defines
@@ -1259,12 +1245,6 @@ CHROMIUM_HEADLESS_GN_DEFINES+=' use_libpci=false use_pulseaudio=false use_udev=f
 CHROMIUM_HEADLESS_GN_DEFINES+=' v8_enable_lazy_source_positions=false use_glib=false use_gtk=false use_pangocairo=false'
 CHROMIUM_HEADLESS_GN_DEFINES+=' use_qt=false is_component_build=false enable_ffmpeg_video_decoders=false media_use_ffmpeg=false'
 CHROMIUM_HEADLESS_GN_DEFINES+=' media_use_libvpx=false proprietary_codecs=false'
-%ifarch aarch64
-%if 0%{?rhel} == 8
-# workaround 64K pagesize on el8
-CHROMIUM_HEADLESS_GN_DEFINES+=' use_partition_alloc_as_malloc=false enable_backup_ref_ptr_support=false'
-%endif
-%endif
 export CHROMIUM_HEADLESS_GN_DEFINES
 
 build/linux/unbundle/replace_gn_files.py --system-libraries \
@@ -1346,17 +1326,9 @@ mkdir -p %{builddir} && cp -a %{_bindir}/gn %{builddir}/
 %build_target %{headlessbuilddir} headless_shell
 %endif
 
-# test build
-echo running process count
-ps ax | wc -l
-
 %build_target %{builddir} chrome
 %build_target %{builddir} chrome_sandbox
 %build_target %{builddir} chromedriver
-
-# test build
-echo running process count
-ps ax | wc -l
 
 %if %{build_clear_key_cdm}
 %build_target %{builddir} clear_key_cdm
