@@ -426,6 +426,9 @@ Source19: https://nodejs.org/dist/latest-v16.x/node-%{nodejs_version}-linux-x64.
 Source21: https://nodejs.org/dist/latest-v16.x/node-%{nodejs_version}-linux-arm64.tar.xz
 %endif
 
+# for test build
+BuildRequires: /usr/bin/ps
+
 %if %{clang}
 %if 0%{?rhel} == 7
 BuildRequires: llvm-toolset-%{llvm_toolset_version}
@@ -1083,6 +1086,12 @@ echo state: build
 echo check the value of /sys/fs/cgroup/pids.max inside the container
 cat /sys/fs/cgroup/pids.max || true
 
+echo ulimit -a
+ulimit -a || true
+
+echo ulimit -u
+ulimit -u || true
+
 # utf8 issue on epel7, Internal parsing error 'ascii' codec can't
 # decode byte 0xe2 in position 474: ordinal not in range(128)
 export LANG=en_US.UTF-8
@@ -1337,9 +1346,17 @@ mkdir -p %{builddir} && cp -a %{_bindir}/gn %{builddir}/
 %build_target %{headlessbuilddir} headless_shell
 %endif
 
+# test build
+echo running process count
+ps ax | wc -l
+
 %build_target %{builddir} chrome
 %build_target %{builddir} chrome_sandbox
 %build_target %{builddir} chromedriver
+
+# test build
+echo running process count
+ps ax | wc -l
 
 %if %{build_clear_key_cdm}
 %build_target %{builddir} clear_key_cdm
