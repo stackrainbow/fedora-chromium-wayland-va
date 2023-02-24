@@ -41,7 +41,7 @@
 	ninja -j %{numjobs} -C '%1' '%2'
 
 # enable|disable headless client build
-%global build_headless 1
+%global build_headless 0
 
 # enable|disable chrome-remote-desktop build
 %global build_remoting 0
@@ -909,12 +909,12 @@ udev.
 %prep
 echo state: prep
 echo check the value of /sys/fs/cgroup/pids.max inside the container
-cat /sys/fs/cgroup/pids.max
+cat /sys/fs/cgroup/pids.max || true
 
 %setup -q -n chromium-%{version}
 echo state: setup
 echo check the value of /sys/fs/cgroup/pids.max inside the container
-cat /sys/fs/cgroup/pids.max
+cat /sys/fs/cgroup/pids.max || true
 
 ### Chromium Fedora Patches ###
 %patch0 -p1 -b .sandboxpie
@@ -1081,7 +1081,7 @@ sed -i 's|moc|moc-qt5|g' ui/qt/moc_wrapper.py
 %build
 echo state: build
 echo check the value of /sys/fs/cgroup/pids.max inside the container
-cat /sys/fs/cgroup/pids.max
+cat /sys/fs/cgroup/pids.max || true
 
 # utf8 issue on epel7, Internal parsing error 'ascii' codec can't
 # decode byte 0xe2 in position 474: ordinal not in range(128)
