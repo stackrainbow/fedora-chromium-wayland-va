@@ -14,14 +14,14 @@
 
 # set default numjobs for the koji build
 %ifarch aarch64
-%global numjobs 8
+%global numjobs 64
 %else
 %global numjobs %{_smp_build_ncpus}
 %endif
 
 # This flag is so I can build things very fast on a giant system.
 # Enabling this in koji causes aarch64 builds to timeout indefinitely.
-%global use_all_cpus 1
+%global use_all_cpus 0
 
 %if %{use_all_cpus}
 %global numjobs %{_smp_build_ncpus}
@@ -41,7 +41,7 @@
 	ninja -j %{numjobs} -C '%1' '%2'
 
 # enable|disable headless client build
-%global build_headless 0
+%global build_headless 1
 
 # enable|disable chrome-remote-desktop build
 %global build_remoting 0
