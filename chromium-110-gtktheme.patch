@@ -23,6 +23,25 @@ index 758d0bf..8c91146 100644
  Lenny Khazan <lenny.khazan@gmail.com>
  Leo Wolf <jclw@ymail.com>
  Leon Han <leon.han@intel.com>
+diff --git a/chrome/common/chrome_features.cc b/chrome/common/chrome_features.cc
+index 85c3931..2b0c2a84 100644
+--- a/chrome/common/chrome_features.cc
++++ b/chrome/common/chrome_features.cc
+@@ -1430,12 +1430,12 @@
+ BASE_FEATURE(kWebUIDarkMode,
+              "WebUIDarkMode",
+ #if BUILDFLAG(IS_MAC) || BUILDFLAG(IS_WIN) || BUILDFLAG(IS_ANDROID) || \
+-    BUILDFLAG(IS_CHROMEOS)
++    BUILDFLAG(IS_CHROMEOS) || BUILDFLAG(IS_LINUX)
+              base::FEATURE_ENABLED_BY_DEFAULT
+ #else
+              base::FEATURE_DISABLED_BY_DEFAULT
+ #endif  // BUILDFLAG(IS_MAC) || BUILDFLAG(IS_WIN) || BUILDFLAG(IS_ANDROID) ||
+-        // BUILDFLAG(IS_CHROMEOS)
++        // BUILDFLAG(IS_CHROMEOS) || BUILDFLAG(IS_LINUX)
+ );
+ 
+ #if BUILDFLAG(IS_CHROMEOS_ASH)
 diff --git a/ui/gtk/native_theme_gtk.cc b/ui/gtk/native_theme_gtk.cc
 index a60d6e3..1200a80 100644
 --- a/ui/gtk/native_theme_gtk.cc
