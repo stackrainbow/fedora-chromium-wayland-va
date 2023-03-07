@@ -385,6 +385,8 @@ Patch143: chromium-110-v8-gcc.patch
 Patch144: chromium-111-v8-std-layout1.patch
 Patch145: chromium-111-v8-std-layout2.patch
 
+Patch146: chromium-110-LargerThan4k.patch
+
 # VAAPI
 # Upstream turned VAAPI on in Linux in 86
 Patch202: chromium-104.0.5112.101-enable-hardware-accelerated-mjpeg.patch
@@ -999,6 +1001,8 @@ udev.
 %patch143 -p1 -b .v8-gcc
 %patch144 -p1 -b .v8-std-layout1
 %patch145 -p1 -b .v8-std-layout2
+
+%patch146 -p1 -b .LargerThan4k
 
 %if %{use_qt}
 %patch121 -p1 -b .enable-allowqt
