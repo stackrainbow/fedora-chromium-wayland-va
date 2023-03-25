@@ -6,4 +6,4 @@
 - Chromium uses the system ffmpeg-free library which is included in
   fedora >= 36 and centos-stream 9. This library contains free video
   codecs. If you want Chromium to use non-free video codecs, you need
-  to install ffmpeg-libs from rpmfussion-free.
+  to install libavcodec-freeworld from rpmfusion-free.
