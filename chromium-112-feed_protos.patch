@@ -1,0 +1,19 @@
+diff -up chromium-112.0.5615.49/components/feed/core/v2/protocol_translator.cc.me chromium-112.0.5615.49/components/feed/core/v2/protocol_translator.cc
+--- chromium-112.0.5615.49/components/feed/core/v2/protocol_translator.cc.me	2023-03-31 20:33:32.129658455 +0200
++++ chromium-112.0.5615.49/components/feed/core/v2/protocol_translator.cc	2023-03-31 20:41:19.593822038 +0200
+@@ -10,7 +10,6 @@
+ #include "base/logging.h"
+ #include "base/time/time.h"
+ #include "components/feed/core/proto/v2/packing.pb.h"
+-#include "components/feed/core/proto/v2/wire/chrome_feed_response_metadata.pb.h"
+ #include "components/feed/core/proto/v2/wire/data_operation.pb.h"
+ #include "components/feed/core/proto/v2/wire/feature.pb.h"
+ #include "components/feed/core/proto/v2/wire/feed_response.pb.h"
+@@ -19,7 +18,6 @@
+ #include "components/feed/core/proto/v2/wire/stream_structure.pb.h"
+ #include "components/feed/core/proto/v2/wire/token.pb.h"
+ #include "components/feed/core/v2/feedstore_util.h"
+-#include "components/feed/core/v2/ios_shared_experiments_translator.h"
+ #include "components/feed/core/v2/metrics_reporter.h"
+ #include "components/feed/core/v2/proto_util.h"
+ #include "components/feed/feed_feature_list.h"

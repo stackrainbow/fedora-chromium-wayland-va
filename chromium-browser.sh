@@ -50,8 +50,6 @@ CHROMIUM_DISTRO_FLAGS=" --enable-plugins \
                         --enable-printing \
                         --enable-gpu-rasterization \
                         --enable-sync \
-                        --disable-features=AudioServiceSandbox,UseChromeOSDirectVideoDecoder \
-                        --enable-features=VaapiVideoDecoder,VaapiVideoEncoder \
                         --auto-ssl-client-auth @@EXTRA_FLAGS@@"
 
 exec -a "$0" "$HERE/@@CHROMIUM_BROWSER_CHANNEL@@" $CHROMIUM_FLAGS $CHROMIUM_DISTRO_FLAGS "$@"
