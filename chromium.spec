@@ -1300,8 +1300,6 @@ cp -a %{SOURCE3} %{buildroot}%{chromium_path}/%{chromium_browser_channel}.sh
 
 %if ! %{use_vaapi}
 # remove vaapi flags
-grep -v features %{SOURCE3} > %{buildroot}%{chromium_path}/%{chromium_browser_channel}.sh
-chmod 755 %{buildroot}%{chromium_path}/%{chromium_browser_channel}.sh
 echo "# system wide chromium flags" > %{buildroot}%{_sysconfdir}/%{name}/%{name}.conf
 %endif
 
