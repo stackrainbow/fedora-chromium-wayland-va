@@ -1060,16 +1060,18 @@ CXXFLAGS="$FLAGS"
 %if %{clang}
 export CC=clang
 export CXX=clang++
+export AR=llvm-ar
+export NM=llvm-nm
+export READELF=llvm-readelf
 %else
 export CC=gcc
 export CXX=g++ 
+export AR="ar"
+export NM="nm"
+export READELF="readelf"
 %endif
 export CFLAGS
 export CXXFLAGS
-export LDFLAGS="$LDFLAGS -Wl,--threads=4"
-export AR="llvm-ar"
-export NM="llvm-nm"
-export READELF="llvm-readelf"
 
 # enable toolset on el7
 %if 0%{?rhel} == 7
@@ -1141,6 +1143,7 @@ CHROMIUM_CORE_GN_DEFINES+=' enable_vr=false'
 CHROMIUM_CORE_GN_DEFINES+=' build_dawn_tests=false enable_perfetto_unittests=false'
 CHROMIUM_CORE_GN_DEFINES+=' disable_fieldtrial_testing_config=true'
 CHROMIUM_CORE_GN_DEFINES+=' blink_symbol_level=0 symbol_level=0 v8_symbol_level=0'
+CHROMIUM_CORE_GN_DEFINES+=' blink_enable_generated_code_formatting=false'
 export CHROMIUM_CORE_GN_DEFINES
 
 # browser gn defines
