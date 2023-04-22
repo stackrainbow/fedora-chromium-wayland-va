@@ -37,7 +37,7 @@
 # %1 where
 # %2 what
 %global build_target() \
-	export UV_THREADPOOL_SIZE=1024 ; \
+	export UV_THREADPOOL_SIZE=4 ; \
 	export NINJA_STATUS="[%2:%f/%t] " ; \
 	ninja -j %{numjobs} -C '%1' '%2' %limit_build -m 3072
 
