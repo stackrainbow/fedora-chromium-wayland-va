@@ -21,7 +21,7 @@
 
 # This flag is so I can build things very fast on a giant system.
 # Enabling this in koji causes aarch64 builds to timeout indefinitely.
-%global use_all_cpus 1
+%global use_all_cpus 0
 
 %if %{use_all_cpus}
 %global numjobs %{_smp_build_ncpus}
@@ -38,7 +38,7 @@
 # %2 what
 %global build_target() \
 	export NINJA_STATUS="[%2:%f/%t] " ; \
-	ninja -j %{numjobs} -l %{numjobs} -C '%1' '%2' %limit_build -m 3072
+	ninja -j %{numjobs} -C '%1' '%2'
 
 # enable|disable headless client build
 %global build_headless 1
@@ -1659,7 +1659,8 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 %{chromium_path}/chromedriver
 
 %changelog
-* Sat Apr 22 2023 Than Ngo <than@redhat.com> - 112.0.5615.165-2
+* Sun Apr 23 2023 Than Ngo <than@redhat.com> - 112.0.5615.165-2
+- make --use-gl=egl default for x11/wayland
 - enable WebUIDarkMode
 
 * Thu Apr 20 2023 Than Ngo <than@redhat.com> - 112.0.5615.165-1
