@@ -322,9 +322,6 @@ Patch91: chromium-108-system-opus.patch
 # enable WebUIDarkMode
 Patch92: chromium-113-WebUIDarkMode.patch
 
-# merged in 113
-Patch93: chromium-112-fix_deps_for_response.proto.patch
-
 # need to explicitly include a kernel header on EL7 to support MFD_CLOEXEC, F_SEAL_SHRINK, F_ADD_SEALS, F_SEAL_SEAL
 Patch100: chromium-108-el7-include-fcntl-memfd.patch
 
@@ -934,7 +931,6 @@ udev.
 %endif
 
 %patch -P92 -p1 -b .WebUIDarkMod
-%patch -P93 -p1 -b .fix_deps_for_response.proto
 
 # Fedora branded user agent
 %if 0%{?fedora}
@@ -1662,7 +1658,6 @@ getent group chrome-remote-desktop >/dev/null || groupadd -r chrome-remote-deskt
 * Sun Apr 23 2023 Than Ngo <than@redhat.com> - 112.0.5615.165-2
 - make --use-gl=egl default for x11/wayland
 - enable WebUIDarkMode
-- fix dependency for feed_response.proto
 
 * Thu Apr 20 2023 Than Ngo <than@redhat.com> - 112.0.5615.165-1
 - update to 112.0.5615.165
