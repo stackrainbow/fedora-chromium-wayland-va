@@ -37,9 +37,8 @@
 # %1 where
 # %2 what
 %global build_target() \
-	export UV_THREADPOOL_SIZE=%{numjobs} ; \
 	export NINJA_STATUS="[%2:%f/%t] " ; \
-	ninja -j %{numjobs} -C '%1' '%2' %limit_build -m 3072
+	ninja -j %{numjobs} -l %{numjobs} -C '%1' '%2' %limit_build -m 3072
 
 # enable|disable headless client build
 %global build_headless 1
