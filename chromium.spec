@@ -362,6 +362,8 @@ Patch300: chromium-113-rhel8-force-disable-use_gnome_keyring.patch
 
 # workaround for bug in clang 14 with c++20 on rhel9, linker errors std::u16string
 Patch301: chromium-112-workaround-llvm14-c++20-epel8.patch
+# workaround for clang bug, https://github.com/llvm/llvm-project/issues/57826
+Patch302: chromium-113-workaround_clang_bug-structured_binding.patch
 
 # Use chromium-latest.py to generate clean tarball from released build tarballs, found here:
 # http://build.chromium.org/buildbot/official/
@@ -949,8 +951,13 @@ udev.
 %patch -P300 -p1 -b .disblegnomekeyring
 %endif
 
-%if %{clang} && 0%{?rhel} == 8
+%if %{clang}
+%if 0%{?rhel} == 8
 %patch -P301 -p1 -b .clang14_c++20
+%endif
+%if 0%{?rhel} || 0%{?fedora} < 38
+%patch -P302 -p1 -b .workaround_clang_bug-structured_binding
+%endif
 %endif
 
 # Change shebang in all relevant files in this directory and all subdirectories
