@@ -364,6 +364,8 @@ Patch300: chromium-113-rhel8-force-disable-use_gnome_keyring.patch
 Patch301: chromium-112-workaround-llvm14-c++20-epel8.patch
 # workaround for clang bug, https://github.com/llvm/llvm-project/issues/57826
 Patch302: chromium-113-workaround_clang_bug-structured_binding.patch
+# declare iterators as subtypes
+Patch303: chromium-113-typename.patch
 
 # Use chromium-latest.py to generate clean tarball from released build tarballs, found here:
 # http://build.chromium.org/buildbot/official/
@@ -959,6 +961,8 @@ udev.
 %patch -P302 -p1 -b .workaround_clang_bug-structured_binding
 %endif
 %endif
+
+%patch -P303 -p1 -b .typename
 
 # Change shebang in all relevant files in this directory and all subdirectories
 # See `man find` for how the `-exec command {} +` syntax works
