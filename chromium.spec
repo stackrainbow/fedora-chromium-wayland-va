@@ -368,6 +368,8 @@ Patch323: chromium-114-qt_deps.patch
 Patch324: chromium-114-qt_enable_AllowQt_feature_flag.patch
 Patch325: chromium-114-qt_logical_scale_factor.patch
 
+
+Patch326: ozone-add-va-api.patch
 # Use chromium-latest.py to generate clean tarball from released build tarballs, found here:
 # http://build.chromium.org/buildbot/official/
 # For Chromium Fedora use chromium-latest.py --stable --ffmpegclean --ffmpegarm
@@ -971,6 +973,7 @@ udev.
 %patch -P323 -p1 -b .qt_deps
 %patch -P324 -p1 -b .qt_enable_AllowQt_feature_flag
 %patch -P325 -p1 -b .qt_logical_scale_factor
+%patch -P326 -p1 -b .vaapiwayland
 
 # Change shebang in all relevant files in this directory and all subdirectories
 # See `man find` for how the `-exec command {} +` syntax works
